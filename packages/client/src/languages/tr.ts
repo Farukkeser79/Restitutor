@@ -1,8 +1,8 @@
 export const TR = {
    $$Credits: "",
    $$Language: "Türkçe",
-   Accept: "Accept",
-   AcceptanceChanceOurPrestigeOurPrestigeTheirPrestige: "Acceptance Chance = Our Prestige / (Our Prestige + Their Prestige)",
+   Accept: "Kabul et",
+   AcceptanceChanceOurPrestigeOurPrestigeTheirPrestige: "Kabul Şansı = Bizim Prestijimiz / (Bizim Prestijimiz + Onların Prestiji)",
    AcceptanceChanceOurPrestigeOurPrestigeTheirPrestigeTotalUpgrades: "Acceptance Chance = Our Prestige / (Our Prestige + Their Prestige + Total Upgrades)",
    AcceptTheDeclineAndMoveOn: "Accept the decline and move on",
    AcceptTheGiftFromTheNewEmperor: "Accept the gift from the new emperor",
