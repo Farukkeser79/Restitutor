@@ -119,11 +119,11 @@ function updateModifier(): void {
          return;
       }
       forEach(config.modifiers, (modifier, data) => {
-         const tileData = G.save.state.tiles.get(config.tile);
-         if (!tileData) {
+         const ŞehirData = G.save.state.Şehirs.get(config.Şehir);
+         if (!ŞehirData) {
             return;
          }
-         const state = G.save.state.provinces[tileData.province];
+         const state = G.save.state.provinces[ŞehirData.province];
          if (!state) {
             return;
          }

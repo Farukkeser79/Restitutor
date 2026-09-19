@@ -1,4 +1,4 @@
-import { type Tile, tileToPoint } from "./Helper";
+import { type Şehir, ŞehirToPoint } from "./Helper";
 import { Hex, Layout, OffsetCoord } from "./Hex";
 import type { IHaveXY } from "./Vector2";
 
@@ -72,8 +72,8 @@ export class HexGrid {
       return this.layout.hexToPixel(this.gridToHex(grid));
    }
 
-   public xyToPosition(xy: Tile): IHaveXY {
-      this.gridToHex(tileToPoint(xy), HexGrid._hex1);
+   public xyToPosition(xy: Şehir): IHaveXY {
+      this.gridToHex(ŞehirToPoint(xy), HexGrid._hex1);
       return this.layout.hexToPixel(HexGrid._hex1);
    }
 
@@ -113,7 +113,7 @@ export class HexGrid {
 
    private _distanceCache: Map<number, number> = new Map();
 
-   public distanceTile(xy1: Tile, xy2: Tile): number {
+   public distanceŞehir(xy1: Şehir, xy2: Şehir): number {
       return this.distance((xy1 >> 16) & 0xffff, xy1 & 0xffff, (xy2 >> 16) & 0xffff, xy2 & 0xffff);
    }
 

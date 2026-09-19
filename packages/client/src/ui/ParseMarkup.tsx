@@ -2,7 +2,7 @@ import { safeParseInt } from "@project/shared/src/utils/Helper";
 import type { HTMLReactParserOptions } from "html-react-parser";
 import parse from "html-react-parser";
 import { type Province, Provinces } from "../game/definitions/Province";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { MapBackgroundColors } from "../game/logic/MapColor";
 import { getProvinceName } from "../game/logic/ProvinceLogic";
 import { WorldScene } from "../scenes/WorldScene";
@@ -42,27 +42,27 @@ const parserOptions: HTMLReactParserOptions = {
       }
       if (
          node.type === "tag" &&
-         node.name === "tile" &&
+         node.name === "Şehir" &&
          node.children.length === 1 &&
          node.children[0].type === "text"
       ) {
-         const tile = safeParseInt(node.children[0].data);
-         const tileData = G.save.state.tiles.get(tile);
-         if (tileData) {
+         const Şehir = safeParseInt(node.children[0].data);
+         const ŞehirData = G.save.state.Şehirs.get(Şehir);
+         if (ŞehirData) {
             return (
                <span
                   className="text-link"
                   onClick={() => {
                      G.scene
                         .getCurrent(WorldScene)
-                        ?.lookAt(tile, { time: 0.2 })
+                        ?.lookAt(Şehir, { time: 0.2 })
                         .then((scene) => {
-                           scene.drawSelectors(new Set([tile]));
-                           scene.drawProvinceOutline(tileData.province);
+                           scene.drawSelectors(new Set([Şehir]));
+                           scene.drawProvinceOutline(ŞehirData.province);
                         });
                   }}
                >
-                  {getTileName(tile, G.save)}
+                  {getŞehirName(Şehir, G.save)}
                </span>
             );
          }

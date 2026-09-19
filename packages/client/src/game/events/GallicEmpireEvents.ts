@@ -1,12 +1,12 @@
 import { fromEntries } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import { ProvinceNameOverrides } from "../definitions/Province";
-import { GallicEmpireProvinces } from "../definitions/TileConstants";
-import { RefreshTiles } from "../Events";
-import { getOriginalTileCount } from "../GameState";
+import { GallicEmpireProvinces } from "../definitions/ŞehirConstants";
+import { RefreshŞehirs } from "../Events";
+import { getOriginalŞehirCount } from "../GameState";
 import type { ConditionChecks } from "../logic/Calculation";
 import { availableDiplomatChecks } from "../logic/DiplomacyLogic";
-import { forcePatronageEffect, maxCoreTileChecks } from "../logic/MissionLogic";
+import { forcePatronageEffect, maxCoreŞehirChecks } from "../logic/MissionLogic";
 import { setProvinceNameOverride } from "../logic/ProvinceLogic";
 import { requireNoTreatyBetweenChecks, requirePeaceBetweenChecks } from "../logic/TreatyLogic";
 import { EventImage } from "./EventImages";
@@ -33,7 +33,7 @@ export const GallicEmpireEvents = {
                {
                   effect: (province, save) => {
                      setProvinceNameOverride(province, "GallicEmpire", save);
-                     RefreshTiles.emit({ tiles: [], options: { visual: true } });
+                     RefreshŞehirs.emit({ Şehirs: [], options: { visual: true } });
                   },
                   desc: (province, save) => {
                      return $t(L.OurProvinceIsNowKnownAsThe$1, ProvinceNameOverrides.GallicEmpire());
@@ -49,12 +49,12 @@ export const GallicEmpireEvents = {
       desc: () => $t(L.TheSubmissionOfBritanniaDesc),
       condition: {
          nameOverride: "GallicEmpire",
-         annexAndCore: { Britannia: Math.ceil(getOriginalTileCount("Britannia") * 0.7) },
+         annexAndCore: { Britannia: Math.ceil(getOriginalŞehirCount("Britannia") * 0.7) },
          conditions: function* (province, save): ConditionChecks {
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Britannia", save);
             yield* requirePeaceBetweenChecks(province, "Britannia", save);
             yield* availableDiplomatChecks(province, "Britannia", save);
-            yield* maxCoreTileChecks(5, "Britannia", save);
+            yield* maxCoreŞehirChecks(5, "Britannia", save);
             return;
          },
       },

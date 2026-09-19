@@ -85,7 +85,7 @@ export function migrateSave(save: SaveGame): void {
       }
    });
    fixRelations(save);
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (!data.autonomy) {
          data.autonomy = 0;
       }

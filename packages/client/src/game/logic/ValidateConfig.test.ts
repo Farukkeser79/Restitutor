@@ -1,4 +1,4 @@
-import { forEach, keysOf, sizeOf, type Tile } from "@project/shared/src/utils/Helper";
+import { forEach, keysOf, sizeOf, type Şehir } from "@project/shared/src/utils/Helper";
 import { expect, test } from "vitest";
 import { type Building, Buildings } from "../definitions/Building";
 import { Goods } from "../definitions/Goods";
@@ -91,13 +91,13 @@ test("SocialClassBonuses have valid supporting and opposing classes", () => {
    });
 });
 
-test("SpawnedProvinces contain unique tiles that are land", () => {
+test("SpawnedProvinces contain unique Şehirs that are land", () => {
    forEach(SpawnedProvinces, (province, config) => {
-      const tiles = new Set<Tile>();
-      config.tiles.forEach((tile) => {
-         expect.soft(isLand(tile), `Spawned province ${province} has tile ${tile} that is not land`).toBe(true);
-         expect.soft(tiles.has(tile), `Spawned province ${province} has duplicate tile ${tile}`).toBe(false);
-         tiles.add(tile);
+      const Şehirs = new Set<Şehir>();
+      config.Şehirs.forEach((Şehir) => {
+         expect.soft(isLand(Şehir), `Spawned province ${province} has Şehir ${Şehir} that is not land`).toBe(true);
+         expect.soft(Şehirs.has(Şehir), `Spawned province ${province} has duplicate Şehir ${Şehir}`).toBe(false);
+         Şehirs.add(Şehir);
       });
    });
 });

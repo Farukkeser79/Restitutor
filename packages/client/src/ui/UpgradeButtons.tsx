@@ -1,11 +1,11 @@
-import type { Tile } from "@project/shared/src/utils/Helper";
+import type { Şehir } from "@project/shared/src/utils/Helper";
 import { useCallback } from "react";
 import {
    UpgradeInfrastructureAction,
    UpgradePopulationAction,
    UpgradeProductionAction,
 } from "../game/actions/UpgradeActions";
-import { getTileUpgradeCost } from "../game/logic/TileLogic";
+import { getŞehirUpgradeCost } from "../game/logic/ŞehirLogic";
 import { TimedActionDescComp } from "../game/logic/TimedActionDescComp";
 import { G } from "../utils/Global";
 import { $t, L } from "../utils/i18n";
@@ -13,13 +13,13 @@ import { ActionButton } from "./ActionButton";
 import { BreakdownComp } from "./BreakdownComp";
 
 export function UpgradeInfrastructureButton({
-   tile,
+   Şehir,
    children,
    className,
    style,
    id,
 }: React.PropsWithChildren<{
-   tile: Tile;
+   Şehir: Şehir;
    className?: string;
    style?: React.CSSProperties;
    id?: string;
@@ -31,17 +31,17 @@ export function UpgradeInfrastructureButton({
             {element}
             <div className="divider" />
             <div className="m10">{$t(L.TheUpgradeCostIsCalculatedAsFollows)}</div>
-            <BreakdownComp breakdown={getTileUpgradeCost(tile, "administrative", G.save)} />
+            <BreakdownComp breakdown={getŞehirUpgradeCost(Şehir, "administrative", G.save)} />
          </>
       ),
-      [tile],
+      [Şehir],
    );
    return (
       <ActionButton
          id={id}
          className={className}
          style={style}
-         action={UpgradeInfrastructureAction(tile, G.save.state.playerProvince, G.save)}
+         action={UpgradeInfrastructureAction(Şehir, G.save.state.playerProvince, G.save)}
          tooltip={tooltip}
       >
          {children}
@@ -50,13 +50,13 @@ export function UpgradeInfrastructureButton({
 }
 
 export function UpgradeProductionButton({
-   tile,
+   Şehir,
    children,
    className,
    style,
    id,
 }: React.PropsWithChildren<{
-   tile: Tile;
+   Şehir: Şehir;
    className?: string;
    style?: React.CSSProperties;
    id?: string;
@@ -68,17 +68,17 @@ export function UpgradeProductionButton({
             {element}
             <div className="divider" />
             <div className="m10">{$t(L.TheUpgradeCostIsCalculatedAsFollows)}</div>
-            <BreakdownComp breakdown={getTileUpgradeCost(tile, "diplomatic", G.save)} />
+            <BreakdownComp breakdown={getŞehirUpgradeCost(Şehir, "diplomatic", G.save)} />
          </>
       ),
-      [tile],
+      [Şehir],
    );
    return (
       <ActionButton
          id={id}
          className={className}
          style={style}
-         action={UpgradeProductionAction(tile, G.save.state.playerProvince, G.save)}
+         action={UpgradeProductionAction(Şehir, G.save.state.playerProvince, G.save)}
          tooltip={tooltip}
       >
          {children}
@@ -87,13 +87,13 @@ export function UpgradeProductionButton({
 }
 
 export function UpgradePopulationButton({
-   tile,
+   Şehir,
    children,
    className,
    style,
    id,
 }: React.PropsWithChildren<{
-   tile: Tile;
+   Şehir: Şehir;
    className?: string;
    style?: React.CSSProperties;
    id?: string;
@@ -105,10 +105,10 @@ export function UpgradePopulationButton({
             {element}
             <div className="divider" />
             <div className="m10">{$t(L.TheUpgradeCostIsCalculatedAsFollows)}</div>
-            <BreakdownComp breakdown={getTileUpgradeCost(tile, "military", G.save)} />
+            <BreakdownComp breakdown={getŞehirUpgradeCost(Şehir, "military", G.save)} />
          </>
       ),
-      [tile],
+      [Şehir],
    );
    return (
       <ActionButton
@@ -116,7 +116,7 @@ export function UpgradePopulationButton({
          className={className}
          style={style}
          tooltip={tooltip}
-         action={UpgradePopulationAction(tile, G.save.state.playerProvince, G.save)}
+         action={UpgradePopulationAction(Şehir, G.save.state.playerProvince, G.save)}
       >
          {children}
       </ActionButton>

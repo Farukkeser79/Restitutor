@@ -14,7 +14,7 @@ import {
    UndermineTheirArmyAction,
 } from "../game/actions/CovertActions";
 import { DemandElectionBackingAction } from "../game/actions/DemandElectionBackingAction";
-import { DemandTileCostCondition } from "../game/actions/DemandTileCostCondition";
+import { DemandŞehirCostCondition } from "../game/actions/DemandŞehirCostCondition";
 import { DemandTributeCostCondition } from "../game/actions/DemandTributeCostCondition";
 import { DenounceAction } from "../game/actions/DenounceAction";
 import type { IGameAction } from "../game/actions/GameAction";
@@ -54,7 +54,7 @@ import {
    RivalAttitudeDuration,
    RivalAttitudeModifier,
 } from "../game/logic/DiplomacyLogic";
-import { getProvinceName, getProvincePrestige, getProvinceTileCount, getWarPower } from "../game/logic/ProvinceLogic";
+import { getProvinceName, getProvincePrestige, getProvinceŞehirCount, getWarPower } from "../game/logic/ProvinceLogic";
 import { TimedActionDescComp } from "../game/logic/TimedActionDescComp";
 import { getTimedActionCooldownLeft, getTimedActionTimeLeft } from "../game/logic/TimedActionLogic";
 import { getAllies, getClients, getDefensePacts, getPatrons } from "../game/logic/TreatyLogic";
@@ -72,7 +72,7 @@ import { colorNumber } from "./components/ColorNumber";
 import { FloatingTip } from "./components/FloatingTip";
 import { html } from "./components/RenderHTMLComp";
 import { DeclareWarPage } from "./DeclareWarPage";
-import { DemandTileModal } from "./DemandTileModal";
+import { DemandŞehirModal } from "./DemandŞehirModal";
 import { DemandTributeModal } from "./DemandTributeModal";
 import { LookForSpouseModal } from "./LookForSpouseModal";
 import { TradeSingletonModal } from "./TradeSingletonModal";
@@ -117,8 +117,8 @@ export function DiplomacyPage({ province }: { province: Province }): React.React
                   <div>{theirState.governor.male.name.join(" ")}</div>
                </div>
                <div className="row my5 mx10">
-                  <div className="f1">{$t(L.Tiles)}</div>
-                  <div>{getProvinceTileCount(province, G.save)}</div>
+                  <div className="f1">{$t(L.Şehirs)}</div>
+                  <div>{getProvinceŞehirCount(province, G.save)}</div>
                </div>
                <div className="row my5 mx10">
                   <div className="f1">{$t(L.Culture)}</div>
@@ -716,11 +716,11 @@ function DiplomacyActions({ province }: { province: Province }): React.ReactNode
             <ActionButton
                className="btn py2"
                action={{
-                  ...DemandTileCostCondition(G.save.state.playerProvince, province, [], G.save),
-                  effect: () => showPanel(DemandTileModal, { province }),
+                  ...DemandŞehirCostCondition(G.save.state.playerProvince, province, [], G.save),
+                  effect: () => showPanel(DemandŞehirModal, { province }),
                }}
             >
-               {$t(L.DemandATile)}
+               {$t(L.DemandAŞehir)}
             </ActionButton>
             <ActionButton
                className="btn py2"

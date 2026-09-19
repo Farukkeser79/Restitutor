@@ -1,6 +1,6 @@
 import { $t, L } from "../../utils/i18n";
 import type { ConditionChecks } from "../logic/Calculation";
-import { forcePatronageEffect, marriageChecks, minCoreTileChecks, provinceResourceChecks } from "../logic/MissionLogic";
+import { forcePatronageEffect, marriageChecks, minCoreŞehirChecks, provinceResourceChecks } from "../logic/MissionLogic";
 import {
    requireAnyTreatyBetweenChecks,
    requireHigherPrestigeChecks,
@@ -118,7 +118,7 @@ export const AfricaEvent = {
             resources: { gold: -750 },
             modifiers: {
                TradeCapacity: { type: "add", value: 1, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
             },
          },
          {
@@ -265,7 +265,7 @@ export const AfricaEvent = {
             resources: { gold: -500 },
             modifiers: {
                Stability: { type: "add", value: 10, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -473,7 +473,7 @@ export const AfricaEvent = {
       condition: {
          province: new Set(["Africa"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(40, province, save);
+            yield* minCoreŞehirChecks(40, province, save);
          },
       },
       buttons: [

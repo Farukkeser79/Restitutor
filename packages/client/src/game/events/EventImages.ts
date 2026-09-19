@@ -988,7 +988,7 @@ export const EventImage = {
    Weavers: {
       url: Weavers,
       credit: "Las Hilanderas (The Fable of Arachne), Diego Velázquez (c.1657)",
-      keywords: ["Textiles", "Arachne", "Workshop", "Women"],
+      keywords: ["TexŞehirs", "Arachne", "Workshop", "Women"],
    },
    Wedding1: {
       url: Wedding1,

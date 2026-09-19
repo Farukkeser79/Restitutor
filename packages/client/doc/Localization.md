@@ -142,13 +142,13 @@ When localized text contains inline HTML (`<i>`, `<b>`, `<q>`, `<br>`) and is re
 ```tsx
 import { html } from "../ui/components/RenderHTMLComp";
 
-// en.ts: Make$1OurCoreTile: "Make <i>$1</i> our core tile."
-html($t(L.Make$1OurCoreTile, getTileName(tile)))
+// en.ts: Make$1OurCoreŞehir: "Make <i>$1</i> our core Şehir."
+html($t(L.Make$1OurCoreŞehir, getŞehirName(Şehir)))
 ```
 
 Use `html()` only when the string contains HTML tags. Plain text does not need it.
 
-**This is validated automatically** by `pnpm run translate` — if a key's content contains `<i>`, `<b>`, `<q>`, or `<br>` and the call site in a `.tsx` file is not wrapped in `html()`, the script reports an error. Markup tags handled by `renderMarkup()` (`<Province>`, `<Tile>`, and `<icon>`) are excluded. Use `html` imported from `RenderHTMLComp` (not an alias); keys used only in `.ts` files are exempt because callers wrap the result.
+**This is validated automatically** by `pnpm run translate` — if a key's content contains `<i>`, `<b>`, `<q>`, or `<br>` and the call site in a `.tsx` file is not wrapped in `html()`, the script reports an error. Markup tags handled by `renderMarkup()` (`<Province>`, `<Şehir>`, and `<icon>`) are excluded. Use `html` imported from `RenderHTMLComp` (not an alias); keys used only in `.ts` files are exempt because callers wrap the result.
 
 ## Parameter Extraction
 
@@ -170,7 +170,7 @@ Extract numbers, signs, and units into parameters to increase key reuse.
 | Original | Don't | Do |
 |----------|-------|-----|
 | `Rebellion is at least 5` | `"Rebellion is at least 5"` (no param) | `"Rebellion is at least $1"` with `"5"` |
-| `-20 Tile Unrest` | `"-20 Tile Unrest"` (no param) | `"$1 Tile Unrest"` with `"-20"` |
+| `-20 Şehir Unrest` | `"-20 Şehir Unrest"` (no param) | `"$1 Şehir Unrest"` with `"-20"` |
 
 **Sign and percent rules:**
 
@@ -200,7 +200,7 @@ When a variable holds an entity, pass its localized **display name** at the call
 | `goods: Goods` | `Goods[goods].name()` |
 | `culture: Culture` | `Culture[culture].name()` |
 | `religion: Religion` | `Religion[religion].name()` |
-| `tile: Tile` (display name) | `getTileName(tile)` or `TileName[tile]?.()` |
+| `Şehir: Şehir` (display name) | `getŞehirName(Şehir)` or `ŞehirName[Şehir]?.()` |
 | `building`, `tech`, `personTrait`, etc. | `Building[x].name()`, `Tech[x].name()`, `PersonTrait[x].name()`, etc. |
 
 If no `.name()` helper exists for an entity type, flag it.
@@ -215,7 +215,7 @@ Keys for entity display names in `en.ts` must be prefixed with the entity type, 
 | Culture | `Culture{Name}` | `CultureIberian: "Iberian"` |
 | Religion | `Religion{Name}` | `ReligionIberian: "Iberian"` |
 | Goods | `Goods{Name}` | `GoodsLeather: "Leather"` |
-| Tile | `Tile{Name}` | `TilePaxIulia: "Pax Iulia"` |
+| Şehir | `Şehir{Name}` | `ŞehirPaxIulia: "Pax Iulia"` |
 | PersonTrait | `PersonTrait{Name}` | `PersonTraitSteadfast: "Steadfast"` |
 | Building | `Building{Name}` | `BuildingMarket: "Market"` |
 | Tech | `Tech{Name}` | `TechMarket: "Market"` |
@@ -248,22 +248,22 @@ $t(L.$1And$2FormedAnAlliance, fromProvince, toProvince)
 
 The parser reads the enum key from inside `<Province>...</Province>` and renders the localized, clickable province name.
 
-### `<Tile>` tags
+### `<Şehir>` tags
 
 ```ts
 // en.ts
 $1DeclaredWarOn$2WithTheGoalOfOccupying$3: "<Province>$1</Province> declared war on <Province>$2</Province> with the goal of occupying $3.",
 
-// call site — wrap each tile ID in <Tile> tags
+// call site — wrap each Şehir ID in <Şehir> tags
 $t(
    L.$1DeclaredWarOn$2WithTheGoalOfOccupying$3,
    attacker,
    defender,
-   Array.from(war.tiles).map((tile) => `<Tile>${tile}</Tile>`).join(", "),
+   Array.from(war.Şehirs).map((Şehir) => `<Şehir>${Şehir}</Şehir>`).join(", "),
 )
 ```
 
-The parser reads the numeric tile ID from inside `<Tile>...</Tile>` and renders the localized, clickable tile name.
+The parser reads the numeric Şehir ID from inside `<Şehir>...</Şehir>` and renders the localized, clickable Şehir name.
 
 ### `<icon>` tags
 
@@ -276,7 +276,7 @@ OffensiveWarCostsMilitaryPoints: "An offensive war costs <icon>military</icon> m
 
 The text inside the tag is an image lookup key, not user-facing text. It must remain unchanged in every translation. Supported keys are defined by `ImageCatalog` in `ParseMarkup.tsx`; currently they are `administrative`, `diplomatic`, `military`, `gold`, `legacy`, `generalSkillPoint`, and `consulPoint`. Use only a supported key.
 
-Content containing these markup tags is rendered via `renderMarkup()`, not `html()`. Do not strip or rename `<Province>`, `<Tile>`, or `<icon>` tags.
+Content containing these markup tags is rendered via `renderMarkup()`, not `html()`. Do not strip or rename `<Province>`, `<Şehir>`, or `<icon>` tags.
 
 ## Key Naming
 
@@ -290,7 +290,7 @@ Embed `$1`, `$2`, `$3`, ... directly in the key name at the position where the v
 
 | Content | Key |
 |---------|-----|
-| `$1 Tile Unrest for $2 months` | `$1TileUnrestFor$2Months` |
+| `$1 Şehir Unrest for $2 months` | `$1ŞehirUnrestFor$2Months` |
 | `$1 nullifies all negative attitudes towards $2` | `$1NullifiesAllNegativeAttitudesTowards$2` |
 
 When a key would exceed **64 characters**, omit tokens from the name and append them at the end:
@@ -307,11 +307,11 @@ When multiple **non-entity** keys share identical content, merge them into one g
 
 ```ts
 // Before
-BuildingEffect1: "$1 Tile Unrest",
-EventEffect2: "$1 Tile Unrest",
+BuildingEffect1: "$1 Şehir Unrest",
+EventEffect2: "$1 Şehir Unrest",
 
 // After
-$1TileUnrest: "$1 Tile Unrest",
+$1ŞehirUnrest: "$1 Şehir Unrest",
 ```
 
 Entity name keys are **never** merged, even if the text is identical. Entity prefix rules take precedence.
@@ -336,18 +336,18 @@ This section describes how localization files are translated. The [Language Regi
 - **Do not rename keys.** Key names are code identifiers shared across all languages.
 - **Do not translate or remove `$1`, `$2`, … tokens.** These are placeholders filled in at runtime.
 - **Do not translate** `$$Language`, `$$Credits`, or other `$$` metadata values unless you are setting the display name for that language (e.g. `$$Language: "Русский"` in the Russian file).
-- **Preserve HTML and parser markup tags** (`<i>`, `<b>`, `<Province>`, `<Tile>`, `<icon>`, etc.) and keep their structure intact. Do not translate the lookup identifier inside `<icon>...</icon>`.
+- **Preserve HTML and parser markup tags** (`<i>`, `<b>`, `<Province>`, `<Şehir>`, `<icon>`, etc.) and keep their structure intact. Do not translate the lookup identifier inside `<icon>...</icon>`.
 
 ### Ensuring Consistent Terminology
 
 Before translating a new key, **search the target language file for existing translations of the same gameplay terms**. This ensures consistency across the entire UI.
 
-For example, when translating a key containing "tiles annexed and cored":
+For example, when translating a key containing "Şehirs annexed and cored":
 
-1. Search the target language file for keys like `TilesAnnexedAndCored`, `OccupyAndCore`, `MakeCore`, etc.
-2. Reuse the same translation for "tiles", "annexed", "cored", "restoration", etc.
+1. Search the target language file for keys like `ŞehirsAnnexedAndCored`, `OccupyAndCore`, `MakeCore`, etc.
+2. Reuse the same translation for "Şehirs", "annexed", "cored", "restoration", etc.
 
-**Never translate the same English term differently in different keys.** If `TilesAnnexedAndCored` uses "владения" for "tiles", do not use "участки" in another key.
+**Never translate the same English term differently in different keys.** If `ŞehirsAnnexedAndCored` uses "владения" for "Şehirs", do not use "участки" in another key.
 
 ### Reordering Tokens
 
@@ -431,7 +431,7 @@ pnpm test run
 2. **Validates token consecutiveness** (`en.ts`) — checks every key's value for `$N` tokens: they must start from `$1` and be consecutive with no gaps (e.g. `$1 $2 $3` ✓, `$1 $3 $4` ✗, `$2 $3 $4` ✗). Skips `$$` metadata keys.
 3. **Validates key-content token match** (`en.ts`) — verifies that the `$1`, `$2`, ... tokens in the key name appear in the same order as in the content value.
 4. **Validates argument counts** — checks that the highest `$N` index in each key's value matches the number of arguments passed to `$t` (reusing the same token number does not require duplicate arguments).
-5. **Validates `html()` wrapper** — if a key's content in `en.ts` contains `<i>`, `<b>`, `<q>`, or `<br>`, the `$t()` call site in `.tsx` files must be wrapped in `html()` from `RenderHTMLComp`. Tags handled by `renderMarkup()` (`<Province>`, `<Tile>`, and `<icon>`) are excluded. Keys used only in `.ts` files are exempt because callers wrap the result. Add new tag names to `HTML_TAGS` in `scripts/Translate.js` when introducing other inline HTML in `en.ts`.
+5. **Validates `html()` wrapper** — if a key's content in `en.ts` contains `<i>`, `<b>`, `<q>`, or `<br>`, the `$t()` call site in `.tsx` files must be wrapped in `html()` from `RenderHTMLComp`. Tags handled by `renderMarkup()` (`<Province>`, `<Şehir>`, and `<icon>`) are excluded. Keys used only in `.ts` files are exempt because callers wrap the result. Add new tag names to `HTML_TAGS` in `scripts/Translate.js` when introducing other inline HTML in `en.ts`.
 6. Removes unused keys from `en.ts` (keys starting with `$` are never removed).
 7. Syncs every other file in the [Language Registry](#language-registry) to match the keys in `en.ts`. Key synchronization does not change a file's ownership or permit edits to its translated values.
 8. Formats language files with biome.

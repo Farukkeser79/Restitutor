@@ -1,7 +1,7 @@
 import { LINE_SCALE_MODE, SmoothGraphics } from "@pixi/graphics-smooth";
 import { hslToRgb } from "@project/shared/src/thirdparty/RandomColor";
 import { AABB, type IAABB } from "@project/shared/src/utils/AABB";
-import { hasFlag, pointToTile, round, type Tile, tileToPoint } from "@project/shared/src/utils/Helper";
+import { hasFlag, pointToŞehir, round, type Şehir, ŞehirToPoint } from "@project/shared/src/utils/Helper";
 import type { IHaveXY } from "@project/shared/src/utils/Vector2";
 import {
    type ColorSource,
@@ -15,24 +15,24 @@ import {
 } from "pixi.js";
 import { Fonts } from "../Fonts";
 import { Goods } from "../game/definitions/Goods";
-import { GreatWork, TileToGreatWork } from "../game/definitions/GreatWork";
+import { GreatWork, ŞehirToGreatWork } from "../game/definitions/GreatWork";
 import type { Province } from "../game/definitions/Province";
 import type { Terrain } from "../game/definitions/Terrain";
-import { getTileName } from "../game/definitions/TileName";
-import { GameStateUpdated, RefreshOverlay, RefreshTiles } from "../game/Events";
+import { getŞehirName } from "../game/definitions/ŞehirName";
+import { GameStateUpdated, RefreshOverlay, RefreshŞehirs } from "../game/Events";
 import { isLand, LandSize } from "../game/Land";
 import { getGameDate } from "../game/logic/GameDateTime";
 import { MapBackgroundColors, MapColorsH, MapForegroundColors, MapTextColors } from "../game/logic/MapColor";
 import { findProvinceLabelPosition } from "../game/logic/MapLogic";
 import { getProvinceName } from "../game/logic/ProvinceLogic";
-import { getTileDefense, getTileMaintenanceCost, getTileTerrain, getTileWar, isCapital } from "../game/logic/TileLogic";
-import { MapGrid, TileHeight, TileWidth } from "../game/MapGrid";
+import { getŞehirDefense, getŞehirMaintenanceCost, getŞehirTerrain, getŞehirWar, isCapital } from "../game/logic/ŞehirLogic";
+import { MapGrid, ŞehirHeight, ŞehirWidth } from "../game/MapGrid";
 import { showPanel } from "../ui/common/ShowPanel";
 import { hideSidebar } from "../ui/common/SidebarManager";
 import { DiplomacyPage } from "../ui/DiplomacyPage";
-import { EditTilePage } from "../ui/EditTilePage";
+import { EditŞehirPage } from "../ui/EditŞehirPage";
 import { playSound } from "../ui/Sound";
-import { TilePage } from "../ui/TilePage";
+import { ŞehirPage } from "../ui/ŞehirPage";
 import { runFunc, sequence, to } from "../utils/actions/ActionHelper";
 import { CustomAction } from "../utils/actions/CustomAction";
 import { G, GameFlags, isDev } from "../utils/Global";
@@ -49,18 +49,18 @@ let time = 0;
 let TerrainTextures: Record<Terrain, Texture[]> | undefined;
 
 export class WorldScene extends Scene {
-   private _indicatorContainer: MapContainer<Tile, Sprite>;
-   private _tileContainer: MapParticleContainer<Tile, Sprite>;
-   private _capitalContainer: MapContainer<Tile, Sprite>;
-   private _overlayContainer: MapContainer<Tile, DisplayObject>;
+   private _indicatorContainer: MapContainer<Şehir, Sprite>;
+   private _ŞehirContainer: MapParticleContainer<Şehir, Sprite>;
+   private _capitalContainer: MapContainer<Şehir, Sprite>;
+   private _overlayContainer: MapContainer<Şehir, DisplayObject>;
    private _labelContainer: MapContainer<Province, UnicodeText>;
    private _selectors: Container<Sprite>;
-   private _selectedTiles = new Set<Tile>();
+   private _selectedŞehirs = new Set<Şehir>();
    private _selectedProvince: Province;
    private _staticOutline: SmoothGraphics;
    private _dynamicOutline: SmoothGraphics;
    private _lastZoom = 0;
-   private _clickTileHandler: ((tile: Tile, e: FederatedPointerEvent) => void) | undefined;
+   private _clickŞehirHandler: ((Şehir: Şehir, e: FederatedPointerEvent) => void) | undefined;
    private readonly _isEditor: boolean;
 
    backgroundColor(): ColorSource {
@@ -74,19 +74,19 @@ export class WorldScene extends Scene {
       const max = MapGrid.maxPosition();
       this.viewport.setWorldSize(max.x + MarginX * 2, max.y);
 
-      this._tileContainer = this.viewport.addChild(new MapParticleContainer<Tile, Sprite>(LandSize, {}));
-      this._tileContainer.position.set(MarginX, 0);
+      this._ŞehirContainer = this.viewport.addChild(new MapParticleContainer<Şehir, Sprite>(LandSize, {}));
+      this._ŞehirContainer.position.set(MarginX, 0);
 
-      this._capitalContainer = this.viewport.addChild(new MapContainer<Tile, Sprite>());
+      this._capitalContainer = this.viewport.addChild(new MapContainer<Şehir, Sprite>());
       this._capitalContainer.position.set(MarginX, 0);
 
-      this._overlayContainer = this.viewport.addChild(new MapContainer<Tile, DisplayObject>());
+      this._overlayContainer = this.viewport.addChild(new MapContainer<Şehir, DisplayObject>());
       this._overlayContainer.position.set(MarginX, 0);
 
       this._staticOutline = this.viewport.addChild(new SmoothGraphics());
       this._staticOutline.position.set(MarginX, 0);
 
-      this._indicatorContainer = this.viewport.addChild(new MapContainer<Tile, Sprite>());
+      this._indicatorContainer = this.viewport.addChild(new MapContainer<Şehir, Sprite>());
       this._indicatorContainer.position.set(MarginX, 0);
 
       this._selectors = this.viewport.addChild(new Container<Sprite>());
@@ -107,27 +107,27 @@ export class WorldScene extends Scene {
       const minPos = { x: Number.POSITIVE_INFINITY, y: Number.POSITIVE_INFINITY };
       const maxPos = { x: Number.NEGATIVE_INFINITY, y: Number.NEGATIVE_INFINITY };
       MapGrid.forEach((g) => {
-         const tile = pointToTile(g);
-         if (isLand(tile)) {
+         const Şehir = pointToŞehir(g);
+         if (isLand(Şehir)) {
             const position = MapGrid.gridToPosition(g);
-            this._makeTile(tile);
-            this._drawIndicator(tile);
-            if (G.save.state.tiles.has(tile)) {
-               minPos.x = Math.min(minPos.x, position.x - TileWidth / 2);
-               minPos.y = Math.min(minPos.y, position.y - TileHeight / 2);
-               maxPos.x = Math.max(maxPos.x, position.x + TileWidth / 2);
-               maxPos.y = Math.max(maxPos.y, position.y + TileHeight / 2);
+            this._makeŞehir(Şehir);
+            this._drawIndicator(Şehir);
+            if (G.save.state.Şehirs.has(Şehir)) {
+               minPos.x = Math.min(minPos.x, position.x - ŞehirWidth / 2);
+               minPos.y = Math.min(minPos.y, position.y - ŞehirHeight / 2);
+               maxPos.x = Math.max(maxPos.x, position.x + ŞehirWidth / 2);
+               maxPos.y = Math.max(maxPos.y, position.y + ŞehirHeight / 2);
             } else {
-               const visual = this._renderTerrain(tile);
+               const visual = this._renderTerrain(Şehir);
                visual.tint = 0x333333;
             }
          } else {
-            G.save.state.tiles.delete(tile);
+            G.save.state.Şehirs.delete(Şehir);
          }
       });
 
       // Adjust for lower part of Egypt
-      maxPos.y -= TileHeight * 4;
+      maxPos.y -= ŞehirHeight * 4;
 
       this._lastZoom = Math.min(
          this.viewport.screenWidth / (maxPos.x - minPos.x),
@@ -139,19 +139,19 @@ export class WorldScene extends Scene {
       this._updateAlpha();
       this._drawStaticOutlineAndLabel();
 
-      RefreshTiles.on(({ tiles, options }) => {
-         for (const tile of tiles) {
-            const tileData = G.save.state.tiles.get(tile);
-            const visual = this._tileContainer.map.get(tile);
-            if (tileData && !visual) {
-               this._makeTile(tile);
-               this._drawIndicator(tile);
+      RefreshŞehirs.on(({ Şehirs, options }) => {
+         for (const Şehir of Şehirs) {
+            const ŞehirData = G.save.state.Şehirs.get(Şehir);
+            const visual = this._ŞehirContainer.map.get(Şehir);
+            if (ŞehirData && !visual) {
+               this._makeŞehir(Şehir);
+               this._drawIndicator(Şehir);
             } else if (visual) {
                if (options.indicator) {
-                  this._drawIndicator(tile);
+                  this._drawIndicator(Şehir);
                }
                if (options.visual) {
-                  this._makeTile(tile);
+                  this._makeŞehir(Şehir);
                }
             }
          }
@@ -162,50 +162,50 @@ export class WorldScene extends Scene {
       });
 
       RefreshOverlay.on(() => {
-         for (const [tile, tileData] of G.save.state.tiles) {
-            this._renderOverlay(tile);
+         for (const [Şehir, ŞehirData] of G.save.state.Şehirs) {
+            this._renderOverlay(Şehir);
          }
       });
 
       GameStateUpdated.on(() => {
          switch (getOverlay()) {
             case "Upgrade": {
-               for (const [tile, tileData] of G.save.state.tiles) {
-                  const visual = this._overlayContainer.map.get(tile);
+               for (const [Şehir, ŞehirData] of G.save.state.Şehirs) {
+                  const visual = this._overlayContainer.map.get(Şehir);
                   if (visual) {
                      const text = visual as UnicodeText;
-                     text.text = `${tileData.infrastructure + tileData.production + tileData.population}`;
+                     text.text = `${ŞehirData.infrastructure + ŞehirData.production + ŞehirData.population}`;
                      this._adjustTextSize(text);
                   }
                }
                break;
             }
             case "Defense": {
-               for (const [tile, tileData] of G.save.state.tiles) {
-                  const visual = this._overlayContainer.map.get(tile);
+               for (const [Şehir, ŞehirData] of G.save.state.Şehirs) {
+                  const visual = this._overlayContainer.map.get(Şehir);
                   if (visual) {
                      const text = visual as UnicodeText;
-                     text.text = `${round(getTileDefense(tile, G.save).value, 1)}`;
+                     text.text = `${round(getŞehirDefense(Şehir, G.save).value, 1)}`;
                      this._adjustTextSize(text);
                   }
                }
                break;
             }
             case "Maintenance": {
-               for (const [tile, tileData] of G.save.state.tiles) {
-                  const visual = this._overlayContainer.map.get(tile);
+               for (const [Şehir, ŞehirData] of G.save.state.Şehirs) {
+                  const visual = this._overlayContainer.map.get(Şehir);
                   if (visual) {
                      const text = visual as UnicodeText;
-                     text.text = `${round(getTileMaintenanceCost(tile, G.save, "value"), 1)}`;
+                     text.text = `${round(getŞehirMaintenanceCost(Şehir, G.save, "value"), 1)}`;
                      this._adjustTextSize(text);
                   }
                }
                break;
             }
             case "GreatWorks": {
-               for (const [tile, tileData] of G.save.state.tiles) {
-                  const visual = this._overlayContainer.map.get(tile);
-                  const gw = TileToGreatWork.get(tile);
+               for (const [Şehir, ŞehirData] of G.save.state.Şehirs) {
+                  const visual = this._overlayContainer.map.get(Şehir);
+                  const gw = ŞehirToGreatWork.get(Şehir);
                   if (visual && gw) {
                      visual.visible = getGameDate(G.save.state.tick).getFullYear() >= GreatWork[gw].completionYear;
                   }
@@ -220,123 +220,123 @@ export class WorldScene extends Scene {
 
       this._isEditor = G.params.has("editor");
       if (this._isEditor) {
-         this._enableTileEditor();
+         this._enableŞehirEditor();
       }
    }
 
-   private _makeTile(tile: Tile): void {
-      const tileData = G.save.state.tiles.get(tile);
-      const { x, y } = MapGrid.gridToPosition(tileToPoint(tile));
+   private _makeŞehir(Şehir: Şehir): void {
+      const ŞehirData = G.save.state.Şehirs.get(Şehir);
+      const { x, y } = MapGrid.gridToPosition(ŞehirToPoint(Şehir));
       // Background
-      const bg = this._tileContainer.map.set(tile, new Sprite(G.textures.get("Tile/Background")));
-      bg.scale.set(TileHeight / TextureHeight);
+      const bg = this._ŞehirContainer.map.set(Şehir, new Sprite(G.textures.get("Şehir/Background")));
+      bg.scale.set(ŞehirHeight / TextureHeight);
       bg.anchor.set(0.5, 0.5);
       bg.position.set(x, y);
-      if (tileData) {
-         bg.tint = MapBackgroundColors[tileData.province];
+      if (ŞehirData) {
+         bg.tint = MapBackgroundColors[ŞehirData.province];
          // Capital
-         if (isCapital(tile, G.save)) {
-            const star = this._capitalContainer.map.set(tile, new Sprite(G.textures.get("Misc/Capital")));
+         if (isCapital(Şehir, G.save)) {
+            const star = this._capitalContainer.map.set(Şehir, new Sprite(G.textures.get("Misc/Capital")));
             star.anchor.set(0.5, 0.5);
             star.scale.set(0.3);
-            star.position.set(x, y + 0.25 * TileHeight);
-            star.tint = MapForegroundColors[tileData.province];
+            star.position.set(x, y + 0.25 * ŞehirHeight);
+            star.tint = MapForegroundColors[ŞehirData.province];
          } else {
-            this._capitalContainer.map.delete(tile);
+            this._capitalContainer.map.delete(Şehir);
          }
       } else {
          bg.tint = 0xf2fcff;
       }
       // Overlay
-      this._renderOverlay(tile);
+      this._renderOverlay(Şehir);
    }
 
-   private _renderOverlay(tile: Tile): void {
-      const tileData = G.save.state.tiles.get(tile);
-      if (!tileData) {
+   private _renderOverlay(Şehir: Şehir): void {
+      const ŞehirData = G.save.state.Şehirs.get(Şehir);
+      if (!ŞehirData) {
          return;
       }
-      const { x, y } = MapGrid.gridToPosition(tileToPoint(tile));
+      const { x, y } = MapGrid.gridToPosition(ŞehirToPoint(Şehir));
       switch (getOverlay()) {
          case "Terrain": {
-            const visual = this._renderTerrain(tile);
-            visual.tint = hslToRgb(MapColorsH[tileData.province], 100, 25);
+            const visual = this._renderTerrain(Şehir);
+            visual.tint = hslToRgb(MapColorsH[ŞehirData.province], 100, 25);
             break;
          }
          case "Output": {
-            const visual = new Sprite(G.textures.get(Goods[tileData.goods].iconTexture));
-            this._overlayContainer.map.set(tile, visual);
+            const visual = new Sprite(G.textures.get(Goods[ŞehirData.goods].iconTexture));
+            this._overlayContainer.map.set(Şehir, visual);
             visual.anchor.set(0.5, 0.5);
             visual.position.set(x, y);
-            visual.scale.set((0.75 * TileHeight) / TextureHeight);
-            visual.tint = MapForegroundColors[tileData.province];
+            visual.scale.set((0.75 * ŞehirHeight) / TextureHeight);
+            visual.tint = MapForegroundColors[ŞehirData.province];
             break;
          }
          case "Upgrade": {
-            const visual = new UnicodeText(`${tileData.infrastructure + tileData.production + tileData.population}`, {
+            const visual = new UnicodeText(`${ŞehirData.infrastructure + ŞehirData.production + ŞehirData.population}`, {
                fontName: Fonts.MainFont,
             });
             this._adjustTextSize(visual);
-            this._overlayContainer.map.set(tile, visual);
+            this._overlayContainer.map.set(Şehir, visual);
             visual.anchor.set(0.5, 0.5);
             visual.position.set(x, y);
-            visual.tint = MapForegroundColors[tileData.province];
+            visual.tint = MapForegroundColors[ŞehirData.province];
             break;
          }
          case "Defense": {
-            const visual = new UnicodeText(`${round(getTileDefense(tile, G.save).value, 1)}`, {
+            const visual = new UnicodeText(`${round(getŞehirDefense(Şehir, G.save).value, 1)}`, {
                fontName: Fonts.MainFont,
             });
             this._adjustTextSize(visual);
-            this._overlayContainer.map.set(tile, visual);
+            this._overlayContainer.map.set(Şehir, visual);
             visual.anchor.set(0.5, 0.5);
             visual.position.set(x, y);
-            visual.tint = MapForegroundColors[tileData.province];
+            visual.tint = MapForegroundColors[ŞehirData.province];
             break;
          }
          case "Maintenance": {
-            const visual = new UnicodeText(`${round(getTileMaintenanceCost(tile, G.save, "value"), 1)}`, {
+            const visual = new UnicodeText(`${round(getŞehirMaintenanceCost(Şehir, G.save, "value"), 1)}`, {
                fontName: Fonts.MainFont,
             });
             this._adjustTextSize(visual);
-            this._overlayContainer.map.set(tile, visual);
+            this._overlayContainer.map.set(Şehir, visual);
             visual.anchor.set(0.5, 0.5);
             visual.position.set(x, y);
-            visual.tint = MapForegroundColors[tileData.province];
+            visual.tint = MapForegroundColors[ŞehirData.province];
             break;
          }
          case "GreatWorks": {
-            const gw = TileToGreatWork.get(tile);
+            const gw = ŞehirToGreatWork.get(Şehir);
             if (gw) {
                const visual = new Sprite(G.textures.get("Misc/GreatWork"));
-               this._overlayContainer.map.set(tile, visual);
+               this._overlayContainer.map.set(Şehir, visual);
                visual.anchor.set(0.5, 0.5);
                visual.position.set(x, y - 5);
                visual.scale.set(0.5);
-               visual.tint = MapForegroundColors[tileData.province];
+               visual.tint = MapForegroundColors[ŞehirData.province];
                visual.visible = getGameDate(G.save.state.tick).getFullYear() >= GreatWork[gw].completionYear;
             } else {
-               this._overlayContainer.map.delete(tile);
+               this._overlayContainer.map.delete(Şehir);
             }
             break;
          }
       }
    }
 
-   private _renderTerrain(tile: number) {
-      const { x, y } = MapGrid.gridToPosition(tileToPoint(tile));
-      const textures = this._getTerrainTextures(getTileTerrain(tile));
-      const visual = new Sprite(textures[tile % textures.length]);
-      this._overlayContainer.map.set(tile, visual);
+   private _renderTerrain(Şehir: number) {
+      const { x, y } = MapGrid.gridToPosition(ŞehirToPoint(Şehir));
+      const textures = this._getTerrainTextures(getŞehirTerrain(Şehir));
+      const visual = new Sprite(textures[Şehir % textures.length]);
+      this._overlayContainer.map.set(Şehir, visual);
       visual.anchor.set(0.5, 0.5);
       visual.position.set(x, y);
-      visual.scale.set(TileHeight / TextureHeight);
+      visual.scale.set(ŞehirHeight / TextureHeight);
       return visual;
    }
 
    private _adjustTextSize(text: UnicodeText): void {
       text.size = 50;
-      while (text.width > TileWidth - 20) {
+      while (text.width > ŞehirWidth - 20) {
          text.size -= 1;
       }
    }
@@ -350,74 +350,74 @@ export class WorldScene extends Scene {
       pos.x -= MarginX;
 
       const point = MapGrid.positionToGrid(pos);
-      const tile = pointToTile(point);
+      const Şehir = pointToŞehir(point);
 
-      if (this._clickTileHandler) {
-         this._clickTileHandler(tile, e);
+      if (this._clickŞehirHandler) {
+         this._clickŞehirHandler(Şehir, e);
          return;
       }
 
-      if (!isLand(tile)) {
+      if (!isLand(Şehir)) {
          return;
       }
 
       playSound("click");
-      const tileData = G.save.state.tiles.get(tile);
+      const ŞehirData = G.save.state.Şehirs.get(Şehir);
 
-      if (!tileData) {
-         this._selectedTiles.clear();
-         this._selectedTiles.add(tile);
-         this.drawSelectors(this._selectedTiles);
+      if (!ŞehirData) {
+         this._selectedŞehirs.clear();
+         this._selectedŞehirs.add(Şehir);
+         this.drawSelectors(this._selectedŞehirs);
          if (isDev()) {
-            console.log(tile, getTileName(tile, G.save));
+            console.log(Şehir, getŞehirName(Şehir, G.save));
          }
          hideSidebar();
          return;
       }
 
-      if (tileData) {
-         this.drawProvinceOutline(tileData.province);
+      if (ŞehirData) {
+         this.drawProvinceOutline(ŞehirData.province);
       }
 
       if (this._isEditor) {
          if (e.ctrlKey) {
-            if (this._selectedTiles.has(tile)) {
-               this._selectedTiles.delete(tile);
+            if (this._selectedŞehirs.has(Şehir)) {
+               this._selectedŞehirs.delete(Şehir);
             } else {
-               this._selectedTiles.add(tile);
+               this._selectedŞehirs.add(Şehir);
             }
          } else {
-            this._selectedTiles.clear();
-            this._selectedTiles.add(tile);
+            this._selectedŞehirs.clear();
+            this._selectedŞehirs.add(Şehir);
          }
-         this.drawSelectors(this._selectedTiles);
-         showPanel(EditTilePage, { tiles: this._selectedTiles });
+         this.drawSelectors(this._selectedŞehirs);
+         showPanel(EditŞehirPage, { Şehirs: this._selectedŞehirs });
       } else {
-         this._selectedTiles.clear();
+         this._selectedŞehirs.clear();
          if (e.button === 0) {
             if (isDev()) {
-               console.log(tile, tileToPoint(tile), G.save.state.tiles.get(tile));
+               console.log(Şehir, ŞehirToPoint(Şehir), G.save.state.Şehirs.get(Şehir));
             }
-            this._selectedTiles.add(tile);
-            showPanel(TilePage, { tile });
+            this._selectedŞehirs.add(Şehir);
+            showPanel(ŞehirPage, { Şehir });
          }
          if (e.button === 2) {
-            const tileData = G.save.state.tiles.get(tile);
-            if (tileData) {
-               showPanel(DiplomacyPage, { province: tileData.province });
+            const ŞehirData = G.save.state.Şehirs.get(Şehir);
+            if (ŞehirData) {
+               showPanel(DiplomacyPage, { province: ŞehirData.province });
             }
          }
-         this.drawSelectors(this._selectedTiles);
+         this.drawSelectors(this._selectedŞehirs);
          // if (e.button === 1) {
-         //    this._highlightedTiles.add(tile);
-         //    this._drawHighlighters(this._highlightedTiles);
+         //    this._highlightedŞehirs.add(Şehir);
+         //    this._drawHighlighters(this._highlightedŞehirs);
          // }
       }
    }
 
-   public lookAt(tile: Tile, { time }: { time: number }): Promise<WorldScene> {
+   public lookAt(Şehir: Şehir, { time }: { time: number }): Promise<WorldScene> {
       return new Promise((resolve) => {
-         const position = MapGrid.gridToPosition(tileToPoint(tile));
+         const position = MapGrid.gridToPosition(ŞehirToPoint(Şehir));
          // position.x += marginX + remToPx(SidebarWidth) / 2 / this.viewport.zoom;
          position.x += MarginX;
          if (time > 0) {
@@ -448,15 +448,15 @@ export class WorldScene extends Scene {
 
    override onMoved(point: IHaveXY): void {
       this._updateAlpha();
-      this._cullTiles();
+      this._cullŞehirs();
    }
 
-   private _cullTiles(): void {
+   private _cullŞehirs(): void {
       const visibleWorldRect = this.viewport.visibleWorldRect();
-      const minX = visibleWorldRect.left - MarginX - TileWidth / 2;
-      const maxX = visibleWorldRect.right - MarginX + TileWidth / 2;
-      const minY = visibleWorldRect.top - TileHeight / 2;
-      const maxY = visibleWorldRect.bottom + TileHeight / 2;
+      const minX = visibleWorldRect.left - MarginX - ŞehirWidth / 2;
+      const maxX = visibleWorldRect.right - MarginX + ŞehirWidth / 2;
+      const minY = visibleWorldRect.top - ŞehirHeight / 2;
+      const maxY = visibleWorldRect.bottom + ŞehirHeight / 2;
       for (const [, visual] of this._overlayContainer.map) {
          visual.visible = visual.x >= minX && visual.x <= maxX && visual.y >= minY && visual.y <= maxY;
       }
@@ -464,7 +464,7 @@ export class WorldScene extends Scene {
 
    override onResize(width: number, height: number): void {
       super.onResize(width, height);
-      this._cullTiles();
+      this._cullŞehirs();
    }
 
    public update(dt: number, unscaled: number): void {
@@ -474,47 +474,47 @@ export class WorldScene extends Scene {
       }
    }
 
-   public setClickTileHandler(callback: (tile: Tile, e: FederatedPointerEvent) => void): void {
-      this._clickTileHandler = callback;
+   public setClickŞehirHandler(callback: (Şehir: Şehir, e: FederatedPointerEvent) => void): void {
+      this._clickŞehirHandler = callback;
    }
 
-   public clearClickTileHandler(): void {
-      this._clickTileHandler = undefined;
+   public clearClickŞehirHandler(): void {
+      this._clickŞehirHandler = undefined;
    }
 
-   public drawSelectors(tiles: Set<Tile>): void {
-      this._selectedTiles = tiles;
+   public drawSelectors(Şehirs: Set<Şehir>): void {
+      this._selectedŞehirs = Şehirs;
       destroyAllChildren(this._selectors);
-      this._selectedTiles.forEach((tile) => {
-         this._addSelector(tile);
+      this._selectedŞehirs.forEach((Şehir) => {
+         this._addSelector(Şehir);
       });
    }
 
-   private _drawIndicator(tile: Tile): void {
-      const tileData = G.save.state.tiles.get(tile);
-      this._indicatorContainer.map.delete(tile);
-      if (!tileData) {
+   private _drawIndicator(Şehir: Şehir): void {
+      const ŞehirData = G.save.state.Şehirs.get(Şehir);
+      this._indicatorContainer.map.delete(Şehir);
+      if (!ŞehirData) {
          return;
       }
 
       let texture: Texture | undefined;
-      const war = getTileWar(tile, G.save);
-      if (tileData.rebellion >= 10 || war) {
-         texture = G.textures.get("Tile/BackgroundStripe");
+      const war = getŞehirWar(Şehir, G.save);
+      if (ŞehirData.rebellion >= 10 || war) {
+         texture = G.textures.get("Şehir/BackgroundStripe");
       }
       if (!texture) {
          return;
       }
-      const indicator = this._indicatorContainer.map.set(tile, new Sprite(texture));
+      const indicator = this._indicatorContainer.map.set(Şehir, new Sprite(texture));
       indicator.anchor.set(0.5, 0.5);
       if (war) {
          indicator.tint = MapForegroundColors[war.attacker];
       } else {
-         indicator.tint = MapForegroundColors[tileData.province];
+         indicator.tint = MapForegroundColors[ŞehirData.province];
       }
       indicator.alpha = 0.5;
-      indicator.scale.set(TileHeight / TextureHeight);
-      const position = MapGrid.gridToPosition(tileToPoint(tile));
+      indicator.scale.set(ŞehirHeight / TextureHeight);
+      const position = MapGrid.gridToPosition(ŞehirToPoint(Şehir));
       indicator.position.set(position.x, position.y);
    }
 
@@ -534,16 +534,16 @@ export class WorldScene extends Scene {
          cap: LINE_CAP.ROUND,
          join: LINE_JOIN.ROUND,
       });
-      for (const [tile, tileData] of G.save.state.tiles) {
-         if (tileData.province !== province) {
+      for (const [Şehir, ŞehirData] of G.save.state.Şehirs) {
+         if (ŞehirData.province !== province) {
             continue;
          }
-         const p = tileToPoint(tile);
+         const p = ŞehirToPoint(Şehir);
          for (let dir = 0; dir < 6; dir++) {
             const neighborPoint = MapGrid.getNeighbor(p, dir);
             if (!neighborPoint) continue;
-            const neighborTile = pointToTile(neighborPoint);
-            if (G.save.state.tiles.get(neighborTile)?.province !== province) {
+            const neighborŞehir = pointToŞehir(neighborPoint);
+            if (G.save.state.Şehirs.get(neighborŞehir)?.province !== province) {
                const center = MapGrid.layout.hexToPixel(MapGrid.gridToHex(p));
                const offset1 = MapGrid.layout.hexCornerOffset(dir);
                const offset2 = MapGrid.layout.hexCornerOffset((dir + 1) % 6);
@@ -575,16 +575,16 @@ export class WorldScene extends Scene {
          join: LINE_JOIN.ROUND,
       });
       const drawnBorders = new Set<bigint>();
-      for (const [tile, tileData] of G.save.state.tiles) {
-         const p = tileToPoint(tile);
+      for (const [Şehir, ŞehirData] of G.save.state.Şehirs) {
+         const p = ŞehirToPoint(Şehir);
          for (let dir = 0; dir < 6; dir++) {
             const neighborPoint = MapGrid.getNeighbor(p, dir);
-            const neighborTile = pointToTile(neighborPoint);
-            if (tileData.province !== G.save.state.tiles.get(neighborTile)?.province) {
+            const neighborŞehir = pointToŞehir(neighborPoint);
+            if (ŞehirData.province !== G.save.state.Şehirs.get(neighborŞehir)?.province) {
                const hash =
-                  tile < neighborTile
-                     ? (BigInt(tile) << 32n) | BigInt(neighborTile)
-                     : (BigInt(neighborTile) << 32n) | BigInt(tile);
+                  Şehir < neighborŞehir
+                     ? (BigInt(Şehir) << 32n) | BigInt(neighborŞehir)
+                     : (BigInt(neighborŞehir) << 32n) | BigInt(Şehir);
                if (!drawnBorders.has(hash)) {
                   drawnBorders.add(hash);
                   const center = MapGrid.layout.hexToPixel(MapGrid.gridToHex(p));
@@ -592,26 +592,26 @@ export class WorldScene extends Scene {
                   const offset2 = MapGrid.layout.hexCornerOffset((dir + 1) % 6);
                   const c1 = { x: center.x + offset1.x, y: center.y + offset1.y };
                   const c2 = { x: center.x + offset2.x, y: center.y + offset2.y };
-                  this._staticOutline.lineStyle(G.save.state.tiles.has(neighborTile) ? InternalBorder : ExternalBorder);
+                  this._staticOutline.lineStyle(G.save.state.Şehirs.has(neighborŞehir) ? InternalBorder : ExternalBorder);
                   this._staticOutline.moveTo(c1.x, c1.y);
                   this._staticOutline.lineTo(c2.x, c2.y);
                }
             }
          }
       }
-      const provinceToTiles = new Map<Province, Set<Tile>>();
-      G.save.state.tiles.forEach((data, tile) => {
+      const provinceToŞehirs = new Map<Province, Set<Şehir>>();
+      G.save.state.Şehirs.forEach((data, Şehir) => {
          if (data.province) {
-            const tiles = provinceToTiles.get(data.province);
-            if (tiles) {
-               tiles.add(tile);
+            const Şehirs = provinceToŞehirs.get(data.province);
+            if (Şehirs) {
+               Şehirs.add(Şehir);
             } else {
-               provinceToTiles.set(data.province, new Set([tile]));
+               provinceToŞehirs.set(data.province, new Set([Şehir]));
             }
          }
       });
       this._labelContainer.map.clear();
-      for (const [province, tiles] of provinceToTiles) {
+      for (const [province, Şehirs] of provinceToŞehirs) {
          const text = this._labelContainer.map.set(
             province,
             new UnicodeText(getProvinceName(province, G.save), {
@@ -621,7 +621,7 @@ export class WorldScene extends Scene {
             }),
          );
          text.anchor.set(0.5, 0.5);
-         const position = findProvinceLabelPosition(tiles, text.width);
+         const position = findProvinceLabelPosition(Şehirs, text.width);
          text.position.set(position.x, position.y);
       }
    }
@@ -635,11 +635,11 @@ export class WorldScene extends Scene {
       return AABB.fromRect(bounds);
    }
 
-   private _addSelector(tile: Tile): void {
-      const position = MapGrid.gridToPosition(tileToPoint(tile));
-      const selector = this._selectors.addChild(new Sprite(G.textures.get("Tile/Selector")));
+   private _addSelector(Şehir: Şehir): void {
+      const position = MapGrid.gridToPosition(ŞehirToPoint(Şehir));
+      const selector = this._selectors.addChild(new Sprite(G.textures.get("Şehir/Selector")));
       selector.position.set(position.x + MarginX, position.y);
-      selector.scale.set(TileHeight / TextureHeight);
+      selector.scale.set(ŞehirHeight / TextureHeight);
       selector.anchor.set(0.5, 0.5);
       selector.alpha = 0.25;
    }
@@ -677,7 +677,7 @@ export class WorldScene extends Scene {
       return TerrainTextures[terrain];
    }
 
-   private _enableTileEditor(): void {
+   private _enableŞehirEditor(): void {
       const sprite = this.viewport.addChild(new Sprite());
       sprite.scale.set(20.2);
       sprite.anchor.set(0.5, 0.5);

@@ -65,7 +65,7 @@ export const DefaultShortcuts = {
       shift: false,
       meta: false,
    },
-   OpenTileUpgrades: {
+   OpenŞehirUpgrades: {
       key: "5",
       ctrl: false,
       alt: false,
@@ -148,7 +148,7 @@ export const Shortcut = {
    OpenTreasury: () => $t(L.OpenTreasury),
    OpenArmy: () => $t(L.OpenArmy),
    OpenFamilyTree: () => $t(L.OpenFamilyTree),
-   OpenTileUpgrades: () => $t(L.OpenTileUpgrades),
+   OpenŞehirUpgrades: () => $t(L.OpenŞehirUpgrades),
    OpenInternalAffairs: () => $t(L.OpenInternalAffairs),
    OpenSocialClass: () => $t(L.OpenSocialClass),
    OpenProduction: () => $t(L.OpenProduction),

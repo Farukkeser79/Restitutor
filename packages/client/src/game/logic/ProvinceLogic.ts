@@ -6,11 +6,11 @@ import {
    formatNumber,
    fromEntries,
    keysOf,
-   pointToTile,
+   pointToŞehir,
    range,
    shuffle,
-   type Tile,
-   tileToPoint,
+   type Şehir,
+   ŞehirToPoint,
 } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import type { ICondition, IValueBreakdown } from "../actions/GameAction";
@@ -19,7 +19,7 @@ import { getAdvisorMonthlyCost, initAdvisors } from "../definitions/Advisor";
 import { Buildings } from "../definitions/Building";
 import type { Culture } from "../definitions/Culture";
 import { Goods, Price } from "../definitions/Goods";
-import { type GreatWork, TileToGreatWork } from "../definitions/GreatWork";
+import { type GreatWork, ŞehirToGreatWork } from "../definitions/GreatWork";
 import { LegacyUpgrades } from "../definitions/LegacyUpgrade";
 import { makeModifierGetter } from "../definitions/Modifier";
 import {
@@ -30,7 +30,7 @@ import {
    ProvinceFlags,
    type ProvinceNameOverride,
    ProvinceNameOverrides,
-   ProvinceOriginalTiles,
+   ProvinceOriginalŞehirs,
    type ProvinceResource,
    ProvinceResources,
    type ProvinceStat,
@@ -46,15 +46,15 @@ import {
    SpawnedProvinceBoostMonths,
    SpawnedProvinces,
 } from "../definitions/SpawnedProvince";
-import { getBorderingProvinces } from "../definitions/Tile";
-import { MediterraneanTiles, StraitOfGibraltarTiles, Tiles } from "../definitions/TileConstants";
-import { getTileName } from "../definitions/TileName";
+import { getBorderingProvinces } from "../definitions/Şehir";
+import { MediterraneanŞehirs, StraitOfGibraltarŞehirs, Şehirs } from "../definitions/ŞehirConstants";
+import { getŞehirName } from "../definitions/ŞehirName";
 import { GameStateUpdated } from "../Events";
 import type { SaveGame } from "../GameState";
 import { getSeaComponent } from "../Land";
 import { MapGrid } from "../MapGrid";
 import { RomeMap } from "../RomeMap";
-import { cacheProvince, getProvinceCoreTilesCached } from "./CacheLogic";
+import { cacheProvince, getProvinceCoreŞehirsCached } from "./CacheLogic";
 import type { ConditionChecks } from "./Calculation";
 import { getAttitudeTowards, getRelation, getRelations } from "./DiplomacyLogic";
 import { EcumenicalCouncilChristianityPct, ongoingEcumenicalCouncilCondition } from "./EcumenicalCouncilLogic";
@@ -63,14 +63,14 @@ import { hasLegacyUpgrade } from "./LegacyUpgradeLogic";
 import { addModifier, attachModifiers } from "./ModifierLogic";
 import { getBaselineTechs } from "./TechLogic";
 import {
-   getTileGoodsTax,
-   getTileGoverningCost,
-   getTileLandTax,
-   getTileMaintenanceCost,
-   getTileManpower,
+   getŞehirGoodsTax,
+   getŞehirGoverningCost,
+   getŞehirLandTax,
+   getŞehirMaintenanceCost,
+   getŞehirManpower,
    isCoastal,
-   settleTile,
-} from "./TileLogic";
+   settleŞehir,
+} from "./ŞehirLogic";
 import { getTimedActionTimeLeft, startTimedAction } from "./TimedActionLogic";
 import { getClients, getPatrons, getTreatyCount } from "./TreatyLogic";
 import {
@@ -79,7 +79,7 @@ import {
    getCurrentWars,
    getInfantryUnitWarPower,
    getRangedUnitWarPower,
-   getWarPowerPerTile,
+   getWarPowerPerŞehir,
    MonthlyExtraArmyMaintenancePct,
 } from "./WarLogic";
 
@@ -215,17 +215,17 @@ export const getProvinceManpower = cacheProvince(_getProvinceManpower);
 
 function _getProvinceManpower(province: Province, save: SaveGame): IValueBreakdown {
    const breakdown: IValueBreakdown = makeValueBreakdown();
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
-         breakdown.add.push({ name: getTileName(tile, save), value: getTileManpower(tile, save).value });
+         breakdown.add.push({ name: getŞehirName(Şehir, save), value: getŞehirManpower(Şehir, save).value });
       }
    }
    return finalizeBreakdown(breakdown);
 }
 
-export function getProvinceOriginalTileCount(province: Province): number {
+export function getProvinceOriginalŞehirCount(province: Province): number {
    let count = 0;
-   for (const [_tile, data] of RomeMap) {
+   for (const [_Şehir, data] of RomeMap) {
       if (data.province === province) {
          count++;
       }
@@ -233,9 +233,9 @@ export function getProvinceOriginalTileCount(province: Province): number {
    return count;
 }
 
-export function getProvinceTileCount(province: Province, save: SaveGame): number {
+export function getProvinceŞehirCount(province: Province, save: SaveGame): number {
    let count = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
          count++;
       }
@@ -243,10 +243,10 @@ export function getProvinceTileCount(province: Province, save: SaveGame): number
    return count;
 }
 
-export function getProvinceCoreCoastalTileCount(province: Province, save: SaveGame): number {
+export function getProvinceCoreCoastalŞehirCount(province: Province, save: SaveGame): number {
    let count = 0;
-   for (const [tile, data] of save.state.tiles) {
-      if (data.province === province && data.coreProvinces.has(province) && isCoastal(tile)) {
+   for (const [Şehir, data] of save.state.Şehirs) {
+      if (data.province === province && data.coreProvinces.has(province) && isCoastal(Şehir)) {
          count++;
       }
    }
@@ -255,7 +255,7 @@ export function getProvinceCoreCoastalTileCount(province: Province, save: SaveGa
 
 export function getTotalUpgrades(province: Province, save: SaveGame): number {
    let upgrade = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
          upgrade += data.infrastructure;
          upgrade += data.production;
@@ -267,12 +267,12 @@ export function getTotalUpgrades(province: Province, save: SaveGame): number {
 
 export function getProvincePrestige(province: Province, save: SaveGame): IValueBreakdown {
    const breakdown: IValueBreakdown = makeValueBreakdown();
-   breakdown.add.push({ name: $t(L.TileUpgrades), value: getTotalUpgrades(province, save) });
+   breakdown.add.push({ name: $t(L.ŞehirUpgrades), value: getTotalUpgrades(province, save) });
    attachModifiers("Prestige", breakdown, province, save);
    if (hasProvinceUpgrade("MaritimeRenown", province, save)) {
       breakdown.multiply.push({
          name: ProvinceUpgrades.MaritimeRenown.name(),
-         value: Math.min(getProvinceCoreCoastalTileCount(province, save) * 0.01, 0.5),
+         value: Math.min(getProvinceCoreCoastalŞehirCount(province, save) * 0.01, 0.5),
       });
    }
    if (hasProvinceUpgrade("CommercialRenown", province, save)) {
@@ -284,7 +284,7 @@ export function getProvincePrestige(province: Province, save: SaveGame): IValueB
          });
       }
    }
-   if (hasProvinceUpgrade("CaputMundi", province, save) && save.state.provinces[province]?.capital === Tiles.Rome) {
+   if (hasProvinceUpgrade("CaputMundi", province, save) && save.state.provinces[province]?.capital === Şehirs.Rome) {
       breakdown.multiply.push({ name: ProvinceUpgrades.CaputMundi.name(), value: 0.1 });
    }
    return finalizeBreakdown(breakdown);
@@ -318,24 +318,24 @@ export function getProvinceStability(province: Province, save: SaveGame): IValue
    return finalizeBreakdown(breakdown);
 }
 
-export function getProvincesInRange(range: number, province: Province, save: SaveGame): Map<Province, Tile[]> {
-   const neighbors = new Set<Tile>();
-   for (const [tile, data] of save.state.tiles) {
+export function getProvincesInRange(range: number, province: Province, save: SaveGame): Map<Province, Şehir[]> {
+   const neighbors = new Set<Şehir>();
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
-         MapGrid.getRange(tileToPoint(tile), range).forEach((tile) => {
-            neighbors.add(pointToTile(tile));
+         MapGrid.getRange(ŞehirToPoint(Şehir), range).forEach((Şehir) => {
+            neighbors.add(pointToŞehir(Şehir));
          });
       }
    }
-   const result = new Map<Province, Tile[]>();
-   for (const tile of neighbors) {
-      const data = save.state.tiles.get(tile);
+   const result = new Map<Province, Şehir[]>();
+   for (const Şehir of neighbors) {
+      const data = save.state.Şehirs.get(Şehir);
       if (data && data.province !== province) {
-         const tiles = result.get(data.province);
-         if (tiles) {
-            tiles.push(tile);
+         const Şehirs = result.get(data.province);
+         if (Şehirs) {
+            Şehirs.push(Şehir);
          } else {
-            result.set(data.province, [tile]);
+            result.set(data.province, [Şehir]);
          }
       }
    }
@@ -350,7 +350,7 @@ export function getProvincesByDistance(province: Province, save: SaveGame): Prov
    return entriesOf(save.state.provinces)
       .filter(([p]) => p !== province)
       .sort(([p1, d1], [p2, d2]) => {
-         return MapGrid.distanceTile(d1.capital, capital) - MapGrid.distanceTile(d2.capital, capital);
+         return MapGrid.distanceŞehir(d1.capital, capital) - MapGrid.distanceŞehir(d2.capital, capital);
       })
       .map(([p]) => p);
 }
@@ -471,12 +471,12 @@ export const getProvinceGoverningCost = cacheProvince(_getProvinceGoverningCost)
 function _getProvinceGoverningCost(province: Province, save: SaveGame): IValueBreakdown {
    const breakdown: IValueBreakdown = makeValueBreakdown({ reverse: true });
    let result = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
-         result += getTileGoverningCost(tile, save).value;
+         result += getŞehirGoverningCost(Şehir, save).value;
       }
    }
-   breakdown.add.push({ name: $t(L.FromAllTiles), value: result });
+   breakdown.add.push({ name: $t(L.FromAllŞehirs), value: result });
    const religiousCohesion = (0.5 - getReligiousCohesion(province, save)) * 0.1;
    if (religiousCohesion !== 0) {
       breakdown.multiply.push({ name: $t(L.ReligiousCohesion), value: religiousCohesion });
@@ -492,7 +492,7 @@ export const GovernorMinIncl = 3;
 export const GovernorMaxIncl = 6;
 export const GovernorMaxExcl = GovernorMaxIncl + 1;
 
-export function initProvince(province: Province, capital: Tile): IProvince {
+export function initProvince(province: Province, capital: Şehir): IProvince {
    return {
       nameOverride: undefined,
       culture: Province[province].culture,
@@ -565,9 +565,9 @@ export function getProvinceGovernmentPoint(type: GovernorPower, province: Provin
    return finalizeBreakdown(breakdown);
 }
 
-export function getTilesAnnexedAndCored(province: Province, save: SaveGame): number {
+export function getŞehirsAnnexedAndCored(province: Province, save: SaveGame): number {
    let count = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (
          data.province === province &&
          data.coreProvinces.has(data.province) &&
@@ -592,14 +592,14 @@ function _getProvinceIncome(
       return { revenue, expense, income: 0 };
    }
    let landTax = 0;
-   let tileMaintenanceCost = 0;
+   let ŞehirMaintenanceCost = 0;
    let buildingMaintenanceCost = 0;
-   let tileGoodsTax = 0;
-   for (const [tile, data] of save.state.tiles) {
+   let ŞehirGoodsTax = 0;
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
-         landTax += getTileLandTax(tile, save).value;
-         tileMaintenanceCost += getTileMaintenanceCost(tile, save, "value");
-         tileGoodsTax += getTileGoodsTax(tile, save);
+         landTax += getŞehirLandTax(Şehir, save).value;
+         ŞehirMaintenanceCost += getŞehirMaintenanceCost(Şehir, save, "value");
+         ŞehirGoodsTax += getŞehirGoodsTax(Şehir, save);
          data.buildings.forEach((building) => {
             buildingMaintenanceCost += Buildings[building].maintenance.gold ?? 0;
          });
@@ -623,9 +623,9 @@ function _getProvinceIncome(
       revenue.add.push({ name: $t(L.GoodsTax), value: goodsTax });
    } else {
       // If we reach here, it means we call this function without ticking production, which should only
-      // happen during initial tile setup. So we use tile goods tax, because we don't have any production
-      // during initial tile setup anyway.
-      revenue.add.push({ name: $t(L.GoodsTax), value: tileGoodsTax });
+      // happen during initial Şehir setup. So we use Şehir goods tax, because we don't have any production
+      // during initial Şehir setup anyway.
+      revenue.add.push({ name: $t(L.GoodsTax), value: ŞehirGoodsTax });
    }
 
    getClients(province, save).forEach((clientProvince) => {
@@ -635,7 +635,7 @@ function _getProvinceIncome(
       });
    });
 
-   expense.add.push({ name: $t(L.TileMaintenance), value: -tileMaintenanceCost });
+   expense.add.push({ name: $t(L.ŞehirMaintenance), value: -ŞehirMaintenanceCost });
    expense.add.push({ name: $t(L.BuildingMaintenance), value: -buildingMaintenanceCost });
    expense.add.push({ name: $t(L.ArmyMaintenance), value: -armyMaintenanceCost });
    expense.add.push({ name: $t(L.AdvisorCost), value: -advisorCost });
@@ -723,25 +723,25 @@ export function getWarPower(province: Province, save: SaveGame): IValueBreakdown
       });
    }
    if (hasProvinceUpgrade("MoorishMuster", province, save)) {
-      const coreTileGroups = Math.floor(getProvinceCoreTilesCached(province).length / 10);
-      if (coreTileGroups > 0) {
+      const coreŞehirGroups = Math.floor(getProvinceCoreŞehirsCached(province).length / 10);
+      if (coreŞehirGroups > 0) {
          result.multiply.push({
             name: ProvinceUpgrades.MoorishMuster.name(),
-            value: coreTileGroups * 0.05,
+            value: coreŞehirGroups * 0.05,
          });
       }
    }
    if (hasProvinceUpgrade("NavalTradition", province, save)) {
       result.multiply.push({
          name: ProvinceUpgrades.NavalTradition.name(),
-         value: Math.min(getProvinceCoreCoastalTileCount(province, save) * 0.005, 0.5),
+         value: Math.min(getProvinceCoreCoastalŞehirCount(province, save) * 0.005, 0.5),
       });
    }
-   if (hasProvinceUpgrade("MercantileMobilization", province, save)) {
+   if (hasProvinceUpgrade("MercanŞehirMobilization", province, save)) {
       const tradeCount = getProvinceTrades(province, save).size;
       if (tradeCount > 0) {
          result.multiply.push({
-            name: ProvinceUpgrades.MercantileMobilization.name(),
+            name: ProvinceUpgrades.MercanŞehirMobilization.name(),
             value: tradeCount * 0.1,
          });
       }
@@ -798,16 +798,16 @@ export function getWarPower(province: Province, save: SaveGame): IValueBreakdown
    return finalizeBreakdown(result);
 }
 
-export function ensureProvinceCapitals(save: SaveGame): Tile[] {
-   const result: Tile[] = [];
+export function ensureProvinceCapitals(save: SaveGame): Şehir[] {
+   const result: Şehir[] = [];
    forEach(save.state.provinces, (province, state) => {
-      if (save.state.tiles.get(state.capital)?.province === province) {
+      if (save.state.Şehirs.get(state.capital)?.province === province) {
          return;
       }
-      for (const [tile, data] of save.state.tiles) {
+      for (const [Şehir, data] of save.state.Şehirs) {
          if (data.province === province) {
-            state.capital = tile;
-            result.push(tile);
+            state.capital = Şehir;
+            result.push(Şehir);
             return;
          }
       }
@@ -910,7 +910,7 @@ export function getProvinceTradeCapacity(province: Province, save: SaveGame): IV
    const result = makeValueBreakdown();
    result.add.push({ name: $t(L.BaseValue), value: 1 });
    let harbour = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province && data.buildings.has("Harbour")) {
          ++harbour;
       }
@@ -930,8 +930,8 @@ export function getProvinceTradeCapacity(province: Province, save: SaveGame): IV
 }
 
 export function hasStraitOfGibraltar(province: Province, save: SaveGame): boolean {
-   return StraitOfGibraltarTiles.every((tile) => {
-      const data = save.state.tiles.get(tile);
+   return StraitOfGibraltarŞehirs.every((Şehir) => {
+      const data = save.state.Şehirs.get(Şehir);
       return data?.province === province && data.coreProvinces.has(province);
    });
 }
@@ -950,7 +950,7 @@ export function getProvinceTradeProfit(province: Province, save: SaveGame): IVal
    }
    if (hasProvinceUpgrade("MaritimeProsperity", province, save)) {
       let harbour = 0;
-      for (const [tile, data] of save.state.tiles) {
+      for (const [Şehir, data] of save.state.Şehirs) {
          if (data.province === province && data.buildings.has("Harbour")) {
             ++harbour;
          }
@@ -1035,16 +1035,16 @@ export function setProvinceNameOverride(province: Province, nameOverride: Provin
    state.nameOverride = nameOverride;
 }
 
-export function getAnnexedTiles(toAnnex: Province, ourProvince: Province, save: SaveGame): [number, number] {
+export function getAnnexedŞehirs(toAnnex: Province, ourProvince: Province, save: SaveGame): [number, number] {
    let annexed = 0;
    let total = 0;
-   const originalTiles = ProvinceOriginalTiles.get(toAnnex);
-   if (!originalTiles) {
+   const originalŞehirs = ProvinceOriginalŞehirs.get(toAnnex);
+   if (!originalŞehirs) {
       return [0, 0];
    }
-   for (const tile of originalTiles) {
-      const tileData = save.state.tiles.get(tile);
-      if (tileData?.province === ourProvince && tileData.coreProvinces.has(ourProvince)) {
+   for (const Şehir of originalŞehirs) {
+      const ŞehirData = save.state.Şehirs.get(Şehir);
+      if (ŞehirData?.province === ourProvince && ŞehirData.coreProvinces.has(ourProvince)) {
          annexed++;
       }
       total++;
@@ -1053,16 +1053,16 @@ export function getAnnexedTiles(toAnnex: Province, ourProvince: Province, save: 
 }
 
 export function getRestoration(province: Province, save: SaveGame): number {
-   const tileAnnexedAndCored = getTilesAnnexedAndCored(province, save);
-   return Math.floor(tileAnnexedAndCored / TilesPerRestoration);
+   const ŞehirAnnexedAndCored = getŞehirsAnnexedAndCored(province, save);
+   return Math.floor(ŞehirAnnexedAndCored / ŞehirsPerRestoration);
 }
 
 export function getProgressToNextRestoration(province: Province, save: SaveGame): number {
-   const tileAnnexedAndCored = getTilesAnnexedAndCored(province, save);
-   return (tileAnnexedAndCored % TilesPerRestoration) / TilesPerRestoration;
+   const ŞehirAnnexedAndCored = getŞehirsAnnexedAndCored(province, save);
+   return (ŞehirAnnexedAndCored % ŞehirsPerRestoration) / ŞehirsPerRestoration;
 }
 
-export const TilesPerRestoration = 5;
+export const ŞehirsPerRestoration = 5;
 
 export const getChristianityYearly = makeModifierGetter("ChristianityYearly", 1, (result, province, save) => {
    const state = save.state.provinces[province];
@@ -1078,7 +1078,7 @@ export const getChristianityYearly = makeModifierGetter("ChristianityYearly", 1,
    }
 });
 
-export const getToleratedReligion = makeModifierGetter("ToleratedReligion", 0, (result, province, save) => {});
+export const getToleratedReligion = makeModifierGetter("ToleratedReligion", 0, (result, province, save) => { });
 export const getToleratedCulture = makeModifierGetter("ToleratedCulture", 0, (result, province, save) => {
    if (hasProvinceUpgrade("InclusiveCitizenship", province, save)) {
       result.add.push({ name: ProvinceUpgrades.InclusiveCitizenship.name(), value: 1 });
@@ -1092,7 +1092,7 @@ export function getReligiousCohesion(province: Province, save: SaveGame): number
    if (!state) {
       return 0;
    }
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
          const totalUpgrades = data.infrastructure + data.production + data.population;
          if (data.religion === state.religion || state.toleratedReligions.has(data.religion)) {
@@ -1111,7 +1111,7 @@ export function getCulturalCohesion(province: Province, save: SaveGame): number 
    if (!state) {
       return 0;
    }
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
          const totalUpgrades = data.infrastructure + data.production + data.population;
          if (data.culture === state.culture || state.toleratedCultures.has(data.culture)) {
@@ -1123,7 +1123,7 @@ export function getCulturalCohesion(province: Province, save: SaveGame): number 
    return sameCulture / total;
 }
 
-export function spawnProvince(province: Province, source: string, save: SaveGame): Tile[] {
+export function spawnProvince(province: Province, source: string, save: SaveGame): Şehir[] {
    if (save.state.provinces[province]) {
       return [];
    }
@@ -1131,14 +1131,14 @@ export function spawnProvince(province: Province, source: string, save: SaveGame
    if (!config) {
       return [];
    }
-   const state = initProvince(province, config.tiles[0]);
+   const state = initProvince(province, config.Şehirs[0]);
    state.unlockedTech = new Set(getBaselineTechs(save));
    save.state.provinces[province] = state;
    const provinces = new Set<Province>();
-   config.tiles.forEach((tile) => {
-      const data = save.state.tiles.get(tile);
+   config.Şehirs.forEach((Şehir) => {
+      const data = save.state.Şehirs.get(Şehir);
       if (!data) {
-         settleTile(tile, province, save);
+         settleŞehir(Şehir, province, save);
       } else {
          provinces.add(data.province);
          data.coreProvinces.forEach((p) => {
@@ -1170,8 +1170,8 @@ export function spawnProvince(province: Province, source: string, save: SaveGame
    });
 
    const neighboringProvinces = new Set<Province>();
-   for (const tile of config.tiles) {
-      for (const neighboringProvince of getBorderingProvinces(tile, save)) {
+   for (const Şehir of config.Şehirs) {
+      for (const neighboringProvince of getBorderingProvinces(Şehir, save)) {
          if (neighboringProvince === province || neighboringProvince === save.state.playerProvince) {
             continue;
          }
@@ -1181,10 +1181,10 @@ export function spawnProvince(province: Province, source: string, save: SaveGame
 
    let targetWarPower = 0;
    for (const neighboringProvince of neighboringProvinces) {
-      const warPowerPerTile = getWarPowerPerTile(neighboringProvince, save);
-      targetWarPower += warPowerPerTile;
+      const warPowerPerŞehir = getWarPowerPerŞehir(neighboringProvince, save);
+      targetWarPower += warPowerPerŞehir;
    }
-   targetWarPower = 2 * (targetWarPower / neighboringProvinces.size) * config.tiles.length;
+   targetWarPower = 2 * (targetWarPower / neighboringProvinces.size) * config.Şehirs.length;
 
    const currentWarPower = getWarPower(province, save).value;
    addModifier({
@@ -1199,14 +1199,14 @@ export function spawnProvince(province: Province, source: string, save: SaveGame
 
    startTimedAction("BarbarianInvasions", province, save);
 
-   return [...config.tiles, ...ensureProvinceCapitals(save)];
+   return [...config.Şehirs, ...ensureProvinceCapitals(save)];
 }
 
 export function getNeighborProvinces(province: Province, save: SaveGame): Set<Province> {
    const result = new Set<Province>();
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
-         getBorderingProvinces(tile, save).forEach((neighbor) => {
+         getBorderingProvinces(Şehir, save).forEach((neighbor) => {
             result.add(neighbor);
          });
       }
@@ -1237,8 +1237,8 @@ export function changeProvinceCulture(culture: Culture, province: Province, save
 }
 
 export function isLandlocked(province: Province, save: SaveGame): boolean {
-   for (const [tile, data] of save.state.tiles) {
-      if (data.province === province && isCoastal(tile)) {
+   for (const [Şehir, data] of save.state.Şehirs) {
+      if (data.province === province && isCoastal(Şehir)) {
          return false;
       }
    }
@@ -1249,15 +1249,15 @@ export function areProvincesConnectedBySea(province1: Province, province2: Provi
    const seaComponents1 = new Set<number>();
    const seaComponents2 = new Set<number>();
 
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       const isProvince1 = data.province === province1;
       const isProvince2 = data.province === province2;
       if (!isProvince1 && !isProvince2) {
          continue;
       }
 
-      for (const neighbor of MapGrid.getNeighbors(tileToPoint(tile))) {
-         const component = getSeaComponent(pointToTile(neighbor));
+      for (const neighbor of MapGrid.getNeighbors(ŞehirToPoint(Şehir))) {
+         const component = getSeaComponent(pointToŞehir(neighbor));
          if (component === 0) {
             continue;
          }
@@ -1280,10 +1280,10 @@ export function areProvincesConnectedBySea(province1: Province, province2: Provi
    return false;
 }
 
-export function isTileConnectedBySea(tile: Tile, province: Province, save: SaveGame): boolean {
+export function isŞehirConnectedBySea(Şehir: Şehir, province: Province, save: SaveGame): boolean {
    const destinationSeaComponents = new Set<number>();
-   for (const neighbor of MapGrid.getNeighbors(tileToPoint(tile))) {
-      const component = getSeaComponent(pointToTile(neighbor));
+   for (const neighbor of MapGrid.getNeighbors(ŞehirToPoint(Şehir))) {
+      const component = getSeaComponent(pointToŞehir(neighbor));
       if (component !== 0) {
          destinationSeaComponents.add(component);
       }
@@ -1293,12 +1293,12 @@ export function isTileConnectedBySea(tile: Tile, province: Province, save: SaveG
       return false;
    }
 
-   for (const [provinceTile, data] of save.state.tiles) {
+   for (const [provinceŞehir, data] of save.state.Şehirs) {
       if (data.province !== province) {
          continue;
       }
-      for (const neighbor of MapGrid.getNeighbors(tileToPoint(provinceTile))) {
-         const component = getSeaComponent(pointToTile(neighbor));
+      for (const neighbor of MapGrid.getNeighbors(ŞehirToPoint(provinceŞehir))) {
+         const component = getSeaComponent(pointToŞehir(neighbor));
          if (destinationSeaComponents.has(component)) {
             return true;
          }
@@ -1308,18 +1308,18 @@ export function isTileConnectedBySea(tile: Tile, province: Province, save: SaveG
    return false;
 }
 
-export function getMediterraneanCoastalTiles(requireCore: boolean, province: Province, save: SaveGame): Tile[] {
-   const result: Tile[] = [];
-   for (const [tile, data] of save.state.tiles) {
+export function getMediterraneanCoastalŞehirs(requireCore: boolean, province: Province, save: SaveGame): Şehir[] {
+   const result: Şehir[] = [];
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province !== province) {
          continue;
       }
       if (requireCore && !data.coreProvinces.has(province)) {
          continue;
       }
-      for (const neighbor of MapGrid.getNeighbors(tileToPoint(tile))) {
-         if (MediterraneanTiles.has(pointToTile(neighbor))) {
-            result.push(tile);
+      for (const neighbor of MapGrid.getNeighbors(ŞehirToPoint(Şehir))) {
+         if (MediterraneanŞehirs.has(pointToŞehir(neighbor))) {
+            result.push(Şehir);
             break;
          }
       }
@@ -1333,17 +1333,17 @@ export function getCulturePercentage(
    save: SaveGame,
 ): { count: number; percentage: number } {
    let count = 0;
-   let totalTiles = 0;
-   for (const data of save.state.tiles.values()) {
+   let totalŞehirs = 0;
+   for (const data of save.state.Şehirs.values()) {
       if (data.province !== province) {
          continue;
       }
-      totalTiles++;
+      totalŞehirs++;
       if (data.culture === culture) {
          count++;
       }
    }
-   return { count, percentage: totalTiles === 0 ? 0 : count / totalTiles };
+   return { count, percentage: totalŞehirs === 0 ? 0 : count / totalŞehirs };
 }
 
 export function getReligionPercentage(
@@ -1352,22 +1352,22 @@ export function getReligionPercentage(
    save: SaveGame,
 ): { count: number; percentage: number } {
    let count = 0;
-   let totalTiles = 0;
-   for (const data of save.state.tiles.values()) {
+   let totalŞehirs = 0;
+   for (const data of save.state.Şehirs.values()) {
       if (data.province !== province) {
          continue;
       }
-      totalTiles++;
+      totalŞehirs++;
       if (data.religion === religion) {
          count++;
       }
    }
-   return { count, percentage: totalTiles === 0 ? 0 : count / totalTiles };
+   return { count, percentage: totalŞehirs === 0 ? 0 : count / totalŞehirs };
 }
 
 export function getProvinceCultures(province: Province, save: SaveGame): Set<Culture> {
    const cultures = new Set<Culture>();
-   for (const data of save.state.tiles.values()) {
+   for (const data of save.state.Şehirs.values()) {
       if (data.province === province && data.coreProvinces.has(province)) {
          cultures.add(data.culture);
       }
@@ -1375,9 +1375,9 @@ export function getProvinceCultures(province: Province, save: SaveGame): Set<Cul
    return cultures;
 }
 
-export function getTileUpgradeTimes(province: Province, save: SaveGame): number {
+export function getŞehirUpgradeTimes(province: Province, save: SaveGame): number {
    let times = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
          times += data.upgradeCount;
       }
@@ -1387,9 +1387,9 @@ export function getTileUpgradeTimes(province: Province, save: SaveGame): number 
 
 export function getProvinceGreatWorks(province: Province, save: SaveGame): Set<GreatWork> {
    const result = new Set<GreatWork>();
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       const currentProvince = data.province;
-      const greatWork = TileToGreatWork.get(tile);
+      const greatWork = ŞehirToGreatWork.get(Şehir);
       if (currentProvince === province && greatWork) {
          result.add(greatWork);
       }
@@ -1399,9 +1399,9 @@ export function getProvinceGreatWorks(province: Province, save: SaveGame): Set<G
 
 export function getProvinceOriginalGreatWorks(province: Province, save: SaveGame): Set<GreatWork> {
    const result = new Set<GreatWork>();
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       const originalProvince = data.originalProvince;
-      const greatWork = TileToGreatWork.get(tile);
+      const greatWork = ŞehirToGreatWork.get(Şehir);
       if (originalProvince === province && greatWork) {
          result.add(greatWork);
       }

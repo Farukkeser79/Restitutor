@@ -1,16 +1,16 @@
-import type { Tile } from "@project/shared/src/utils/Helper";
+import type { Şehir } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import type { Province } from "../definitions/Province";
-import { getBorderingProvinces } from "../definitions/Tile";
-import { getTileName } from "../definitions/TileName";
+import { getBorderingProvinces } from "../definitions/Şehir";
+import { getŞehirName } from "../definitions/ŞehirName";
 import type { SaveGame } from "../GameState";
 import { getRelation, isWithinDiplomaticRange } from "../logic/DiplomacyLogic";
 import { isGreatPowerCondition, isNorGreatPowerCondition } from "../logic/ProvinceLogic";
 import { timedActionConditions } from "../logic/TimedActionLogic";
-import { getTruceMonthsLeft, getWarForTile, getWarsBetween } from "../logic/WarLogic";
+import { getTruceMonthsLeft, getWarForŞehir, getWarsBetween } from "../logic/WarLogic";
 import { finalizeCondition, type ICondition, type IGameCostCondition } from "./GameAction";
 
-export function DemandTileCostCondition(
+export function DemandŞehirCostCondition(
    ourProvince: Province,
    theirProvince: Province,
    additionalConditions: ICondition[],
@@ -19,7 +19,7 @@ export function DemandTileCostCondition(
    return {
       cost: { diplomatic: 50 },
       condition: finalizeCondition([
-         ...timedActionConditions({ action: "DemandTile" }, ourProvince, save),
+         ...timedActionConditions({ action: "DemandŞehir" }, ourProvince, save),
          isGreatPowerCondition(ourProvince, save),
          isNorGreatPowerCondition(theirProvince, save),
          isWithinDiplomaticRange(ourProvince, theirProvince, save),
@@ -44,23 +44,23 @@ export function DemandTileCostCondition(
    };
 }
 
-export function canDemandTile(tile: Tile, ourProvince: Province, save: SaveGame): ICondition[] {
-   const tileData = save.state.tiles.get(tile);
-   if (!tileData) {
+export function canDemandŞehir(Şehir: Şehir, ourProvince: Province, save: SaveGame): ICondition[] {
+   const ŞehirData = save.state.Şehirs.get(Şehir);
+   if (!ŞehirData) {
       return [];
    }
    return [
       {
-         name: $t(L.$1IsNotContestedInAWar, getTileName(tile, save)),
-         value: getWarForTile(tile, save) === undefined,
+         name: $t(L.$1IsNotContestedInAWar, getŞehirName(Şehir, save)),
+         value: getWarForŞehir(Şehir, save) === undefined,
       },
       {
-         name: $t(L.$1IsNotTheirCapital, getTileName(tile, save)),
-         value: save.state.provinces[tileData.province]?.capital !== tile,
+         name: $t(L.$1IsNotTheirCapital, getŞehirName(Şehir, save)),
+         value: save.state.provinces[ŞehirData.province]?.capital !== Şehir,
       },
       {
-         name: $t(L.$1BordersOurProvince, getTileName(tile, save)),
-         value: getBorderingProvinces(tile, save).includes(ourProvince),
+         name: $t(L.$1BordersOurProvince, getŞehirName(Şehir, save)),
+         value: getBorderingProvinces(Şehir, save).includes(ourProvince),
       },
    ];
 }

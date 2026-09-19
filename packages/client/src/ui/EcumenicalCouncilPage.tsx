@@ -6,7 +6,7 @@ import { CasusBelli } from "../game/definitions/CasusBelli";
 import { Modifiers, modifierToString } from "../game/definitions/Modifier";
 import { Province, ProvinceResourceNames } from "../game/definitions/Province";
 import { type ChristianHeresy, Religion } from "../game/definitions/Religion";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { TimedActions } from "../game/definitions/TimedAction";
 import { GameStateUpdated } from "../game/Events";
 import { getRelation } from "../game/logic/DiplomacyLogic";
@@ -16,7 +16,7 @@ import {
    getCouncilHeresies,
    getHereticProvinces,
    getOngoingEcumenicalCouncil,
-   getReconcileTiles,
+   getReconcileŞehirs,
    ongoingEcumenicalCouncilCondition,
 } from "../game/logic/EcumenicalCouncilLogic";
 import { addModifier, type IAddModifier } from "../game/logic/ModifierLogic";
@@ -185,8 +185,8 @@ export function EcumenicalCouncilPage(): React.ReactNode {
 }
 
 function ReconcilePanel(): React.ReactNode {
-   const tiles = getReconcileTiles(G.save.state.playerProvince, G.save);
-   if (tiles.size === 0) {
+   const Şehirs = getReconcileŞehirs(G.save.state.playerProvince, G.save);
+   if (Şehirs.size === 0) {
       return null;
    }
    const state = G.save.state.provinces[G.save.state.playerProvince];
@@ -198,38 +198,38 @@ function ReconcilePanel(): React.ReactNode {
          <table className="data-table">
             <thead>
                <tr>
-                  <th>{$t(L.Tile)}</th>
+                  <th>{$t(L.Şehir)}</th>
                   <th>{$t(L.Heresy)}</th>
                   <th></th>
                </tr>
             </thead>
             <tbody>
-               {Array.from(tiles).map((tile) => {
-                  const tileData = G.save.state.tiles.get(tile);
-                  if (!tileData) {
+               {Array.from(Şehirs).map((Şehir) => {
+                  const ŞehirData = G.save.state.Şehirs.get(Şehir);
+                  if (!ŞehirData) {
                      return null;
                   }
-                  const tileUpgrades = tileData.infrastructure + tileData.production + tileData.population;
+                  const ŞehirUpgrades = ŞehirData.infrastructure + ŞehirData.production + ŞehirData.population;
                   return (
-                     <tr key={tile}>
+                     <tr key={Şehir}>
                         <td>
                            <div
                               className="row pointer"
                               onClick={() => {
                                  G.scene
                                     .getCurrent(WorldScene)
-                                    ?.lookAt(tile, { time: 0.2 })
+                                    ?.lookAt(Şehir, { time: 0.2 })
                                     .then((scene) => {
-                                       scene.drawSelectors(new Set([tile]));
-                                       scene.drawProvinceOutline(tileData.province);
+                                       scene.drawSelectors(new Set([Şehir]));
+                                       scene.drawProvinceOutline(ŞehirData.province);
                                     });
                               }}
                            >
                               <div className="mi sm">open_in_new</div>
-                              <div className="f1">{getTileName(tile, G.save)}</div>
+                              <div className="f1">{getŞehirName(Şehir, G.save)}</div>
                            </div>
                         </td>
-                        <td>{Religion[tileData.religion].name()}</td>
+                        <td>{Religion[ŞehirData.religion].name()}</td>
                         <td>
                            <ActionButton
                               action={{
@@ -239,14 +239,14 @@ function ReconcilePanel(): React.ReactNode {
                                           action: "EcumenicalCouncilAction",
                                           label: $t(L.EcumenicalCouncilActionsAreNotOnCooldown),
                                        },
-                                       tileData.province,
+                                       ŞehirData.province,
                                        G.save,
                                     ),
                                     ongoingEcumenicalCouncilCondition(G.save.state.playerProvince, G.save),
                                  ]),
-                                 cost: { christianity: tileUpgrades },
+                                 cost: { christianity: ŞehirUpgrades },
                                  effect: () => {
-                                    tileData.religion = state.religion;
+                                    ŞehirData.religion = state.religion;
                                     startTimedAction("EcumenicalCouncilAction", G.save.state.playerProvince, G.save);
                                  },
                               }}
@@ -255,8 +255,8 @@ function ReconcilePanel(): React.ReactNode {
                                     <div className="m10">
                                        {$t(
                                           L.Convert$1From$2To$3,
-                                          getTileName(tile, G.save),
-                                          Religion[tileData.religion].name(),
+                                          getŞehirName(Şehir, G.save),
+                                          Religion[ŞehirData.religion].name(),
                                           Religion[state.religion].name(),
                                        )}
                                     </div>
@@ -292,7 +292,7 @@ function HeresyPanel({ heresy }: { heresy: ChristianHeresy }): React.ReactNode {
       <div key={heresy}>
          <FloatingTip
             label={$t(
-               L.AllTilesFollowing$1Get$2$3And$4$5,
+               L.AllŞehirsFollowing$1Get$2$3And$4$5,
                Religion[heresy].name(),
                formatPercentDelta(-EcumenicalCouncilPct),
                $t(L.Defense),
@@ -404,7 +404,7 @@ function HeresyPanel({ heresy }: { heresy: ChristianHeresy }): React.ReactNode {
                <CouncilActionButton
                   modifier={{
                      name: $t(L.EmbargoHeretics),
-                     modifier: "TileOutput",
+                     modifier: "ŞehirOutput",
                      type: "multiply",
                      value: -0.1,
                      duration: 12,

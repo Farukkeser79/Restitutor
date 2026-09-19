@@ -1,7 +1,7 @@
-import type { Tile } from "@project/shared/src/utils/Helper";
+import type { Şehir } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import type { Province } from "../definitions/Province";
-import { RefreshTiles } from "../Events";
+import { RefreshŞehirs } from "../Events";
 import type { SaveGame } from "../GameState";
 import { getGameDate } from "../logic/GameDateTime";
 import { timedActionConditions } from "../logic/TimedActionLogic";
@@ -9,27 +9,27 @@ import { EmptyGameAction } from "./EmptyGameAction";
 import type { IGameAction } from "./GameAction";
 import { finalizeCondition } from "./GameAction";
 
-export function CrackDownAction(tile: Tile, province: Province, save: SaveGame): IGameAction {
-   const tileData = save.state.tiles.get(tile);
-   if (!tileData) {
+export function CrackDownAction(Şehir: Şehir, province: Province, save: SaveGame): IGameAction {
+   const ŞehirData = save.state.Şehirs.get(Şehir);
+   if (!ŞehirData) {
       return EmptyGameAction;
    }
-   const totalUpgrades = tileData.infrastructure + tileData.production + tileData.population;
+   const totalUpgrades = ŞehirData.infrastructure + ŞehirData.production + ŞehirData.population;
    return {
       cost: { military: totalUpgrades * 6 },
       condition: finalizeCondition([
          ...timedActionConditions({ action: "Crackdown" }, province, save),
-         { name: $t(L.CurrentlyInRebellion), value: tileData.rebellion >= 10 },
+         { name: $t(L.CurrentlyInRebellion), value: ŞehirData.rebellion >= 10 },
       ]),
       effect: () => {
-         tileData.rebellion = 0;
-         tileData.modifiers.Unrest.push({
+         ŞehirData.rebellion = 0;
+         ŞehirData.modifiers.Unrest.push({
             type: "add",
             name: $t(L.Crackdown$1, getGameDate(save.state.tick).toLocaleDateString()),
             value: 10,
             duration: 5 * 12,
          });
-         RefreshTiles.emit({ tiles: [tile], options: { indicator: true } });
+         RefreshŞehirs.emit({ Şehirs: [Şehir], options: { indicator: true } });
       },
    };
 }

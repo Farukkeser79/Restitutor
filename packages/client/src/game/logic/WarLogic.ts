@@ -3,9 +3,9 @@ import {
    clearFlag,
    formatNumber,
    hasFlag,
-   pointToTile,
-   type Tile,
-   tileToPoint,
+   pointToŞehir,
+   type Şehir,
+   ŞehirToPoint,
    type ValueOf,
 } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
@@ -15,8 +15,8 @@ import { CasusBelli } from "../definitions/CasusBelli";
 import { PersonFlags } from "../definitions/Family";
 import type { Province } from "../definitions/Province";
 import { hasProvinceUpgrade, ProvinceUpgrades } from "../definitions/ProvinceUpgrades";
-import { getBorderingProvinces } from "../definitions/Tile";
-import { getTileName } from "../definitions/TileName";
+import { getBorderingProvinces } from "../definitions/Şehir";
+import { getŞehirName } from "../definitions/ŞehirName";
 import type { SaveGame } from "../GameState";
 import { MapGrid } from "../MapGrid";
 import type { ConditionChecks } from "./Calculation";
@@ -33,14 +33,14 @@ import {
    getProvinceName,
    getProvincePrestige,
    getProvinceStat,
-   getProvinceTileCount,
+   getProvinceŞehirCount,
    getWarPower,
    isLandlocked,
-   isTileConnectedBySea,
+   isŞehirConnectedBySea,
    provinceResourceOf,
    setProvinceStat,
 } from "./ProvinceLogic";
-import { getTileDefense, getTileTerrain } from "./TileLogic";
+import { getŞehirDefense, getŞehirTerrain } from "./ŞehirLogic";
 import { endTimedActionAndResetCooldown, getTimedActionTimeLeft } from "./TimedActionLogic";
 
 export const WarFlag = {
@@ -55,7 +55,7 @@ export interface IWar {
    coAttackers: Map<Province, IConditionBreakdown>;
    defender: Province;
    coDefenders: Map<Province, IConditionBreakdown>;
-   tiles: Set<Tile>;
+   Şehirs: Set<Şehir>;
    casusBelli: CasusBelli;
    requiredWarScore: number;
    actualWarScore: number;
@@ -220,7 +220,7 @@ export function getWarParticipants(
 export function getWarScore(
    attacker: Province,
    defender: Province,
-   tiles: Set<Tile>,
+   Şehirs: Set<Şehir>,
    casusBelli: CasusBelli,
    save: SaveGame,
 ): IValueBreakdown {
@@ -233,59 +233,59 @@ export function getWarScore(
    if (!attackerState) {
       return result;
    }
-   for (const tile of tiles) {
-      const data = save.state.tiles.get(tile);
+   for (const Şehir of Şehirs) {
+      const data = save.state.Şehirs.get(Şehir);
       if (data) {
-         if (defenderState.capital === tile) {
+         if (defenderState.capital === Şehir) {
             result.multiply.push({
                name: $t(L.OccupyingCapital),
                value: 0.5,
             });
          }
-         const defense = getTileDefense(tile, save);
+         const defense = getŞehirDefense(Şehir, save);
          result.add.push({
-            name: getTileName(tile, save),
+            name: getŞehirName(Şehir, save),
             value: defense.value,
          });
-         if (hasProvinceUpgrade("MaritimeAmbition", attacker, save) && isTileConnectedBySea(tile, attacker, save)) {
+         if (hasProvinceUpgrade("MaritimeAmbition", attacker, save) && isŞehirConnectedBySea(Şehir, attacker, save)) {
             result.add.push({
-               name: `${ProvinceUpgrades.MaritimeAmbition.name()}: ${getTileName(tile, save)}`,
+               name: `${ProvinceUpgrades.MaritimeAmbition.name()}: ${getŞehirName(Şehir, save)}`,
                value: -0.2 * defense.value,
             });
          }
-         const terrain = getTileTerrain(tile);
+         const terrain = getŞehirTerrain(Şehir);
          if (
             hasProvinceUpgrade("MastersOfThePasses", attacker, save) &&
             (terrain === "Hill" || terrain === "Mountain")
          ) {
             result.add.push({
-               name: `${ProvinceUpgrades.MastersOfThePasses.name()}: ${getTileName(tile, save)}`,
+               name: `${ProvinceUpgrades.MastersOfThePasses.name()}: ${getŞehirName(Şehir, save)}`,
                value: -0.2 * defense.value,
             });
          }
          if (casusBelli === "Reconquista" && data.originalProvince === attacker) {
             result.add.push({
-               name: $t(L.Reconquista$1, getTileName(tile, save)),
+               name: $t(L.Reconquista$1, getŞehirName(Şehir, save)),
                value: -0.2 * defense.value,
             });
          }
          if (data.coreProvinces.has(attacker)) {
             result.add.push({
-               name: $t(L.$1IsOurCoreTile, getTileName(tile, save)),
+               name: $t(L.$1IsOurCoreŞehir, getŞehirName(Şehir, save)),
                value: -0.2 * defense.value,
             });
          }
       }
    }
 
-   const neighborTiles = filterNeighborTiles(tiles, attacker, save);
-   const nonNeighborTileCount = tiles.size - neighborTiles.length;
+   const neighborŞehirs = filterNeighborŞehirs(Şehirs, attacker, save);
+   const nonNeighborŞehirCount = Şehirs.size - neighborŞehirs.length;
 
-   if (nonNeighborTileCount > 0) {
+   if (nonNeighborŞehirCount > 0) {
       result.multiply.push({
-         name: $t(L.RemoteTiles),
-         desc: $t(L.$1TilesNotBorderingOurProvince, formatNumber(nonNeighborTileCount)),
-         value: 0.1 * nonNeighborTileCount,
+         name: $t(L.RemoteŞehirs),
+         desc: $t(L.$1ŞehirsNotBorderingOurProvince, formatNumber(nonNeighborŞehirCount)),
+         value: 0.1 * nonNeighborŞehirCount,
       });
    }
 
@@ -296,14 +296,14 @@ export function getWarScore(
       desc: $t(L.EachWarStartedAdds$1OfTheBaseCost$2, "10%", formatNumber(warCount)),
    });
 
-   if (!AreTilesContiguous(tiles)) {
+   if (!AreŞehirsContiguous(Şehirs)) {
       result.multiply.push({
-         name: $t(L.DiscontiguousTiles),
+         name: $t(L.DiscontiguousŞehirs),
          value: 0.25,
       });
    }
 
-   if (casusBelli === "ConquestMission" && tiles.size > 1) {
+   if (casusBelli === "ConquestMission" && Şehirs.size > 1) {
       result.multiply.push({
          name: CasusBelli.ConquestMission.name(),
          value: -0.1,
@@ -387,11 +387,11 @@ const MonthlyStabilityCostWithoutCB = 0.2;
 export const MonthlyExtraArmyMaintenancePct = 0.5;
 
 export function getWarMonthlyMilitaryPoint(war: IWar): number {
-   return calculateWarMonthlyMilitaryPoint(war.log.length + 1, war.tiles.size);
+   return calculateWarMonthlyMilitaryPoint(war.log.length + 1, war.Şehirs.size);
 }
 
-export function calculateWarMonthlyMilitaryPoint(lengthOfWar: number, tileCount: number): number {
-   return Math.ceil(lengthOfWar / 12) * tileCount;
+export function calculateWarMonthlyMilitaryPoint(lengthOfWar: number, ŞehirCount: number): number {
+   return Math.ceil(lengthOfWar / 12) * ŞehirCount;
 }
 
 export function calculateWarMonthlyStability(lengthOfWar: number, casusBelli: CasusBelli): number {
@@ -417,39 +417,39 @@ export function calculateWarLengthForStability(stability: number, casusBelli: Ca
    return warLength;
 }
 
-function filterNeighborTiles(tiles: Iterable<Tile>, province: Province, save: SaveGame): Tile[] {
-   const result: Tile[] = [];
-   for (const tile of tiles) {
-      if (getBorderingProvinces(tile, save).includes(province)) {
-         result.push(tile);
+function filterNeighborŞehirs(Şehirs: Iterable<Şehir>, province: Province, save: SaveGame): Şehir[] {
+   const result: Şehir[] = [];
+   for (const Şehir of Şehirs) {
+      if (getBorderingProvinces(Şehir, save).includes(province)) {
+         result.push(Şehir);
       }
    }
    return result;
 }
 
-function AreTilesContiguous(tiles: Set<Tile>): boolean {
-   if (tiles.size === 0) {
+function AreŞehirsContiguous(Şehirs: Set<Şehir>): boolean {
+   if (Şehirs.size === 0) {
       return true;
    }
 
-   const [startTile] = tiles;
-   const visited = new Set<Tile>();
-   const queue: Tile[] = [startTile];
+   const [startŞehir] = Şehirs;
+   const visited = new Set<Şehir>();
+   const queue: Şehir[] = [startŞehir];
 
    while (queue.length > 0) {
       const current = queue.pop();
       if (current && !visited.has(current)) {
          visited.add(current);
          for (let dir = 0; dir < 6; dir++) {
-            const neighbor = pointToTile(MapGrid.getNeighbor(tileToPoint(current), dir));
-            if (tiles.has(neighbor) && !visited.has(neighbor)) {
+            const neighbor = pointToŞehir(MapGrid.getNeighbor(ŞehirToPoint(current), dir));
+            if (Şehirs.has(neighbor) && !visited.has(neighbor)) {
                queue.push(neighbor);
             }
          }
       }
    }
 
-   return visited.size === tiles.size;
+   return visited.size === Şehirs.size;
 }
 
 export function getCurrentWars(province: Province, save: SaveGame): IWar[] {
@@ -462,19 +462,19 @@ export function getCurrentWars(province: Province, save: SaveGame): IWar[] {
    );
 }
 
-export function getWarTiles(save: SaveGame): Set<Tile> {
-   const result = new Set<Tile>();
+export function getWarŞehirs(save: SaveGame): Set<Şehir> {
+   const result = new Set<Şehir>();
    for (const war of save.state.wars) {
-      for (const tile of war.tiles) {
-         result.add(tile);
+      for (const Şehir of war.Şehirs) {
+         result.add(Şehir);
       }
    }
    return result;
 }
 
-export function getWarForTile(tile: Tile, save: SaveGame): IWar | undefined {
+export function getWarForŞehir(Şehir: Şehir, save: SaveGame): IWar | undefined {
    for (const war of save.state.wars) {
-      if (war.tiles.has(tile)) {
+      if (war.Şehirs.has(Şehir)) {
          return war;
       }
    }
@@ -533,7 +533,7 @@ export function isWarStalled(war: IWar, save: SaveGame): boolean {
    return war.log[0].result === "Stalled";
 }
 
-export const WhitePeaceCostPerTile = 20;
+export const WhitePeaceCostPerŞehir = 20;
 
 export function getInfantryUnitWarPower(province: Province, save: SaveGame): IValueBreakdown {
    const result = makeValueBreakdown();
@@ -646,52 +646,52 @@ export function getWarCoalitions(provinces: Province[], save: SaveGame): IWar[] 
    });
 }
 
-export function getWarPlunder(war: IWar, save: SaveGame): { tiles: IValueBreakdown; warScore: IValueBreakdown } {
-   const tilesResult = makeValueBreakdown();
+export function getWarPlunder(war: IWar, save: SaveGame): { Şehirs: IValueBreakdown; warScore: IValueBreakdown } {
+   const ŞehirsResult = makeValueBreakdown();
    const warScoreResult = makeValueBreakdown();
-   for (const tile of war.tiles) {
-      const data = save.state.tiles.get(tile);
+   for (const Şehir of war.Şehirs) {
+      const data = save.state.Şehirs.get(Şehir);
       if (data) {
          if (data.infrastructure > 1) {
-            tilesResult.add.push({
-               name: getTileName(tile, save),
+            ŞehirsResult.add.push({
+               name: getŞehirName(Şehir, save),
                desc: $t(L.Infrastructure),
                value: -1,
             });
          }
          if (data.production > 1) {
-            tilesResult.add.push({
-               name: getTileName(tile, save),
+            ŞehirsResult.add.push({
+               name: getŞehirName(Şehir, save),
                desc: $t(L.Production),
                value: -1,
             });
          }
          if (data.population > 1) {
-            tilesResult.add.push({
-               name: getTileName(tile, save),
+            ŞehirsResult.add.push({
+               name: getŞehirName(Şehir, save),
                desc: $t(L.Population),
                value: -1,
             });
          }
       }
    }
-   finalizeBreakdown(tilesResult);
+   finalizeBreakdown(ŞehirsResult);
    warScoreResult.add.push({
       name: $t(L.WarScore),
-      value: tilesResult.value / 2,
+      value: ŞehirsResult.value / 2,
    });
    return {
-      tiles: tilesResult,
+      Şehirs: ŞehirsResult,
       warScore: finalizeBreakdown(warScoreResult),
    };
 }
 
-export function getWarPowerPerTile(province: Province, save: SaveGame): number {
-   const tileCount = getProvinceTileCount(province, save);
-   if (tileCount === 0) {
+export function getWarPowerPerŞehir(province: Province, save: SaveGame): number {
+   const ŞehirCount = getProvinceŞehirCount(province, save);
+   if (ŞehirCount === 0) {
       return 0;
    }
-   return getWarPower(province, save).value / tileCount;
+   return getWarPower(province, save).value / ŞehirCount;
 }
 export function setProvinceArmyMaintenance(value: number, province: Province, save: SaveGame): void {
    value = clamp(value, MinArmyMaintenance, MaxArmyMaintenance);

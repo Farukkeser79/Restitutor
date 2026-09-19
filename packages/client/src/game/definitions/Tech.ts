@@ -171,7 +171,7 @@ export class TechDefinitions {
       modifiers: {
          InfantryUnitPower: { type: "add", value: 1 },
       },
-      timedActions: ["InciteUnrest", "PlunderWarTile"],
+      timedActions: ["InciteUnrest", "PlunderWarŞehir"],
    } as const;
 
    G1: ITechDefinition = {
@@ -189,7 +189,7 @@ export class TechDefinitions {
       requires: ["F1", "F2"],
       name: () => $t(L.TechCraftWorkshops),
       buildings: ["Workshop"],
-      timedActions: ["DemandTile"],
+      timedActions: ["DemandŞehir"],
       modifiers: {
          ProductionCapacity: { type: "add", value: 5 },
          ProductionUpgradeCost: { type: "multiply", value: -0.2 },

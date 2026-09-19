@@ -1,4 +1,4 @@
-import { entriesOf, type Tile } from "@project/shared/src/utils/Helper";
+import { entriesOf, type Şehir } from "@project/shared/src/utils/Helper";
 import AlKhazneh from "../../assets/images/greatworks/AlKhazneh.webp";
 import AntonineBaths from "../../assets/images/greatworks/AntonineBaths.webp";
 import AqueductOfSegovia from "../../assets/images/greatworks/AqueductOfSegovia.webp";
@@ -22,7 +22,7 @@ import type { IBaseModifier, Modifier } from "./Modifier";
 
 interface IGreatWork {
    name: () => string;
-   tile: Tile;
+   Şehir: Şehir;
    completionYear: number;
    image: ImageWithCredit;
    modifiers: Partial<Record<Modifier, IBaseModifier>>;
@@ -32,7 +32,7 @@ interface IGreatWork {
 export const _GreatWork = {
    GreatPyramidOfGiza: {
       name: () => $t(L.GreatWorkGreatPyramidOfGiza),
-      tile: 10551390,
+      Şehir: 10551390,
       completionYear: -2560,
       wikipedia: "Great_Pyramid_of_Giza",
       image: {
@@ -45,7 +45,7 @@ export const _GreatWork = {
    },
    TempleOfArtemis: {
       name: () => $t(L.GreatWorkTempleOfArtemis),
-      tile: 10289234,
+      Şehir: 10289234,
       completionYear: -323,
       wikipedia: "Temple_of_Artemis",
       image: {
@@ -53,12 +53,12 @@ export const _GreatWork = {
          credit: "The Building of the Temple of Artemis at Ephesus, Hendrik van Cleve (III)",
       },
       modifiers: {
-         TileOutput: { type: "multiply", value: 0.1 },
+         ŞehirOutput: { type: "multiply", value: 0.1 },
       },
    },
    PharosOfAlexandria: {
       name: () => $t(L.GreatWorkPharosOfAlexandria),
-      tile: 10485850,
+      Şehir: 10485850,
       completionYear: -283,
       wikipedia: "Lighthouse_of_Alexandria",
       image: {
@@ -71,7 +71,7 @@ export const _GreatWork = {
    },
    RoyalMausoleumOfMauretania: {
       name: () => $t(L.GreatWorkRoyalMausoleumOfMauretania),
-      tile: 8978516,
+      Şehir: 8978516,
       completionYear: -3,
       wikipedia: "Royal_Mausoleum_of_Mauretania",
       image: {
@@ -84,7 +84,7 @@ export const _GreatWork = {
    },
    HadriansWall: {
       name: () => $t(L.GreatWorkHadriansWall),
-      tile: 8716347,
+      Şehir: 8716347,
       completionYear: 128,
       wikipedia: "Hadrian%27s_Wall",
       image: {
@@ -97,7 +97,7 @@ export const _GreatWork = {
    },
    RomanTempleOfEvora: {
       name: () => $t(L.GreatWorkRomanTempleOfEvora),
-      tile: 8454225,
+      Şehir: 8454225,
       completionYear: 100,
       wikipedia: "Roman_Temple_of_%C3%89vora",
       image: {
@@ -110,7 +110,7 @@ export const _GreatWork = {
    },
    AqueductOfSegovia: {
       name: () => $t(L.GreatWorkAqueductOfSegovia),
-      tile: 8716366,
+      Şehir: 8716366,
       completionYear: 120,
       wikipedia: "Aqueduct_of_Segovia",
       image: {
@@ -123,7 +123,7 @@ export const _GreatWork = {
    },
    PortaNigra: {
       name: () => $t(L.GreatWorkPortaNigra),
-      tile: 9175107,
+      Şehir: 9175107,
       completionYear: 170,
       wikipedia: "Porta_Nigra",
       image: {
@@ -136,7 +136,7 @@ export const _GreatWork = {
    },
    PontDuGard: {
       name: () => $t(L.GreatWorkPontDuGard),
-      tile: 9044042,
+      Şehir: 9044042,
       completionYear: 50,
       wikipedia: "Pont_du_Gard",
       image: {
@@ -149,7 +149,7 @@ export const _GreatWork = {
    },
    Colosseum: {
       name: () => $t(L.GreatWorkColosseum),
-      tile: 9502797,
+      Şehir: 9502797,
       completionYear: 80,
       wikipedia: "Colosseum",
       image: {
@@ -162,7 +162,7 @@ export const _GreatWork = {
    },
    AntonineBaths: {
       name: () => $t(L.GreatWorkAntonineBaths),
-      tile: 9371731,
+      Şehir: 9371731,
       completionYear: 162,
       wikipedia: "Baths_of_Antoninus",
       image: {
@@ -175,7 +175,7 @@ export const _GreatWork = {
    },
    DiocletiansPalace: {
       name: () => $t(L.GreatWorkDiocletiansPalace),
-      tile: 9764939,
+      Şehir: 9764939,
       completionYear: 305,
       wikipedia: "Diocletian%27s_Palace",
       image: {
@@ -188,7 +188,7 @@ export const _GreatWork = {
    },
    RotundaOfGalerius: {
       name: () => $t(L.GreatWorkRotundaOfGalerius),
-      tile: 10027087,
+      Şehir: 10027087,
       completionYear: 306,
       wikipedia: "Arch_of_Galerius_and_Rotunda",
       image: {
@@ -202,7 +202,7 @@ export const _GreatWork = {
    },
    HagiaSophia: {
       name: () => $t(L.GreatWorkHagiaSophia),
-      tile: 10354767,
+      Şehir: 10354767,
       completionYear: 537,
       wikipedia: "Hagia_Sophia",
       image: {
@@ -215,7 +215,7 @@ export const _GreatWork = {
    },
    TempleOfBel: {
       name: () => $t(L.GreatWorkTempleOfBel),
-      tile: 10879061,
+      Şehir: 10879061,
       completionYear: 175,
       wikipedia: "Temple_of_Bel",
       image: {
@@ -228,7 +228,7 @@ export const _GreatWork = {
    },
    AlKhazneh: {
       name: () => $t(L.GreatWorkAlKhazneh),
-      tile: 10682459,
+      Şehir: 10682459,
       completionYear: 25,
       wikipedia: "Al-Khazneh",
       image: {
@@ -241,7 +241,7 @@ export const _GreatWork = {
    },
    ChurchOfTheHolySepulchre: {
       name: () => $t(L.GreatWorkChurchOfTheHolySepulchre),
-      tile: 10747993,
+      Şehir: 10747993,
       completionYear: 335,
       wikipedia: "Church_of_the_Holy_Sepulchre",
       image: {
@@ -256,6 +256,6 @@ export const _GreatWork = {
 
 export type GreatWork = keyof typeof _GreatWork;
 export const GreatWork = _GreatWork as Record<GreatWork, IGreatWork>;
-export const TileToGreatWork: Map<Tile, GreatWork> = new Map(
-   entriesOf(GreatWork).map(([key, value]) => [value.tile, key]),
+export const ŞehirToGreatWork: Map<Şehir, GreatWork> = new Map(
+   entriesOf(GreatWork).map(([key, value]) => [value.Şehir, key]),
 );

@@ -1,29 +1,29 @@
 import { Select, Switch, TextInput } from "@mantine/core";
 import { useForceUpdate } from "@mantine/hooks";
-import { iFirstOf, mapSafePush, type Tile, tileToString } from "@project/shared/src/utils/Helper";
+import { iFirstOf, mapSafePush, type Şehir, ŞehirToString } from "@project/shared/src/utils/Helper";
 import { useState } from "react";
 import { Provinces } from "../game/definitions/Province";
-import type { ITileConfig } from "../game/definitions/Tile";
-import { RefreshTiles } from "../game/Events";
+import type { IŞehirConfig } from "../game/definitions/Şehir";
+import { RefreshŞehirs } from "../game/Events";
 import { WorldScene } from "../scenes/WorldScene";
 import { idbSet } from "../utils/BrowserStorage";
 import { G } from "../utils/Global";
 import { SidebarComp, SidebarHeader } from "./common/SidebarComp";
 
-export function EditTilePage({ tiles }: { tiles: Set<Tile> }): React.ReactNode {
-   const [checkName, setCheckName] = useState<Map<string, Tile[]>>(new Map());
-   let data: ITileConfig = {};
-   let singleTile: React.ReactNode = null;
-   if (tiles.size === 1) {
-      const t = iFirstOf(tiles);
+export function EditŞehirPage({ Şehirs }: { Şehirs: Set<Şehir> }): React.ReactNode {
+   const [checkName, setCheckName] = useState<Map<string, Şehir[]>>(new Map());
+   let data: IŞehirConfig = {};
+   let singleŞehir: React.ReactNode = null;
+   if (Şehirs.size === 1) {
+      const t = iFirstOf(Şehirs);
       if (t) {
-         const d = G.tileEditor.get(t);
+         const d = G.ŞehirEditor.get(t);
          if (d) {
             data = d;
          }
-         singleTile = (
+         singleŞehir = (
             <>
-               <div className="h1">Tile {tileToString(t)}</div>
+               <div className="h1">Şehir {ŞehirToString(t)}</div>
                <div className="h10" />
                <div className="mx10">
                   <div className="row">
@@ -32,7 +32,7 @@ export function EditTilePage({ tiles }: { tiles: Set<Tile> }): React.ReactNode {
                         className="f1"
                         value={data.name ?? ""}
                         onChange={(e) => {
-                           let oldData = G.tileEditor.get(t);
+                           let oldData = G.ŞehirEditor.get(t);
                            if (!oldData) {
                               oldData = {};
                            }
@@ -41,9 +41,9 @@ export function EditTilePage({ tiles }: { tiles: Set<Tile> }): React.ReactNode {
                            } else {
                               oldData.name = undefined;
                            }
-                           G.tileEditor.set(t, oldData);
-                           RefreshTiles.emit({ tiles: [t], options: { indicator: true, visual: true } });
-                           idbSet("TileEditor", G.tileEditor);
+                           G.ŞehirEditor.set(t, oldData);
+                           RefreshŞehirs.emit({ Şehirs: [t], options: { indicator: true, visual: true } });
+                           idbSet("ŞehirEditor", G.ŞehirEditor);
                            forceUpdate();
                         }}
                      />
@@ -54,20 +54,20 @@ export function EditTilePage({ tiles }: { tiles: Set<Tile> }): React.ReactNode {
                      <Switch
                         checked={data.isCapital ?? false}
                         onChange={(e) => {
-                           let oldData = G.tileEditor.get(t);
+                           let oldData = G.ŞehirEditor.get(t);
                            if (!oldData) {
                               oldData = {};
                            }
-                           G.tileEditor.forEach((tileData, tile) => {
-                              if (tileData.province === data.province && tileData.isCapital) {
-                                 tileData.isCapital = false;
-                                 RefreshTiles.emit({ tiles: [tile], options: { indicator: true, visual: true } });
+                           G.ŞehirEditor.forEach((ŞehirData, Şehir) => {
+                              if (ŞehirData.province === data.province && ŞehirData.isCapital) {
+                                 ŞehirData.isCapital = false;
+                                 RefreshŞehirs.emit({ Şehirs: [Şehir], options: { indicator: true, visual: true } });
                               }
                            });
                            oldData.isCapital = e.target.checked;
-                           G.tileEditor.set(t, oldData);
-                           RefreshTiles.emit({ tiles: [t], options: { indicator: true, visual: true } });
-                           idbSet("TileEditor", G.tileEditor);
+                           G.ŞehirEditor.set(t, oldData);
+                           RefreshŞehirs.emit({ Şehirs: [t], options: { indicator: true, visual: true } });
+                           idbSet("ŞehirEditor", G.ŞehirEditor);
                            forceUpdate();
                         }}
                      />
@@ -80,46 +80,46 @@ export function EditTilePage({ tiles }: { tiles: Set<Tile> }): React.ReactNode {
 
    const forceUpdate = useForceUpdate();
    return (
-      <SidebarComp title={<SidebarHeader title={`Edit ${tiles.size} Tile`} />}>
+      <SidebarComp title={<SidebarHeader title={`Edit ${Şehirs.size} Şehir`} />}>
          <div className="m10">
             <SelectComp
                value={data.province}
                data={Array.from(Provinces)}
                onChange={(value) => {
-                  tiles.forEach((tile) => {
-                     let oldData = G.tileEditor.get(tile);
+                  Şehirs.forEach((Şehir) => {
+                     let oldData = G.ŞehirEditor.get(Şehir);
                      if (!oldData) {
                         oldData = {};
                      }
                      oldData.province = value;
-                     G.tileEditor.set(tile, oldData);
-                     RefreshTiles.emit({ tiles: [tile], options: { indicator: true, visual: true } });
+                     G.ŞehirEditor.set(Şehir, oldData);
+                     RefreshŞehirs.emit({ Şehirs: [Şehir], options: { indicator: true, visual: true } });
                   });
-                  idbSet("TileEditor", G.tileEditor);
+                  idbSet("ŞehirEditor", G.ŞehirEditor);
                   forceUpdate();
                }}
             />
          </div>
-         {singleTile}
-         <div className="h1 my10">Check Tile Names</div>
+         {singleŞehir}
+         <div className="h1 my10">Check Şehir Names</div>
          <div className="mx10">
             <button className="btn w100 py5">Default Button</button>
             <div className="h10"></div>
             <button
                className="btn primary w100 py5"
                onClick={() => {
-                  const result = new Map<string, Tile[]>();
-                  const noname: Tile[] = [];
-                  G.tileEditor.forEach((tileData, tile) => {
-                     if (tileData.name) {
-                        mapSafePush(result, tileData.name, tile);
+                  const result = new Map<string, Şehir[]>();
+                  const noname: Şehir[] = [];
+                  G.ŞehirEditor.forEach((ŞehirData, Şehir) => {
+                     if (ŞehirData.name) {
+                        mapSafePush(result, ŞehirData.name, Şehir);
                      }
-                     if (tileData.province && !tileData.name) {
-                        noname.push(tile);
+                     if (ŞehirData.province && !ŞehirData.name) {
+                        noname.push(Şehir);
                      }
                   });
-                  result.forEach((tiles, name) => {
-                     if (tiles.length <= 1) {
+                  result.forEach((Şehirs, name) => {
+                     if (Şehirs.length <= 1) {
                         result.delete(name);
                      }
                   });
@@ -129,19 +129,19 @@ export function EditTilePage({ tiles }: { tiles: Set<Tile> }): React.ReactNode {
                   setCheckName(result);
                }}
             >
-               Check Tile Names
+               Check Şehir Names
             </button>
             <div className="h10" />
-            {Array.from(checkName.entries()).map(([name, tiles]) => (
+            {Array.from(checkName.entries()).map(([name, Şehirs]) => (
                <div className="row" key={name}>
                   <div className="f1">{name}</div>
                   <div
                      className="pointer"
                      onClick={() => {
-                        G.scene.getCurrent(WorldScene)?.drawSelectors(new Set(tiles));
+                        G.scene.getCurrent(WorldScene)?.drawSelectors(new Set(Şehirs));
                      }}
                   >
-                     {tiles.map((t) => tileToString(t)).join(", ")}
+                     {Şehirs.map((t) => ŞehirToString(t)).join(", ")}
                   </div>
                </div>
             ))}

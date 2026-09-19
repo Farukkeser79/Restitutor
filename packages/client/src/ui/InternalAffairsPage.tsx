@@ -19,7 +19,7 @@ import { Modifiers, modifierValueToString } from "../game/definitions/Modifier";
 import { Province, ProvinceFlags, ProvinceResourceNames } from "../game/definitions/Province";
 import { getProvinceUpgradeDesc, hasProvinceUpgrade, ProvinceUpgrades } from "../game/definitions/ProvinceUpgrades";
 import { Religion } from "../game/definitions/Religion";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { GameStateUpdated } from "../game/Events";
 import {
    getChristianityYearly,
@@ -33,12 +33,12 @@ import {
    getProvinceStability,
    getReligiousCohesion,
    getRestoration,
-   getTilesAnnexedAndCored,
+   getŞehirsAnnexedAndCored,
    getToleratedCulture,
    getToleratedReligion,
-   TilesPerRestoration,
+   ŞehirsPerRestoration,
 } from "../game/logic/ProvinceLogic";
-import { getTileUnrest, isCapital } from "../game/logic/TileLogic";
+import { getŞehirUnrest, isCapital } from "../game/logic/ŞehirLogic";
 import { WorldScene } from "../scenes/WorldScene";
 import { G } from "../utils/Global";
 import { refreshOnTypedEvent } from "../utils/Hook";
@@ -59,7 +59,7 @@ import { GreatWorksSingletonModal } from "./GreatWorksSingletonModal";
 import { MakeCoreButton } from "./MakeCoreButton";
 import { ProvinceResourceImages } from "./ProvinceResourceImages";
 import { playSound } from "./Sound";
-import { TilePage } from "./TilePage";
+import { ŞehirPage } from "./ŞehirPage";
 import { TimedActionButton } from "./TimedActionButton";
 import { Grid2 } from "./UIConstant";
 
@@ -73,13 +73,13 @@ export function InternalAffairsPage(): React.ReactNode {
    const governingCapacity = getProvinceGoverningCapacity(G.save.state.playerProvince, G.save);
    const christianity = getProvinceResource("christianity", G.save.state.playerProvince, G.save);
    const christianityYearly = getChristianityYearly(G.save.state.playerProvince, G.save);
-   const tileAnnexedAndCored = getTilesAnnexedAndCored(G.save.state.playerProvince, G.save);
+   const ŞehirAnnexedAndCored = getŞehirsAnnexedAndCored(G.save.state.playerProvince, G.save);
    const progressToNextRestoration = getProgressToNextRestoration(G.save.state.playerProvince, G.save);
-   const tiles = Array.from(G.save.state.tiles)
+   const Şehirs = Array.from(G.save.state.Şehirs)
       .filter(
-         ([tile, tileData]) =>
-            tileData.province === G.save.state.playerProvince &&
-            (tileData.rebellion > 0 || !tileData.coreProvinces.has(tileData.province) || tileData.autonomy > 0),
+         ([Şehir, ŞehirData]) =>
+            ŞehirData.province === G.save.state.playerProvince &&
+            (ŞehirData.rebellion > 0 || !ŞehirData.coreProvinces.has(ŞehirData.province) || ŞehirData.autonomy > 0),
       )
       .sort((a, b) => {
          const diff = compareBool(a[1].coreProvinces.has(a[1].province), b[1].coreProvinces.has(b[1].province));
@@ -103,7 +103,7 @@ export function InternalAffairsPage(): React.ReactNode {
             breakdown={governingCost}
             tooltip={(element) => (
                <>
-                  <div className="m10">{html($t(L.GoverningCostIsTheSumOfAllTilesGoverningCost))}</div>
+                  <div className="m10">{html($t(L.GoverningCostIsTheSumOfAllŞehirsGoverningCost))}</div>
                   {element}
                   <div className="divider" />
                   <div className="m10">{$t(L.GoverningCapacityIsDeterminedAsFollows)}</div>
@@ -181,7 +181,7 @@ export function InternalAffairsPage(): React.ReactNode {
                   </div>
                   <div className="divider" />
                   <div className="m10">
-                     {html($t(L.EveryTilesGrantRestorationWithBonusChoice$1, TilesPerRestoration))}
+                     {html($t(L.EveryŞehirsGrantRestorationWithBonusChoice$1, ŞehirsPerRestoration))}
                   </div>
                </>
             }
@@ -192,8 +192,8 @@ export function InternalAffairsPage(): React.ReactNode {
                   <div>{formatNumber(getRestoration(G.save.state.playerProvince, G.save))}</div>
                </div>
                <div className="row my5">
-                  <div className="f1">{$t(L.TilesAnnexedAndCored)}</div>
-                  <div>{formatNumber(tileAnnexedAndCored)}</div>
+                  <div className="f1">{$t(L.ŞehirsAnnexedAndCored)}</div>
+                  <div>{formatNumber(ŞehirAnnexedAndCored)}</div>
                </div>
                <div className="h5" />
                <Progress value={100 * progressToNextRestoration} />
@@ -460,13 +460,13 @@ export function InternalAffairsPage(): React.ReactNode {
             })}
          </div>
          <div className="h1">{$t(L.AutonomyAndRebellion)}</div>
-         {tiles.map(([tile, tileData]) => {
-            const unrest = getTileUnrest(tile, G.save);
+         {Şehirs.map(([Şehir, ŞehirData]) => {
+            const unrest = getŞehirUnrest(Şehir, G.save);
             return (
-               <div className="box m10 text-sm" key={tile}>
+               <div className="box m10 text-sm" key={Şehir}>
                   <div className="h3 row">
-                     {getTileName(tile, G.save)}
-                     {isCapital(tile, G.save) && <div className="mi sm text-yellow">stars</div>}
+                     {getŞehirName(Şehir, G.save)}
+                     {isCapital(Şehir, G.save) && <div className="mi sm text-yellow">stars</div>}
                      <div className="f1" />
                      <div
                         className="mi sm pointer"
@@ -474,12 +474,12 @@ export function InternalAffairsPage(): React.ReactNode {
                            hideModal();
                            G.scene
                               .getCurrent(WorldScene)
-                              ?.lookAt(tile, { time: 0.2 })
+                              ?.lookAt(Şehir, { time: 0.2 })
                               .then((scene) => {
-                                 scene.drawSelectors(new Set([tile]));
-                                 scene.drawProvinceOutline(tileData.province);
+                                 scene.drawSelectors(new Set([Şehir]));
+                                 scene.drawProvinceOutline(ŞehirData.province);
                               });
-                           showPanel(TilePage, { tile });
+                           showPanel(ŞehirPage, { Şehir });
                         }}
                      >
                         open_in_new
@@ -494,23 +494,23 @@ export function InternalAffairsPage(): React.ReactNode {
                   <div className="row mx10 my5">
                      <div className="f1">{$t(L.Autonomy)}</div>
                      <div className="row g5">
-                        <FloatingTip label={$t(L.SetTileAutonomyTo$1, "0")}>
+                        <FloatingTip label={$t(L.SetŞehirAutonomyTo$1, "0")}>
                            <button
                               className="btn text-xs"
                               onClick={() => {
-                                 tileData.autonomy = 0;
+                                 ŞehirData.autonomy = 0;
                                  GameStateUpdated.emit();
                               }}
                            >
                               {$t(L.Reset)}
                            </button>
                         </FloatingTip>
-                        <FloatingTip label={$t(L.SettlingUnrestAdjustsAutonomySoThatTileUnrestIsAtMost$1, "0")}>
+                        <FloatingTip label={$t(L.SettlingUnrestAdjustsAutonomySoThatŞehirUnrestIsAtMost$1, "0")}>
                            <button
                               className="btn text-xs"
                               onClick={() => {
-                                 const unrest = getTileUnrest(tile, G.save).value;
-                                 tileData.autonomy = clamp(tileData.autonomy + Math.ceil(unrest), 0, 100);
+                                 const unrest = getŞehirUnrest(Şehir, G.save).value;
+                                 ŞehirData.autonomy = clamp(ŞehirData.autonomy + Math.ceil(unrest), 0, 100);
                                  GameStateUpdated.emit();
                               }}
                            >
@@ -518,25 +518,25 @@ export function InternalAffairsPage(): React.ReactNode {
                            </button>
                         </FloatingTip>
                      </div>
-                     <div>{tileData.autonomy}</div>
+                     <div>{ŞehirData.autonomy}</div>
                   </div>
                   <div className="row g5 mx10 my5">
                      <div className="f1">{$t(L.Rebellion)}</div>
-                     <MakeCoreButton className="text-xs" id={`InternalAffairsPage_MakeCore_${tile}`} tile={tile} />
-                     <AppeaseButton tile={tile} className="text-xs" />
-                     <CrackDownButton tile={tile} className="text-xs" />
+                     <MakeCoreButton className="text-xs" id={`InternalAffairsPage_MakeCore_${Şehir}`} Şehir={Şehir} />
+                     <AppeaseButton Şehir={Şehir} className="text-xs" />
+                     <CrackDownButton Şehir={Şehir} className="text-xs" />
                      <div
                         className={cls(
-                           tileData.rebellion >= 8 ? "text-red" : tileData.rebellion >= 5 ? "text-yellow" : null,
+                           ŞehirData.rebellion >= 8 ? "text-red" : ŞehirData.rebellion >= 5 ? "text-yellow" : null,
                         )}
                      >
-                        {tileData.rebellion}/10
+                        {ŞehirData.rebellion}/10
                      </div>
                   </div>
                </div>
             );
          })}
-         {tiles.length === 0 && <div className="text-dimmed m10">{$t(L.NoRebellions)}</div>}
+         {Şehirs.length === 0 && <div className="text-dimmed m10">{$t(L.NoRebellions)}</div>}
       </SidebarComp>
    );
 }

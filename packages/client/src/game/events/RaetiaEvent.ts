@@ -4,10 +4,10 @@ import type { ConditionChecks } from "../logic/Calculation";
 import { availableDiplomatChecks } from "../logic/DiplomacyLogic";
 import {
    forcePatronageEffect,
-   isCoreTileChecks,
-   maxCoreTileChecks,
+   isCoreŞehirChecks,
+   maxCoreŞehirChecks,
    mediterraneanCoastChecks,
-   minCoreTileChecks,
+   minCoreŞehirChecks,
    minCulturePercentageChecks,
 } from "../logic/MissionLogic";
 import { changeProvinceCulture } from "../logic/ProvinceLogic";
@@ -31,7 +31,7 @@ export const RaetiaEvent = {
             resources: { gold: -500 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -98,7 +98,7 @@ export const RaetiaEvent = {
             label: () => $t(L.ScreenTheTownsWithFieldTroops),
             modifiers: {
                WarPower: { type: "multiply", value: 0.15, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
          {
@@ -106,7 +106,7 @@ export const RaetiaEvent = {
             modifiers: {
                Stability: { type: "add", value: 10, duration: 2 * 12 },
                Prestige: { type: "multiply", value: -0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
       ],
@@ -160,7 +160,7 @@ export const RaetiaEvent = {
             resources: { gold: -1000 },
             modifiers: {
                Prestige: { type: "multiply", value: 0.2, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -271,7 +271,7 @@ export const RaetiaEvent = {
             resources: { gold: -500 },
             modifiers: {
                Defense: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -397,7 +397,7 @@ export const RaetiaEvent = {
             Germania: 4,
          },
          conditions: function* (province, save): ConditionChecks {
-            yield* isCoreTileChecks(9240645, "Raetia", save);
+            yield* isCoreŞehirChecks(9240645, "Raetia", save);
          },
       },
       buttons: [
@@ -414,7 +414,7 @@ export const RaetiaEvent = {
             label: () => $t(L.SettleAndTaxOurConquests),
             modifiers: {
                LandTax: { type: "multiply", value: 0.2, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.2, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.2, duration: 2 * 12 },
             },
          },
          {
@@ -435,8 +435,8 @@ export const RaetiaEvent = {
          province: new Set(["Raetia"]),
          onMap: { Noricum: true },
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(15, "Raetia", save);
-            yield* maxCoreTileChecks(3, "Noricum", save);
+            yield* minCoreŞehirChecks(15, "Raetia", save);
+            yield* maxCoreŞehirChecks(3, "Noricum", save);
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Noricum", save);
             yield* requirePeaceBetweenChecks(province, "Noricum", save);
             yield* availableDiplomatChecks(province, "Noricum", save);
@@ -473,7 +473,7 @@ export const RaetiaEvent = {
       condition: {
          province: new Set(["Raetia"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(20, province, save);
+            yield* minCoreŞehirChecks(20, province, save);
          },
       },
       buttons: [

@@ -1,7 +1,7 @@
 import { mapOf } from "@project/shared/src/utils/Helper";
 import { GreatWork } from "../game/definitions/GreatWork";
 import { modifierToString } from "../game/definitions/Modifier";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { openUrl } from "../rpc/SteamClient";
 import { G } from "../utils/Global";
 import { $t, L } from "../utils/i18n";
@@ -31,7 +31,7 @@ export function GreatWorkCompletedModal({ greatWork }: { greatWork: GreatWork })
                <div className="f1" />
             </div>
          }
-         content={renderMarkup($t(L.GreatWorkCompletedDesc$1$2, config.name(), config.tile))}
+         content={renderMarkup($t(L.GreatWorkCompletedDesc$1$2, config.name(), config.Şehir))}
          image={config.image.url}
          titleTooltip={<div className="m10">{$t(L.ImageCredit$1, config.image.credit)}</div>}
          buttons={[
@@ -44,7 +44,7 @@ export function GreatWorkCompletedModal({ greatWork }: { greatWork: GreatWork })
                            L.GreatWorkCompletedEffectsActive$1$2$3,
                            config.name(),
                            mapOf(config.modifiers, (modifier, data) => modifierToString(modifier, data)).join(", "),
-                           getTileName(config.tile, G.save),
+                           getŞehirName(config.Şehir, G.save),
                         ),
                      )}
                   </div>

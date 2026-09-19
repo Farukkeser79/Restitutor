@@ -9,7 +9,7 @@ const SOURCE_PATH = "./packages/";
 // HTML tags that require html() wrapper at call sites (add new tags here when used in en.ts)
 const HTML_TAGS = ["i", "b", "q", "br"];
 // Chronicle markup tags (excluded from html() validation)
-const CHRONICLE_TAGS = ["Province", "Tile"];
+const CHRONICLE_TAGS = ["Province", "Şehir"];
 
 const htmlTagPattern = new RegExp(`<(${HTML_TAGS.join("|")})(\\s[^>]*)?>`, "i");
 const chronicleTagPattern = new RegExp(

@@ -91,10 +91,10 @@ export async function bootstrap(): Promise<void> {
    }
 
    if (isDev()) {
-      G.tileEditor = RomeMap;
-      G.tileEditor.forEach((data, tile) => {
+      G.ŞehirEditor = RomeMap;
+      G.ŞehirEditor.forEach((data, Şehir) => {
          if (!data.province) {
-            throw new Error(`Invalid tile config: ${tile}: ${JSON.stringify(data)}`);
+            throw new Error(`Invalid Şehir config: ${Şehir}: ${JSON.stringify(data)}`);
          }
       });
    }

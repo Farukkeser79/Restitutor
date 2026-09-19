@@ -1,7 +1,7 @@
-import { pointToTile, type Tile, tileToPoint } from "@project/shared/src/utils/Helper";
+import { pointToŞehir, type Şehir, ŞehirToPoint } from "@project/shared/src/utils/Helper";
 import { makeNoise2D } from "open-simplex-noise";
 import type { SaveGame } from "../GameState";
-import { getTileTerrain } from "../logic/TileLogic";
+import { getŞehirTerrain } from "../logic/ŞehirLogic";
 import { MapGrid } from "../MapGrid";
 import { RomeMap } from "../RomeMap";
 import type { Building } from "./Building";
@@ -12,13 +12,13 @@ import { Province } from "./Province";
 import type { Religion } from "./Religion";
 import type { Terrain } from "./Terrain";
 
-export interface ITileConfig {
+export interface IŞehirConfig {
    province?: Province;
    name?: string;
    isCapital?: boolean;
 }
 
-export interface ITileData {
+export interface IŞehirData {
    nameOverride?: string;
    province: Province;
    coreProvinces: Set<Province>;
@@ -46,15 +46,15 @@ export interface ITileData {
    };
 }
 
-export function getBorderingProvinces(tile: Tile, save: SaveGame): Province[] {
+export function getBorderingProvinces(Şehir: Şehir, save: SaveGame): Province[] {
    const result: Province[] = [];
-   const province = save.state.tiles.get(tile)?.province;
+   const province = save.state.Şehirs.get(Şehir)?.province;
    if (!province) {
       return [];
    }
    for (let dir = 0; dir < 6; dir++) {
-      const neighbor = pointToTile(MapGrid.getNeighbor(tileToPoint(tile), dir));
-      const neighborProvince = save.state.tiles.get(neighbor)?.province;
+      const neighbor = pointToŞehir(MapGrid.getNeighbor(ŞehirToPoint(Şehir), dir));
+      const neighborProvince = save.state.Şehirs.get(neighbor)?.province;
       if (neighborProvince && neighborProvince !== province) {
          result.push(neighborProvince);
       }
@@ -70,24 +70,24 @@ export const TerrainToGoods: Record<Terrain, Goods[]> = {
    Arid: ["ironOre", "grain", "livestock"],
 };
 
-export function initTiles(): Map<Tile, ITileData> {
+export function initŞehirs(): Map<Şehir, IŞehirData> {
    const noise = makeNoise2D(Date.now());
    return new Map(
-      Array.from(RomeMap.entries()).map(([tile, config]) => {
+      Array.from(RomeMap.entries()).map(([Şehir, config]) => {
          if (!config.name || !config.province) {
-            throw new Error(`Invalid tile config: ${tile}: ${JSON.stringify(config)}`);
+            throw new Error(`Invalid Şehir config: ${Şehir}: ${JSON.stringify(config)}`);
          }
-         const { x, y } = tileToPoint(tile);
+         const { x, y } = ŞehirToPoint(Şehir);
          const random = (noise(x, y) + 1) / 2;
-         const terrain = getTileTerrain(tile);
+         const terrain = getŞehirTerrain(Şehir);
          const goods = TerrainToGoods[terrain];
-         const data: ITileData = initTileData(config.province, goods[Math.floor(random * goods.length)]);
-         return [tile, data];
+         const data: IŞehirData = initŞehirData(config.province, goods[Math.floor(random * goods.length)]);
+         return [Şehir, data];
       }),
    );
 }
 
-export function initTileData(province: Province, goods: Goods): ITileData {
+export function initŞehirData(province: Province, goods: Goods): IŞehirData {
    const provinceConfig = Province[province];
    return {
       province: province,

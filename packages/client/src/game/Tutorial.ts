@@ -1,4 +1,4 @@
-import { entriesOf, formatNumber, formatPercent, type Tile } from "@project/shared/src/utils/Helper";
+import { entriesOf, formatNumber, formatPercent, type Şehir } from "@project/shared/src/utils/Helper";
 import { G } from "../utils/Global";
 import { $t, L } from "../utils/i18n";
 import { unlockAchievement } from "./Achievement";
@@ -6,8 +6,8 @@ import { Goods } from "./definitions/Goods";
 import { DefaultConscription, Province, ProvinceResourceNames } from "./definitions/Province";
 import { SocialClass } from "./definitions/SocialClass";
 import { Tech } from "./definitions/Tech";
-import { Tiles } from "./definitions/TileConstants";
-import { getTileName } from "./definitions/TileName";
+import { Şehirs } from "./definitions/ŞehirConstants";
+import { getŞehirName } from "./definitions/ŞehirName";
 import { LugdunensisEvent } from "./events/LugdunensisEvent";
 import type { SaveGame } from "./GameState";
 import { BaseDiplomats, getRelation } from "./logic/DiplomacyLogic";
@@ -24,7 +24,7 @@ import { getCurrentGeneral, getCurrentWars, WarOneTimeDiplomaticPoint } from "./
 import { provinceSel, techSel } from "./ProvinceSelector";
 
 const TutorialEnemyProvince: Province = "Belgica" as const;
-const TutorialWarGoal: Tile = Tiles.Durocortorum;
+const TutorialWarGoal: Şehir = Şehirs.Durocortorum;
 
 export interface ITutorial {
    id: string;
@@ -163,7 +163,7 @@ export const Tutorial: ITutorial[] = [
       selectors: [
          provinceSel("Belgica"),
          "#DiplomacyPage_DeclareWar_Belgica",
-         `#DeclareWarPage_Tile_${TutorialWarGoal}_Unselected`,
+         `#DeclareWarPage_Şehir_${TutorialWarGoal}_Unselected`,
          "#DeclareWarPage_DeclareWar_Belgica:enabled",
       ],
       setup: (save) => {
@@ -195,7 +195,7 @@ export const Tutorial: ITutorial[] = [
       name: () => $t(L.SignPeaceTreaty),
       desc: () => $t(L.TutorialSignPeaceTreatyAfterVictoryDesc$1, TutorialWarGoal),
       progress: (save) => {
-         if (save.state.tiles.get(TutorialWarGoal)?.province === save.state.playerProvince) {
+         if (save.state.Şehirs.get(TutorialWarGoal)?.province === save.state.playerProvince) {
             return [1, 1];
          }
          return [0, 1];
@@ -204,10 +204,10 @@ export const Tutorial: ITutorial[] = [
    },
    {
       id: "MakeCore",
-      name: (save) => $t(L.TutorialMakeTileOurCore$1, getTileName(TutorialWarGoal, save)),
+      name: (save) => $t(L.TutorialMakeŞehirOurCore$1, getŞehirName(TutorialWarGoal, save)),
       desc: () => $t(L.MakeDurocortorumOurCoreDesc),
       progress: (save) => {
-         const data = save.state.tiles.get(TutorialWarGoal);
+         const data = save.state.Şehirs.get(TutorialWarGoal);
          if (data?.province === save.state.playerProvince && data?.coreProvinces.has(save.state.playerProvince)) {
             return [1, 1];
          }
@@ -217,16 +217,16 @@ export const Tutorial: ITutorial[] = [
    },
    {
       id: "UpgradeProduction",
-      name: (save) => $t(L.TutorialUpgradeTileProduction$1, getTileName(Tiles.Lutetia, save)),
-      desc: () => $t(L.TutorialUpgradeTileProductionDesc$1, Tiles.Lutetia),
+      name: (save) => $t(L.TutorialUpgradeŞehirProduction$1, getŞehirName(Şehirs.Lutetia, save)),
+      desc: () => $t(L.TutorialUpgradeŞehirProductionDesc$1, Şehirs.Lutetia),
       progress: (save) => {
-         const data = save.state.tiles.get(Tiles.Lutetia);
+         const data = save.state.Şehirs.get(Şehirs.Lutetia);
          if ((data?.upgradeCount ?? 0) > 0) {
             return [1, 1];
          }
          return [0, 1];
       },
-      selectors: ["#TopPanel_TileCount", `#TileListModal_UpgradeProduction_${Tiles.Lutetia}`],
+      selectors: ["#TopPanel_ŞehirCount", `#ŞehirListModal_UpgradeProduction_${Şehirs.Lutetia}`],
    },
    {
       id: "LowerArmyMaintenance",

@@ -7,18 +7,18 @@ import { unlockAchievement } from "../Achievement";
 import { addChronicleEntry } from "../definitions/Chronicle";
 import type { Province } from "../definitions/Province";
 import { hasProvinceUpgrade, ProvinceUpgrades } from "../definitions/ProvinceUpgrades";
-import { RefreshTiles } from "../Events";
+import { RefreshŞehirs } from "../Events";
 import type { SaveGame } from "../GameState";
 import { getRelation } from "../logic/DiplomacyLogic";
 import { addModifier } from "../logic/ModifierLogic";
 import { addProvinceResource } from "../logic/ProvinceLogic";
 import { showGameEventModal } from "../logic/TickProvince";
-import { getTruceDuration, type IWar, WhitePeaceCostPerTile, warIsOngoingCondition } from "../logic/WarLogic";
+import { getTruceDuration, type IWar, WhitePeaceCostPerŞehir, warIsOngoingCondition } from "../logic/WarLogic";
 import { finalizeCondition, type IGameAction } from "./GameAction";
 
 export function NegotiateWhitePeaceAction(war: IWar, province: Province, save: SaveGame): IGameAction {
    return {
-      cost: { diplomatic: war.casusBelli === "BarbarianRaid" ? 0 : WhitePeaceCostPerTile * war.tiles.size },
+      cost: { diplomatic: war.casusBelli === "BarbarianRaid" ? 0 : WhitePeaceCostPerŞehir * war.Şehirs.size },
       condition: finalizeCondition([
          {
             name: $t(L.WeAreTheLeadAttackerOfTheWar),
@@ -66,7 +66,7 @@ export function NegotiateWhitePeaceAction(war: IWar, province: Province, save: S
                save,
             });
          }
-         RefreshTiles.emit({ tiles: war.tiles, options: { indicator: true } });
+         RefreshŞehirs.emit({ Şehirs: war.Şehirs, options: { indicator: true } });
          if (headless) {
             if (war.defender === save.state.playerProvince) {
                showGameEventModal(InvaderSueForWhitePeaceModal, { war });

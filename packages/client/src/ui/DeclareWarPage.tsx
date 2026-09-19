@@ -1,10 +1,10 @@
 import { type ComboboxItem, Select } from "@mantine/core";
-import { cls, formatNumber, type Tile } from "@project/shared/src/utils/Helper";
+import { cls, formatNumber, type Şehir } from "@project/shared/src/utils/Helper";
 import { useEffect, useState } from "react";
 import { DeclareWarAction, getOneTimeConsequences } from "../game/actions/DeclareWarAction";
 import { CasusBelli } from "../game/definitions/CasusBelli";
 import type { Province } from "../game/definitions/Province";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { GameStateUpdated } from "../game/Events";
 import { getRelation } from "../game/logic/DiplomacyLogic";
 import {
@@ -12,7 +12,7 @@ import {
    getWarParticipants,
    getWarScore,
    getWarSuccessChance,
-   getWarTiles,
+   getWarŞehirs,
 } from "../game/logic/WarLogic";
 import { WorldScene } from "../scenes/WorldScene";
 import { G } from "../utils/Global";
@@ -32,11 +32,11 @@ import { WarPowerComp } from "./WarPowerComp";
 
 export function DeclareWarPage({ province }: { province: Province }): React.ReactNode {
    refreshOnTypedEvent(GameStateUpdated);
-   const [selectedTiles, setSelectedTiles] = useState<Set<Tile>>(new Set());
+   const [selectedŞehirs, setSelectedŞehirs] = useState<Set<Şehir>>(new Set());
    const defenderState = G.save.state.provinces[province];
    const { coAttackers, coDefenders } = getWarParticipants(G.save.state.playerProvince, province, G.save);
    const successChance = getWarSuccessChance(G.save.state.playerProvince, coAttackers, province, coDefenders, G.save);
-   const warTiles = getWarTiles(G.save);
+   const warŞehirs = getWarŞehirs(G.save);
    const relation = getRelation(G.save.state.playerProvince, province, G.save);
    const casusBelli: ComboboxItem[] = [
       ...Array.from(relation?.casusBelli ?? []).map(([cb, data]) => ({
@@ -49,38 +49,38 @@ export function DeclareWarPage({ province }: { province: Province }): React.Reac
    if (selectedCasusBelli !== "None" && !relation?.casusBelli.has(selectedCasusBelli)) {
       setSelectedCasusBelli(casusBelli[0].value as CasusBelli);
    }
-   const warScore = getWarScore(G.save.state.playerProvince, province, selectedTiles, selectedCasusBelli, G.save);
-   const warGoalTiles = new Set(
-      Array.from(G.save.state.tiles)
-         .filter(([tile, data]) => data.province === province && !warTiles.has(tile))
-         .map(([tile]) => tile),
+   const warScore = getWarScore(G.save.state.playerProvince, province, selectedŞehirs, selectedCasusBelli, G.save);
+   const warGoalŞehirs = new Set(
+      Array.from(G.save.state.Şehirs)
+         .filter(([Şehir, data]) => data.province === province && !warŞehirs.has(Şehir))
+         .map(([Şehir]) => Şehir),
    );
    useEffect(() => {
       let dirty = false;
-      const updatedSelectedTiles = new Set<Tile>();
-      for (const tile of selectedTiles) {
-         if (warGoalTiles.has(tile)) {
-            updatedSelectedTiles.add(tile);
+      const updatedSelectedŞehirs = new Set<Şehir>();
+      for (const Şehir of selectedŞehirs) {
+         if (warGoalŞehirs.has(Şehir)) {
+            updatedSelectedŞehirs.add(Şehir);
          } else {
             dirty = true;
          }
       }
       if (dirty) {
-         setSelectedTiles(updatedSelectedTiles);
+         setSelectedŞehirs(updatedSelectedŞehirs);
       }
-      G.scene.getCurrent(WorldScene)?.drawSelectors(updatedSelectedTiles);
-      G.scene.getCurrent(WorldScene)?.setClickTileHandler((tile) => {
-         if (!warGoalTiles.has(tile)) {
+      G.scene.getCurrent(WorldScene)?.drawSelectors(updatedSelectedŞehirs);
+      G.scene.getCurrent(WorldScene)?.setClickŞehirHandler((Şehir) => {
+         if (!warGoalŞehirs.has(Şehir)) {
             G.scene.getCurrent(WorldScene)?.drawProvinceOutline(province);
             playSound("error");
             return;
          }
-         setSelectedTiles((prev) => {
+         setSelectedŞehirs((prev) => {
             const result = new Set(prev);
-            if (result.has(tile)) {
-               result.delete(tile);
+            if (result.has(Şehir)) {
+               result.delete(Şehir);
             } else {
-               result.add(tile);
+               result.add(Şehir);
             }
             playSound("click");
             G.scene.getCurrent(WorldScene)?.drawSelectors(result);
@@ -90,10 +90,10 @@ export function DeclareWarPage({ province }: { province: Province }): React.Reac
       return () => {
          G.scene.enqueue(WorldScene, (scene) => {
             scene.drawSelectors(new Set());
-            scene.clearClickTileHandler();
+            scene.clearClickŞehirHandler();
          });
       };
-   }, [province, selectedTiles, warGoalTiles]);
+   }, [province, selectedŞehirs, warGoalŞehirs]);
    const effect = CasusBelli[selectedCasusBelli].effect?.();
    if (!relation) {
       return null;
@@ -105,30 +105,30 @@ export function DeclareWarPage({ province }: { province: Province }): React.Reac
             className="m10 text-sm"
             style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start", gap: "0.3125rem" }}
          >
-            {Array.from(warGoalTiles).map((tile) => (
+            {Array.from(warGoalŞehirs).map((Şehir) => (
                <div
                   className={cls(
                      "box row py2 px2 pr5 g5 pointer",
-                     selectedTiles.has(tile) ? "primary text-primary" : "",
+                     selectedŞehirs.has(Şehir) ? "primary text-primary" : "",
                   )}
-                  id={`DeclareWarPage_Tile_${tile}_${selectedTiles.has(tile) ? "Selected" : "Unselected"}`}
-                  key={tile}
+                  id={`DeclareWarPage_Şehir_${Şehir}_${selectedŞehirs.has(Şehir) ? "Selected" : "Unselected"}`}
+                  key={Şehir}
                   onClick={() =>
-                     setSelectedTiles((prev) => {
+                     setSelectedŞehirs((prev) => {
                         const result = new Set(prev);
-                        if (result.has(tile)) {
-                           result.delete(tile);
+                        if (result.has(Şehir)) {
+                           result.delete(Şehir);
                         } else {
-                           result.add(tile);
+                           result.add(Şehir);
                         }
                         G.scene.getCurrent(WorldScene)?.drawSelectors(result);
                         return result;
                      })
                   }
                >
-                  <div className="mi sm">{selectedTiles.has(tile) ? "check_box" : "check_box_outline_blank"}</div>
-                  {getTileName(tile, G.save)}
-                  {defenderState?.capital === tile ? <div className="mi xs">stars</div> : null}
+                  <div className="mi sm">{selectedŞehirs.has(Şehir) ? "check_box" : "check_box_outline_blank"}</div>
+                  {getŞehirName(Şehir, G.save)}
+                  {defenderState?.capital === Şehir ? <div className="mi xs">stars</div> : null}
                </div>
             ))}
          </div>
@@ -173,7 +173,7 @@ export function DeclareWarPage({ province }: { province: Province }): React.Reac
             items={getOneTimeConsequences(
                G.save.state.playerProvince,
                province,
-               selectedTiles,
+               selectedŞehirs,
                selectedCasusBelli,
                G.save,
             )}
@@ -182,7 +182,7 @@ export function DeclareWarPage({ province }: { province: Province }): React.Reac
          <WarMonthlyConsequences
             war={{
                attacker: G.save.state.playerProvince,
-               tiles: selectedTiles,
+               Şehirs: selectedŞehirs,
                casusBelli: selectedCasusBelli,
             }}
          />
@@ -203,7 +203,7 @@ export function DeclareWarPage({ province }: { province: Province }): React.Reac
                   coAttackers,
                   province,
                   coDefenders,
-                  selectedTiles,
+                  selectedŞehirs,
                   selectedCasusBelli,
                   G.save,
                )}

@@ -1,4 +1,4 @@
-import { fromEntries, keysOf, mapOf, mapSafePush, type Tile, type ValueOf } from "@project/shared/src/utils/Helper";
+import { fromEntries, keysOf, mapOf, mapSafePush, type Şehir, type ValueOf } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import type { GameEvent } from "../events/GameEvents";
 import { RomeMap } from "../RomeMap";
@@ -141,7 +141,7 @@ export interface IProvince {
    stats: ProvinceStats;
    advisors: Record<GovernorPower, { selected: IAdvisor | null; candidates: IAdvisor[] }>;
    focus: GovernorPower;
-   capital: Tile;
+   capital: Şehir;
    rivals: [Province | null, Province | null];
    _relations: Map<Province, IRelation>;
    unlockedTech: Set<Tech>;
@@ -183,7 +183,7 @@ export const AIActions = [
    "Construct",
    "Appease",
    "CrackDown",
-   "ChangeTileGoods",
+   "ChangeŞehirGoods",
    "LookForSpouse",
    "RecruitGeneral",
    "RequestFunding",
@@ -254,7 +254,7 @@ export const Province = {
       name: () => $t(L.ProvinceAfrica),
       culture: "Punic",
       religion: "GrecoRoman",
-      upgrades: ["LittoralTaxDistricts", "MercantileMobilization", "GranaryOfTheEmpire"],
+      upgrades: ["LittoralTaxDistricts", "MercanŞehirMobilization", "GranaryOfTheEmpire"],
    },
    Aquitania: {
       code: "AQ",
@@ -502,9 +502,9 @@ export const EnabledProvinces: Province[] = [
 EnabledProvinces.sort();
 export const AlwaysFreeProvinces: Province[] = ["Lugdunensis"];
 
-export const ProvinceOriginalTiles: Map<Province, Tile[]> = new Map();
-for (const [tile, data] of RomeMap) {
+export const ProvinceOriginalŞehirs: Map<Province, Şehir[]> = new Map();
+for (const [Şehir, data] of RomeMap) {
    if (data.province) {
-      mapSafePush(ProvinceOriginalTiles, data.province, tile);
+      mapSafePush(ProvinceOriginalŞehirs, data.province, Şehir);
    }
 }

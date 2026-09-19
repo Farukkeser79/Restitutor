@@ -1,8 +1,8 @@
-import type { Tile } from "@project/shared/src/utils/Helper";
+import type { Şehir } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import type { Province } from "../definitions/Province";
 import { TimedActions } from "../definitions/TimedAction";
-import { RefreshTiles } from "../Events";
+import { RefreshŞehirs } from "../Events";
 import type { SaveGame } from "../GameState";
 import { getAnnexClientCost, getRelation } from "../logic/DiplomacyLogic";
 import { addModifier } from "../logic/ModifierLogic";
@@ -130,14 +130,14 @@ export function AnnexClientAction(ourProvince: Province, clientProvince: Provinc
       ]),
       effect: () => {
          startTimedAction("AnnexClient", ourProvince, save);
-         const tiles = new Set<Tile>();
-         for (const [tile, data] of save.state.tiles) {
+         const Şehirs = new Set<Şehir>();
+         for (const [Şehir, data] of save.state.Şehirs) {
             if (data.province === clientProvince) {
                data.province = ourProvince;
-               tiles.add(tile);
+               Şehirs.add(Şehir);
             }
          }
-         RefreshTiles.emit({ tiles, options: { indicator: true, visual: true } });
+         RefreshŞehirs.emit({ Şehirs, options: { indicator: true, visual: true } });
       },
    };
 }

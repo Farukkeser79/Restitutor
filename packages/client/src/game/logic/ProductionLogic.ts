@@ -24,7 +24,7 @@ import {
    spendProvinceResource,
 } from "./ProvinceLogic";
 import { hasResearched } from "./TechLogic";
-import { getTileOutput } from "./TileLogic";
+import { getŞehirOutput } from "./ŞehirLogic";
 
 export function makeProductionTree(province: Province, save: SaveGame): { nodes: Node[]; edges: Edge[] } {
    const nodes: ProductionNode[] = [];
@@ -85,7 +85,7 @@ export type GoodsIO = {
    exported: number;
 };
 
-export function initTileProduction(province: Province, save: SaveGame): void {
+export function initŞehirProduction(province: Province, save: SaveGame): void {
    const state = save.state.provinces[province];
    if (!state) {
       return;
@@ -95,9 +95,9 @@ export function initTileProduction(province: Province, save: SaveGame): void {
          state.production[goods].capacity = 0;
       }
    });
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
-         state.production[data.goods].capacity += getTileOutput(tile, save).value;
+         state.production[data.goods].capacity += getŞehirOutput(Şehir, save).value;
       }
    }
 }
@@ -111,7 +111,7 @@ export function tickProduction(province: Province, save: SaveGame): void {
    monthly.tradeGold.clear();
    monthly.goodsTax.clear();
    monthly.skippedTrade.clear();
-   initTileProduction(province, save);
+   initŞehirProduction(province, save);
    const relations = getRelations(province, save);
    // Trades
    if (relations) {
@@ -286,7 +286,7 @@ export function getProvinceProductionCapacity(province: Province, save: SaveGame
    result.add.push({ name: $t(L.BaseValue), value: 5 });
    attachModifiers("ProductionCapacity", result, province, save);
    let workshop = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province && data.buildings.has("Workshop")) {
          ++workshop;
       }

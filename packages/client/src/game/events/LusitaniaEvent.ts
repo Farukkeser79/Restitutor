@@ -1,10 +1,10 @@
 import { $t, L } from "../../utils/i18n";
-import { getTileName } from "../definitions/TileName";
+import { getŞehirName } from "../definitions/ŞehirName";
 import type { ConditionChecks } from "../logic/Calculation";
 import {
-   allCoreTileChecks,
-   annexTiles,
-   minCoreTileChecks,
+   allCoreŞehirChecks,
+   annexŞehirs,
+   minCoreŞehirChecks,
    provinceResourceChecks,
    provinceRevenueChecks,
 } from "../logic/MissionLogic";
@@ -27,7 +27,7 @@ export const LusitaniaEvent = {
             label: () => $t(L.RepairTheAqueductsAndReservoirs),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                Stability: { type: "add", value: 10, duration: 2 * 12 },
             },
          },
@@ -78,7 +78,7 @@ export const LusitaniaEvent = {
             resources: { gold: -500 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -102,7 +102,7 @@ export const LusitaniaEvent = {
          {
             label: () => $t(L.FavorTheGreatEstates),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
                LandTax: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
@@ -226,7 +226,7 @@ export const LusitaniaEvent = {
             label: () => $t(L.ResistTheirSettlement),
             modifiers: {
                WarPower: { type: "multiply", value: 0.15, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
       ],
@@ -363,7 +363,7 @@ export const LusitaniaEvent = {
          conditions: function* (province, save): ConditionChecks {
             yield* requireAnyTreatyBetweenChecks(["Alliance", "Patron"], province, "Tarraconensis", save);
             yield* provinceResourceChecks("gold", 10_000, province, save);
-            yield* allCoreTileChecks([8519758, 8585295], "Tarraconensis", save);
+            yield* allCoreŞehirChecks([8519758, 8585295], "Tarraconensis", save);
             return;
          },
       },
@@ -374,11 +374,11 @@ export const LusitaniaEvent = {
             custom: [
                {
                   desc: (province, save) => {
-                     const tileNames = [8519758, 8585295].map((tile) => getTileName(tile, save)).join(", ");
-                     return $t(L.$1Annexes$2, getProvinceName(province, save), tileNames);
+                     const ŞehirNames = [8519758, 8585295].map((Şehir) => getŞehirName(Şehir, save)).join(", ");
+                     return $t(L.$1Annexes$2, getProvinceName(province, save), ŞehirNames);
                   },
                   effect: (province, save) => {
-                     annexTiles({ tiles: [8519758, 8585295], province, save });
+                     annexŞehirs({ Şehirs: [8519758, 8585295], province, save });
                   },
                },
             ],
@@ -398,7 +398,7 @@ export const LusitaniaEvent = {
       condition: {
          province: new Set(["Lusitania"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(15, province, save);
+            yield* minCoreŞehirChecks(15, province, save);
             yield* provinceRevenueChecks(200, province, save);
          },
       },
@@ -420,7 +420,7 @@ export const LusitaniaEvent = {
       condition: {
          province: new Set(["Lusitania"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(20, province, save);
+            yield* minCoreŞehirChecks(20, province, save);
             yield* provinceRevenueChecks(300, province, save);
          },
       },

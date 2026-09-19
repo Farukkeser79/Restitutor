@@ -1,14 +1,14 @@
 import { $t, L } from "../../utils/i18n";
 import { OfferAllianceAction } from "../actions/TreatyActions";
 import { Province } from "../definitions/Province";
-import { getTileName } from "../definitions/TileName";
+import { getŞehirName } from "../definitions/ŞehirName";
 import type { ConditionChecks } from "../logic/Calculation";
 import { availableDiplomatChecks } from "../logic/DiplomacyLogic";
 import {
-   annexTiles,
+   annexŞehirs,
    forcePatronageEffect,
-   isCoreTileChecks,
-   maxCoreTileChecks,
+   isCoreŞehirChecks,
+   maxCoreŞehirChecks,
    provinceResourceChecks,
 } from "../logic/MissionLogic";
 import { getProvinceName, getProvinceResource } from "../logic/ProvinceLogic";
@@ -36,7 +36,7 @@ export const TarraconensisEvent = {
             label: () => $t(L.DrainTheOldWorkings),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
             },
          },
          {
@@ -121,7 +121,7 @@ export const TarraconensisEvent = {
             resources: { gold: -1000 },
             modifiers: {
                Defense: { type: "multiply", value: 0.15, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -154,7 +154,7 @@ export const TarraconensisEvent = {
          {
             label: () => $t(L.GrantTheCitiesALighterAssessment),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                LandTax: { type: "multiply", value: -0.1, duration: 2 * 12 },
                Stability: { type: "add", value: 10, duration: 2 * 12 },
             },
@@ -174,14 +174,14 @@ export const TarraconensisEvent = {
             label: () => $t(L.RepairThePublicCanals),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
             label: () => $t(L.GrantTheWatersToTheGreatEstates),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
                LandTax: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
@@ -255,7 +255,7 @@ export const TarraconensisEvent = {
             label: () => $t(L.ReceiveTheRefugeesAndOfficials),
             resources: { administrative: 100 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                Stability: { type: "add", value: -10, duration: 2 * 12 },
             },
          },
@@ -321,7 +321,7 @@ export const TarraconensisEvent = {
          {
             label: () => $t(L.RestoreTheFieldsAndWorkshops),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -341,7 +341,7 @@ export const TarraconensisEvent = {
          playerOnly: true,
          onMap: { Baetica: true },
          conditions: function* (province, save): ConditionChecks {
-            yield* maxCoreTileChecks(3, "Baetica", save);
+            yield* maxCoreŞehirChecks(3, "Baetica", save);
          },
       },
       buttons: [
@@ -424,7 +424,7 @@ export const TarraconensisEvent = {
          conditions: function* (province, save): ConditionChecks {
             yield* requireAnyTreatyBetweenChecks(["Alliance", "Patron"], province, "Lusitania", save);
             yield* provinceResourceChecks("gold", 5000, province, save);
-            yield* isCoreTileChecks(8585296, "Lusitania", save);
+            yield* isCoreŞehirChecks(8585296, "Lusitania", save);
             return;
          },
       },
@@ -435,9 +435,9 @@ export const TarraconensisEvent = {
             custom: [
                {
                   desc: (province, save) =>
-                     $t(L.$1Annexes$2, getProvinceName(province, save), getTileName(8585296, save)),
+                     $t(L.$1Annexes$2, getProvinceName(province, save), getŞehirName(8585296, save)),
                   effect: (province, save) => {
-                     annexTiles({ tiles: [8585296], province, save });
+                     annexŞehirs({ Şehirs: [8585296], province, save });
                   },
                },
             ],

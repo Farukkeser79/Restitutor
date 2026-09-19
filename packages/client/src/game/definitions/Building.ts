@@ -1,4 +1,4 @@
-import type { Tile } from "@project/shared/src/utils/Helper";
+import type { Şehir } from "@project/shared/src/utils/Helper";
 import Amphitheatre from "../../assets/images/buildings/Amphitheatre.webp";
 import ArmyCamp from "../../assets/images/buildings/ArmyCamp.webp";
 import Barracks from "../../assets/images/buildings/Barracks.webp";
@@ -16,7 +16,7 @@ import Workshop from "../../assets/images/buildings/Workshop.webp";
 import { $t, L } from "../../utils/i18n";
 import type { ICondition } from "../actions/GameAction";
 import type { SaveGame } from "../GameState";
-import { isCoastal } from "../logic/TileLogic";
+import { isCoastal } from "../logic/ŞehirLogic";
 import type { ProvinceResourceCosts } from "./Province";
 
 export interface IBuilding {
@@ -25,14 +25,14 @@ export interface IBuilding {
    image: string;
    construction: ProvinceResourceCosts;
    maintenance: ProvinceResourceCosts;
-   conditions: (tile: Tile, save: SaveGame) => ICondition[];
+   conditions: (Şehir: Şehir, save: SaveGame) => ICondition[];
    imageCredit: string;
 }
 
 export const _Buildings = {
    Amphitheatre: {
       name: () => $t(L.BuildingAmphitheatre),
-      desc: () => $t(L.$1TileUnrest, "-10"),
+      desc: () => $t(L.$1ŞehirUnrest, "-10"),
       image: Amphitheatre,
       construction: {
          gold: 100,
@@ -45,7 +45,7 @@ export const _Buildings = {
    },
    CircusMaximus: {
       name: () => $t(L.BuildingCircusMaximus),
-      desc: () => $t(L.$1TileUnrest, "-20"),
+      desc: () => $t(L.$1ŞehirUnrest, "-20"),
       image: CircusMaximus,
       construction: {
          gold: 400,
@@ -58,7 +58,7 @@ export const _Buildings = {
    },
    TownSquare: {
       name: () => $t(L.BuildingTownSquare),
-      desc: () => $t(L.$1TileLandTax, "+20%"),
+      desc: () => $t(L.$1ŞehirLandTax, "+20%"),
       image: TownSquare,
       construction: {
          gold: 100,
@@ -71,7 +71,7 @@ export const _Buildings = {
    },
    Forum: {
       name: () => $t(L.BuildingForum),
-      desc: () => $t(L.$1TileLandTax, "+40%"),
+      desc: () => $t(L.$1ŞehirLandTax, "+40%"),
       image: Forum,
       construction: {
          gold: 400,
@@ -84,7 +84,7 @@ export const _Buildings = {
    },
    Market: {
       name: () => $t(L.BuildingMarket),
-      desc: () => $t(L.$1TileOutput, "+20%"),
+      desc: () => $t(L.$1ŞehirOutput, "+20%"),
       image: Market,
       construction: {
          gold: 100,
@@ -97,7 +97,7 @@ export const _Buildings = {
    },
    TradeDistrict: {
       name: () => $t(L.BuildingTradeDistrict),
-      desc: () => $t(L.$1TileOutput, "+40%"),
+      desc: () => $t(L.$1ŞehirOutput, "+40%"),
       image: TradeDistrict,
       construction: {
          gold: 400,
@@ -110,7 +110,7 @@ export const _Buildings = {
    },
    ArmyCamp: {
       name: () => $t(L.BuildingArmyCamp),
-      desc: () => $t(L.$1TileManpower, "+20%"),
+      desc: () => $t(L.$1ŞehirManpower, "+20%"),
       image: ArmyCamp,
       construction: {
          gold: 100,
@@ -123,7 +123,7 @@ export const _Buildings = {
    },
    Barracks: {
       name: () => $t(L.BuildingBarracks),
-      desc: () => $t(L.$1TileManpower, "+40%"),
+      desc: () => $t(L.$1ŞehirManpower, "+40%"),
       image: Barracks,
       construction: {
          gold: 400,
@@ -136,7 +136,7 @@ export const _Buildings = {
    },
    Castra: {
       name: () => $t(L.BuildingCastra),
-      desc: () => $t(L.$1TileDefense, "+20%"),
+      desc: () => $t(L.$1ŞehirDefense, "+20%"),
       image: Castra,
       construction: {
          gold: 100,
@@ -149,7 +149,7 @@ export const _Buildings = {
    },
    Citadel: {
       name: () => $t(L.BuildingCitadel),
-      desc: () => $t(L.$1TileDefense, "+40%"),
+      desc: () => $t(L.$1ŞehirDefense, "+40%"),
       image: Citadel,
       construction: {
          gold: 400,
@@ -162,7 +162,7 @@ export const _Buildings = {
    },
    Temple: {
       name: () => $t(L.BuildingTemple),
-      desc: () => $t(L.$1TileMaintenanceCostAnd$2BuildingSlot, "-20%", "+1"),
+      desc: () => $t(L.$1ŞehirMaintenanceCostAnd$2BuildingSlot, "-20%", "+1"),
       image: Temple,
       construction: {
          gold: 200,
@@ -175,7 +175,7 @@ export const _Buildings = {
    },
    Courthouse: {
       name: () => $t(L.BuildingCourthouse),
-      desc: () => $t(L.$1TileGoverningCost, "-20%"),
+      desc: () => $t(L.$1ŞehirGoverningCost, "-20%"),
       image: Courthouse,
       construction: {
          gold: 100,
@@ -209,7 +209,7 @@ export const _Buildings = {
       maintenance: {
          gold: 0.5,
       },
-      conditions: (tile, save) => [{ name: $t(L.TileIsCoastal), value: isCoastal(tile) }],
+      conditions: (Şehir, save) => [{ name: $t(L.ŞehirIsCoastal), value: isCoastal(Şehir) }],
       imageCredit: "View of a Mediterranean harbour, Hendrik Frans Van Lint (Flemish, 1684-1763)",
    },
 } as const satisfies Record<string, IBuilding>;

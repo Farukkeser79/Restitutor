@@ -7,7 +7,7 @@ import { unlockAchievement } from "../Achievement";
 import { addChronicleEntry } from "../definitions/Chronicle";
 import type { Province } from "../definitions/Province";
 import { hasProvinceUpgrade, ProvinceUpgrades } from "../definitions/ProvinceUpgrades";
-import { RefreshTiles } from "../Events";
+import { RefreshŞehirs } from "../Events";
 import type { SaveGame } from "../GameState";
 import { getRelation } from "../logic/DiplomacyLogic";
 import { addModifier } from "../logic/ModifierLogic";
@@ -29,8 +29,8 @@ export function SignPeaceTreatyAction(war: IWar, province: Province, save: SaveG
          },
       ]),
       effect: ({ headless }) => {
-         for (const tile of war.tiles) {
-            const data = save.state.tiles.get(tile);
+         for (const Şehir of war.Şehirs) {
+            const data = save.state.Şehirs.get(Şehir);
             if (data) {
                data.province = war.attacker;
                if (hasFlag(war.flag, WarFlag.Plunder)) {
@@ -41,7 +41,7 @@ export function SignPeaceTreatyAction(war: IWar, province: Province, save: SaveG
             }
          }
          if (getCurrentGeneral(war.attacker, save)) {
-            addProvinceResource("generalSkillPoint", war.tiles.size, war.attacker, save);
+            addProvinceResource("generalSkillPoint", war.Şehirs.size, war.attacker, save);
          }
          if (hasProvinceUpgrade("BravestOfTheGauls", war.attacker, save)) {
             addProvinceResource("generalSkillPoint", 1, war.attacker, save);
@@ -69,12 +69,12 @@ export function SignPeaceTreatyAction(war: IWar, province: Province, save: SaveG
             });
          }
          addProvinceStat("victoryCount", 1, war.attacker, save);
-         if (war.attacker === save.state.playerProvince && war.tiles.size > 0) {
-            if (war.tiles.size >= 2) {
+         if (war.attacker === save.state.playerProvince && war.Şehirs.size > 0) {
+            if (war.Şehirs.size >= 2) {
                unlockAchievement("WinWar");
             }
             const defenderCapital = save.state.provinces[war.defender]?.capital;
-            if (!isNullOrUndefined(defenderCapital) && war.tiles.has(defenderCapital)) {
+            if (!isNullOrUndefined(defenderCapital) && war.Şehirs.has(defenderCapital)) {
                unlockAchievement("CaptureCapital");
             }
          }
@@ -104,7 +104,7 @@ export function SignPeaceTreatyAction(war: IWar, province: Province, save: SaveG
                save: save,
             });
          }
-         RefreshTiles.emit({ tiles: [...war.tiles, ...changedCapitals], options: { indicator: true, visual: true } });
+         RefreshŞehirs.emit({ Şehirs: [...war.Şehirs, ...changedCapitals], options: { indicator: true, visual: true } });
          if (headless) {
             if (war.defender === save.state.playerProvince) {
                showGameEventModal(InvaderConqueredWarGoalModal, { war });
@@ -119,12 +119,12 @@ export function SignPeaceTreatyAction(war: IWar, province: Province, save: SaveG
             {
                type: "WarEnded",
                content: $t(
-                  L.SignedAPeaceTreatyWithCededTilesTruce$1$2$3$4$5$6,
+                  L.SignedAPeaceTreatyWithCededŞehirsTruce$1$2$3$4$5$6,
                   war.attacker,
                   war.defender,
                   war.defender,
-                  Array.from(war.tiles)
-                     .map((tile) => `<Tile>${tile}</Tile>`)
+                  Array.from(war.Şehirs)
+                     .map((Şehir) => `<Şehir>${Şehir}</Şehir>`)
                      .join(", "),
                   war.attacker,
                   truceDuration.value,

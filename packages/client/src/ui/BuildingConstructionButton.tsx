@@ -1,4 +1,4 @@
-import { cls, entriesOf, type Tile } from "@project/shared/src/utils/Helper";
+import { cls, entriesOf, type Şehir } from "@project/shared/src/utils/Helper";
 import { useCallback } from "react";
 import { ConstructBuildingAction, DemolishBuildingAction } from "../game/actions/BuildingActions";
 import { type Building, Buildings } from "../game/definitions/Building";
@@ -9,17 +9,17 @@ import { ActionButton } from "./ActionButton";
 
 export function BuildingConstructionButton({
    building,
-   tile,
+   Şehir,
    children,
    className,
    style,
 }: React.PropsWithChildren<{
    building: Building;
-   tile: Tile;
+   Şehir: Şehir;
    className?: string;
    style?: React.CSSProperties;
 }>): React.ReactNode {
-   const tileData = G.save.state.tiles.get(tile);
+   const ŞehirData = G.save.state.Şehirs.get(Şehir);
    const config = Buildings[building];
    const maintenance = entriesOf(config.maintenance);
    const tooltip = useCallback(
@@ -47,17 +47,17 @@ export function BuildingConstructionButton({
       [config, maintenance],
    );
 
-   if (!tileData) {
+   if (!ŞehirData) {
       return null;
    }
-   if (tileData.buildings.has(building)) {
+   if (ŞehirData.buildings.has(building)) {
       return null;
    }
    return (
       <ActionButton
          className={className}
          style={style}
-         action={ConstructBuildingAction(building, tile, G.save.state.playerProvince, G.save)}
+         action={ConstructBuildingAction(building, Şehir, G.save.state.playerProvince, G.save)}
          tooltip={tooltip}
       >
          {children}
@@ -67,13 +67,13 @@ export function BuildingConstructionButton({
 
 export function DemolishBuildingButton({
    building,
-   tile,
+   Şehir,
    children,
    className,
    style,
 }: React.PropsWithChildren<{
    building: Building;
-   tile: Tile;
+   Şehir: Şehir;
    className?: string;
    style?: React.CSSProperties;
 }>): React.ReactNode {
@@ -81,7 +81,7 @@ export function DemolishBuildingButton({
       <ActionButton
          className={cls("red", className)}
          style={style}
-         action={DemolishBuildingAction(building, tile, G.save.state.playerProvince, G.save)}
+         action={DemolishBuildingAction(building, Şehir, G.save.state.playerProvince, G.save)}
          tooltip={(element) => (
             <>
                <div className="m10">{$t(L.AreYouSureYouWantToDemolishThisBuilding)}</div>

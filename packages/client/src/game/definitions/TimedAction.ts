@@ -147,7 +147,7 @@ class TimedActionDefinitions {
    };
    MakeCore: ITimedAction = {
       name: () => $t(L.MakeCore),
-      desc: () => $t(L.MadeCoreTileRemainsCoreAfterReconquest),
+      desc: () => $t(L.MadeCoreŞehirRemainsCoreAfterReconquest),
       duration: 0,
       cooldown: 12,
    };
@@ -270,7 +270,7 @@ class TimedActionDefinitions {
       },
       modifiers: {
          LandTax: { type: "multiply", value: -0.8 },
-         TileOutput: { type: "multiply", value: -0.8 },
+         ŞehirOutput: { type: "multiply", value: -0.8 },
          Manpower: { type: "multiply", value: -0.8 },
          Stability: { type: "add", value: -10 },
          InfrastructureUpgradeCost: { type: "multiply", value: 1 },
@@ -303,9 +303,9 @@ class TimedActionDefinitions {
       duration: 12 * 1,
       cooldown: 12 * 4,
    };
-   DemandTile: ITimedAction = {
-      name: () => $t(L.DemandATile),
-      desc: () => $t(L.TimedActionDemandTileDesc),
+   DemandŞehir: ITimedAction = {
+      name: () => $t(L.DemandAŞehir),
+      desc: () => $t(L.TimedActionDemandŞehirDesc),
       duration: 12 * 5,
       cooldown: 12 * 10,
    };
@@ -319,7 +319,7 @@ class TimedActionDefinitions {
          };
       },
       modifiers: {
-         TileOutput: { type: "multiply", value: 0.25 },
+         ŞehirOutput: { type: "multiply", value: 0.25 },
          LandTax: { type: "multiply", value: 0.25 },
       },
    };
@@ -389,9 +389,9 @@ class TimedActionDefinitions {
       duration: 12,
       cooldown: 12 * 10,
    };
-   PlunderWarTile: ITimedAction = {
-      name: () => $t(L.PlunderWarTile),
-      desc: () => $t(L.TimedActionPlunderWarTileDesc),
+   PlunderWarŞehir: ITimedAction = {
+      name: () => $t(L.PlunderWarŞehir),
+      desc: () => $t(L.TimedActionPlunderWarŞehirDesc),
       duration: 0,
       cooldown: 0,
    };
@@ -495,7 +495,7 @@ class TimedActionDefinitions {
    };
    AnnexClient: ITimedAction = {
       name: () => $t(L.AnnexClient),
-      desc: () => $t(L.AnnexingAClientImmediatelyAnnexesAllTheirTiles),
+      desc: () => $t(L.AnnexingAClientImmediatelyAnnexesAllTheirŞehirs),
       duration: 0,
       cooldown: 12 * 10,
    };
@@ -535,9 +535,9 @@ class TimedActionDefinitions {
       duration: 12 * 5,
       cooldown: 12 * 10,
    };
-   EvangelizeTile: ITimedAction = {
+   EvangelizeŞehir: ITimedAction = {
       name: () => $t(L.Evangelize),
-      desc: () => $t(L.TimedActionEvangelizeTileDesc),
+      desc: () => $t(L.TimedActionEvangelizeŞehirDesc),
       duration: 0,
       cooldown: 12,
    };

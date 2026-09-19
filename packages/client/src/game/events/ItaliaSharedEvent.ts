@@ -16,7 +16,7 @@ export const ItaliaSharedEvent = {
             label: () => $t(L.PlantEstatesAlongTheAfricanShore),
             modifiers: {
                LandTax: { type: "multiply", value: 0.2, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.2, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.2, duration: 2 * 12 },
             },
          },
          {

@@ -1,4 +1,4 @@
-import { forEach, round, type Tile } from "@project/shared/src/utils/Helper";
+import { forEach, round, type Şehir } from "@project/shared/src/utils/Helper";
 import { hideSidebar } from "../../ui/common/SidebarManager";
 import { DeclareWarOnUsModal } from "../../ui/DeclareWarOnUsModal";
 import { DrawnIntoWarModal } from "../../ui/DrawnIntoWarModal";
@@ -7,7 +7,7 @@ import { unlockAchievement } from "../Achievement";
 import { CasusBelli } from "../definitions/CasusBelli";
 import { addChronicleEntry } from "../definitions/Chronicle";
 import type { Province } from "../definitions/Province";
-import { RefreshTiles } from "../Events";
+import { RefreshŞehirs } from "../Events";
 import type { SaveGame } from "../GameState";
 import {
    addAttitudeModifier,
@@ -23,7 +23,7 @@ import {
    getTruceMonthsLeft,
    getWarCoalitions,
    getWarScore,
-   getWarTiles,
+   getWarŞehirs,
    WarFlag,
    WarOneTimeDiplomaticPoint,
 } from "../logic/WarLogic";
@@ -34,13 +34,13 @@ export function DeclareWarAction(
    coAttackers: Map<Province, IConditionBreakdown>,
    defender: Province,
    coDefenders: Map<Province, IConditionBreakdown>,
-   tiles: Set<Tile>,
+   Şehirs: Set<Şehir>,
    casusBelli: CasusBelli,
    save: SaveGame,
 ): IGameAction {
-   const warScore = getWarScore(attacker, defender, tiles, casusBelli, save);
+   const warScore = getWarScore(attacker, defender, Şehirs, casusBelli, save);
    const truceMonthsLeft = getTruceMonthsLeft(attacker, defender, save);
-   const warTiles = getWarTiles(save);
+   const warŞehirs = getWarŞehirs(save);
    const warCoalitions = getWarCoalitions([attacker, defender], save);
    return {
       cost: {
@@ -60,12 +60,12 @@ export function DeclareWarAction(
             value: casusBelli === "None" || !!getRelation(attacker, defender, save)?.casusBelli.has(casusBelli),
          },
          {
-            name: $t(L.WeHaveSelectedAtLeastOneTileAsWarGoal),
-            value: tiles.size > 0,
+            name: $t(L.WeHaveSelectedAtLeastOneŞehirAsWarGoal),
+            value: Şehirs.size > 0,
          },
          {
-            name: $t(L.WeHaveNotSelectedAnyTilesThatAreAlreadyInAWar),
-            value: Array.from(tiles).every((tile) => !warTiles.has(tile)),
+            name: $t(L.WeHaveNotSelectedAnyŞehirsThatAreAlreadyInAWar),
+            value: Array.from(Şehirs).every((Şehir) => !warŞehirs.has(Şehir)),
          },
          {
             name: $t(L.WeHaventAttackedThemYet),
@@ -81,13 +81,13 @@ export function DeclareWarAction(
             desc:
                warCoalitions.length > 0
                   ? $t(
-                       L.WeAreInTheFollowingWarCoalitions$1,
-                       warCoalitions
-                          .map((w) =>
-                             $t(L.$1$2War, getProvinceName(w.attacker, save), getProvinceName(w.defender, save)),
-                          )
-                          .join(", "),
-                    )
+                     L.WeAreInTheFollowingWarCoalitions$1,
+                     warCoalitions
+                        .map((w) =>
+                           $t(L.$1$2War, getProvinceName(w.attacker, save), getProvinceName(w.defender, save)),
+                        )
+                        .join(", "),
+                  )
                   : undefined,
          },
          {
@@ -111,7 +111,7 @@ export function DeclareWarAction(
                   .filter(([_, condition]) => condition.value)
                   .map(([province]) => [province, { value: true, breakdown: [] }]),
             ),
-            tiles: tiles,
+            Şehirs: Şehirs,
             casusBelli: casusBelli,
             requiredWarScore: round(warScore.value, 2),
             actualWarScore: 0,
@@ -119,7 +119,7 @@ export function DeclareWarAction(
             flag: WarFlag.None,
          };
          save.state.wars.push(war);
-         doOneTimeConsequences(attacker, defender, tiles, casusBelli, save);
+         doOneTimeConsequences(attacker, defender, Şehirs, casusBelli, save);
          addProvinceStat("attackCount", 1, attacker, save);
          addProvinceStat("defendCount", 1, defender, save);
          const attackerToDefender = getRelation(attacker, defender, save);
@@ -134,7 +134,7 @@ export function DeclareWarAction(
             defenderToAttacker.trade = undefined;
          }
 
-         RefreshTiles.emit({ tiles: tiles, options: { indicator: true } });
+         RefreshŞehirs.emit({ Şehirs: Şehirs, options: { indicator: true } });
          if (headless) {
             if (war.defender === save.state.playerProvince) {
                showGameEventModal(DeclareWarOnUsModal, { war });
@@ -157,8 +157,8 @@ export function DeclareWarAction(
                   L.$1DeclaredWarOn$2WithTheGoalOfOccupying$3,
                   attacker,
                   defender,
-                  Array.from(war.tiles)
-                     .map((tile) => `<Tile>${tile}</Tile>`)
+                  Array.from(war.Şehirs)
+                     .map((Şehir) => `<Şehir>${Şehir}</Şehir>`)
                      .join(", "),
                ),
             },
@@ -171,7 +171,7 @@ export function DeclareWarAction(
 export function getOneTimeConsequences(
    attacker: Province,
    defender: Province,
-   tiles: Set<Tile>,
+   Şehirs: Set<Şehir>,
    casusBelli: CasusBelli,
    save: SaveGame,
 ): IValueBreakdownItem[] {
@@ -204,7 +204,7 @@ export function getOneTimeConsequences(
 export function doOneTimeConsequences(
    attacker: Province,
    defender: Province,
-   tiles: Set<Tile>,
+   Şehirs: Set<Şehir>,
    casusBelli: CasusBelli,
    save: SaveGame,
 ): void {

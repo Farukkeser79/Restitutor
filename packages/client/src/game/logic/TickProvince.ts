@@ -30,13 +30,13 @@ import { addProvinceUpgrade, removeProvinceUpgrade } from "../definitions/Provin
 import { isChristianReligion } from "../definitions/Religion";
 import { RestorationBonus } from "../definitions/RestorationBonus";
 import { TimedActions } from "../definitions/TimedAction";
-import { RefreshTiles } from "../Events";
+import { RefreshŞehirs } from "../Events";
 import { applyGameEventButton, getEventButtons, getGameEventCondition } from "../events/GameEventLogic";
 import { type GameEvent, GameEvents } from "../events/GameEvents";
 import { applyGameEffect } from "../GameEffect";
 import type { SaveGame } from "../GameState";
 import { showWarning } from "./AlertLogic";
-import { calculateTilesConnectedToCapital } from "./CacheLogic";
+import { calculateŞehirsConnectedToCapital } from "./CacheLogic";
 import { cleanUpProvince } from "./CleanupProvince";
 import { getImproveRelationsRate, getInfiltrationRate, getRelations, MaxImprovedRelations } from "./DiplomacyLogic";
 import { getGameDate } from "./GameDateTime";
@@ -58,14 +58,14 @@ import {
    getProvinceIncome,
    getProvinceResource,
    getProvinceStat,
-   getProvinceTileCount,
+   getProvinceŞehirCount,
    getRestoration,
    pledgeProvinceConsulVotes,
    setProvinceStat,
    spendProvinceResource,
 } from "./ProvinceLogic";
 import { TickFamilyMonth } from "./TickLogic";
-import { getTileUnrest } from "./TileLogic";
+import { getŞehirUnrest } from "./ŞehirLogic";
 import { getTimedActionCooldownLeft, startTimedAction } from "./TimedActionLogic";
 import { ArmyMoraleMonthlyIncrease } from "./WarLogic";
 
@@ -76,11 +76,11 @@ export function tickProvince(province: Province, save: SaveGame): void {
    if (!state) {
       return;
    }
-   if (getProvinceTileCount(province, save) <= 0) {
+   if (getProvinceŞehirCount(province, save) <= 0) {
       cleanUpProvince(province, save);
       return;
    }
-   calculateTilesConnectedToCapital(province, save);
+   calculateŞehirsConnectedToCapital(province, save);
    addProvinceResource(
       "administrative",
       getProvinceGovernmentPoint("administrative", province, save).value,
@@ -305,7 +305,7 @@ export function tickProvince(province: Province, save: SaveGame): void {
       spendProvinceResource("gold", Math.abs(income), province, save);
    }
 
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
          forEach(data.modifiers, (type, modifier) => {
             filterInPlace(modifier, (modifier) => {
@@ -317,7 +317,7 @@ export function tickProvince(province: Province, save: SaveGame): void {
             });
          });
 
-         const unrest = getTileUnrest(tile, save).value;
+         const unrest = getŞehirUnrest(Şehir, save).value;
          if (hasFlag(state.flags, ProvinceFlags.AutomaticallySettleUnrest)) {
             data.autonomy = clamp(data.autonomy + Math.ceil(unrest), 0, 100);
          }
@@ -328,9 +328,9 @@ export function tickProvince(province: Province, save: SaveGame): void {
          if (oldRebellion < 10 && data.rebellion >= 10) {
             if (!hasFlag(G.flags, GameFlags.Sandbox) && province === save.state.playerProvince) {
                playSound("shatter");
-               showWarning(renderMarkup($t(L.$1IsInRebellion, tile)));
+               showWarning(renderMarkup($t(L.$1IsInRebellion, Şehir)));
             }
-            RefreshTiles.emit({ tiles: [tile], options: { indicator: true } });
+            RefreshŞehirs.emit({ Şehirs: [Şehir], options: { indicator: true } });
          }
       }
    }

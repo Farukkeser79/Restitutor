@@ -3,11 +3,11 @@ import type { ConditionChecks } from "../logic/Calculation";
 import { availableDiplomatChecks } from "../logic/DiplomacyLogic";
 import {
    forcePatronageEffect,
-   isCoreTileChecks,
+   isCoreŞehirChecks,
    manpowerChecks,
-   maxCoreTileChecks,
+   maxCoreŞehirChecks,
    mediterraneanCoastChecks,
-   minCoreTileChecks,
+   minCoreŞehirChecks,
    provinceRevenueChecks,
 } from "../logic/MissionLogic";
 import { requireNoTreatyBetweenChecks, requirePeaceBetweenChecks } from "../logic/TreatyLogic";
@@ -30,7 +30,7 @@ export const NoricumEvent = {
             resources: { gold: -1000 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.15, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -71,7 +71,7 @@ export const NoricumEvent = {
             label: () => $t(L.TaskTheGuildWithFireDuty),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                Prestige: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
@@ -176,7 +176,7 @@ export const NoricumEvent = {
             resources: { gold: -500 },
             modifiers: {
                Defense: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -251,7 +251,7 @@ export const NoricumEvent = {
             label: () => $t(L.RequireLaborFromNearbyTowns),
             resources: { administrative: 50 },
             modifiers: {
-               TileOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
                Stability: { type: "add", value: -5, duration: 2 * 12 },
             },
          },
@@ -311,7 +311,7 @@ export const NoricumEvent = {
             resources: { gold: -500 },
             modifiers: {
                Defense: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -338,7 +338,7 @@ export const NoricumEvent = {
             resources: { gold: -1000 },
             modifiers: {
                Stability: { type: "add", value: 10, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: -0.2, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.2, duration: 3 * 12 },
             },
          },
          {
@@ -418,7 +418,7 @@ export const NoricumEvent = {
          {
             label: () => $t(L.OpenTheCoastalMarkets),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
@@ -439,9 +439,9 @@ export const NoricumEvent = {
          onMap: { Raetia: true },
          playerOnly: true,
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(15, "Noricum", save);
-            yield* maxCoreTileChecks(5, "Raetia", save);
-            yield* isCoreTileChecks(9437254, province, save);
+            yield* minCoreŞehirChecks(15, "Noricum", save);
+            yield* maxCoreŞehirChecks(5, "Raetia", save);
+            yield* isCoreŞehirChecks(9437254, province, save);
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Raetia", save);
             yield* requirePeaceBetweenChecks(province, "Raetia", save);
             yield* availableDiplomatChecks(province, "Raetia", save);
@@ -471,7 +471,7 @@ export const NoricumEvent = {
       condition: {
          province: new Set(["Noricum"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(20, "Noricum", save);
+            yield* minCoreŞehirChecks(20, "Noricum", save);
          },
          annexAndCore: { Italia: 5, Raetia: 5, Pannonia: 5 },
       },

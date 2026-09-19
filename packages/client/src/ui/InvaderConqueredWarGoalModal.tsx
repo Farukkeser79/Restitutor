@@ -1,4 +1,4 @@
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { EventImage } from "../game/events/EventImages";
 import type { IWar } from "../game/logic/WarLogic";
 import { G } from "../utils/Global";
@@ -10,8 +10,8 @@ import { GenericEventModal } from "./GenericEventModal";
 import { PeaceTreatyTooltip } from "./PeaceTreatyTooltip";
 
 export function InvaderConqueredWarGoalModal({ war }: { war: IWar }): React.ReactNode {
-   const warGoal = Array.from(war.tiles)
-      .map((tile) => getTileName(tile, G.save))
+   const warGoal = Array.from(war.Şehirs)
+      .map((Şehir) => getŞehirName(Şehir, G.save))
       .join(", ");
    return (
       <GenericEventModal

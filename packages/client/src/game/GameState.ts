@@ -5,7 +5,7 @@ import {
    randomAlphaNumeric,
    range,
    shuffle,
-   type Tile,
+   type Şehir,
    uuid4,
 } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../utils/i18n";
@@ -13,8 +13,8 @@ import type { IChronicleEntry } from "./definitions/Chronicle";
 import { Goods } from "./definitions/Goods";
 import type { Province } from "./definitions/Province";
 import { type IProvince, Provinces } from "./definitions/Province";
-import { type ITileData, initTiles } from "./definitions/Tile";
-import { Tiles } from "./definitions/TileConstants";
+import { type IŞehirData, initŞehirs } from "./definitions/Şehir";
+import { Şehirs } from "./definitions/ŞehirConstants";
 import { GameStateUpdated } from "./Events";
 import { GameOption } from "./GameOption";
 import { addAttitudeModifier, getProvincesWithinDiplomaticRange, getRelation } from "./logic/DiplomacyLogic";
@@ -22,7 +22,7 @@ import { tickProduction } from "./logic/ProductionLogic";
 import {
    ConsulCandidatesCount,
    getProvinceOverextension,
-   getProvinceTileCount,
+   getProvinceŞehirCount,
    getTotalUpgrades,
    initProvince,
    provinceResourceOf,
@@ -65,7 +65,7 @@ export class GameState {
       votes: new Map(),
    };
    completedTutorials: Set<string> = new Set();
-   tiles: Map<Tile, ITileData> = initTiles();
+   Şehirs: Map<Şehir, IŞehirData> = initŞehirs();
    wars: IWar[] = [];
    chronicle: IChronicleEntry[] = [];
 }
@@ -83,8 +83,8 @@ export class SaveGame {
 
 export function initSaveGame(save: SaveGame): SaveGame {
    rollTradeOffers(save);
-   initTileUpgrades(save);
-   initTileProductions(save);
+   initŞehirUpgrades(save);
+   initŞehirProductions(save);
    initPlayerProvince(save);
    initAttitudes(save);
    return save;
@@ -92,7 +92,7 @@ export function initSaveGame(save: SaveGame): SaveGame {
 
 export function initNewPlayerSaveGame(save: SaveGame): SaveGame {
    provinceResourceOf("gold", save.state.playerProvince, save)[0] = 1453;
-   save.state.tiles.get(Tiles.Durocortorum)?.modifiers.Defense.push({
+   save.state.Şehirs.get(Şehirs.Durocortorum)?.modifiers.Defense.push({
       type: "multiply",
       name: $t(L.Tutorial),
       value: -0.5,
@@ -101,10 +101,10 @@ export function initNewPlayerSaveGame(save: SaveGame): SaveGame {
    return save;
 }
 
-function initTileProductions(save: SaveGame) {
+function initŞehirProductions(save: SaveGame) {
    forEach(save.state.provinces, (province) => {
       forEach(Goods, (goods) => {
-         // We did some `tickProduction` in `initTileUpgrades`  to get correct province income.
+         // We did some `tickProduction` in `initŞehirUpgrades`  to get correct province income.
          // so here we need to clear those resources first.
          resetProvinceResource(goods, province, save);
       });
@@ -151,36 +151,36 @@ function initPlayerProvince(save: SaveGame): void {
 }
 const UpgradeTypes = ["infrastructure", "production", "population"] as const;
 
-function initTileUpgrades(save: SaveGame): void {
+function initŞehirUpgrades(save: SaveGame): void {
    for (const [province, data] of entriesOf(save.state.provinces)) {
-      const tileData = save.state.tiles.get(data.capital);
-      if (tileData) {
-         tileData.infrastructure = 2;
-         tileData.production = 2;
-         tileData.population = 2;
+      const ŞehirData = save.state.Şehirs.get(data.capital);
+      if (ŞehirData) {
+         ŞehirData.infrastructure = 2;
+         ŞehirData.production = 2;
+         ŞehirData.population = 2;
       }
    }
 
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       data.infrastructure = Math.max(data.infrastructure, 1);
       data.production = Math.max(data.production, 1);
       data.population = Math.max(data.population, 1);
    }
 
    let maxUpgrades = 0;
-   let maxTileCount = 0;
+   let maxŞehirCount = 0;
    for (const [province, data] of entriesOf(save.state.provinces)) {
       maxUpgrades = Math.max(maxUpgrades, getTotalUpgrades(province, save));
-      maxTileCount = Math.max(maxTileCount, getProvinceTileCount(province, save));
+      maxŞehirCount = Math.max(maxŞehirCount, getProvinceŞehirCount(province, save));
    }
 
    for (const [province, data] of entriesOf(save.state.provinces)) {
       let total =
-         maxUpgrades - getTotalUpgrades(province, save) - (maxTileCount - getProvinceTileCount(province, save));
-      const tiles = shuffle(Array.from(save.state.tiles).filter(([tile, data]) => data.province === province));
+         maxUpgrades - getTotalUpgrades(province, save) - (maxŞehirCount - getProvinceŞehirCount(province, save));
+      const Şehirs = shuffle(Array.from(save.state.Şehirs).filter(([Şehir, data]) => data.province === province));
       while (total > 0) {
          let upgraded = false;
-         for (const [tile, data] of tiles) {
+         for (const [Şehir, data] of Şehirs) {
             if (data.province !== province) {
                continue;
             }
@@ -202,27 +202,27 @@ function initTileUpgrades(save: SaveGame): void {
       }
       const overextension = getProvinceOverextension(province, save).value;
       if (overextension > 0) {
-         console.error(`initTileUpgrades: ${province} has overextension: ${overextension}`);
+         console.error(`initŞehirUpgrades: ${province} has overextension: ${overextension}`);
       }
    }
 
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.infrastructure < 1 || data.infrastructure > 10) {
-         console.error(`initTileUpgrades: ${tile} has invalid infrastructure: ${data.infrastructure}`);
+         console.error(`initŞehirUpgrades: ${Şehir} has invalid infrastructure: ${data.infrastructure}`);
       }
       if (data.production < 1 || data.production > 10) {
-         console.error(`initTileUpgrades: ${tile} has invalid production: ${data.production}`);
+         console.error(`initŞehirUpgrades: ${Şehir} has invalid production: ${data.production}`);
       }
       if (data.population < 1 || data.population > 10) {
-         console.error(`initTileUpgrades: ${tile} has invalid population: ${data.population}`);
+         console.error(`initŞehirUpgrades: ${Şehir} has invalid population: ${data.population}`);
       }
    }
    GameStateUpdated.emit();
 }
 
-export function getOriginalTileCount(province: Province): number {
+export function getOriginalŞehirCount(province: Province): number {
    let count = 0;
-   for (const [tile, data] of RomeMap) {
+   for (const [Şehir, data] of RomeMap) {
       if (data.province === province) {
          count++;
       }
@@ -230,10 +230,10 @@ export function getOriginalTileCount(province: Province): number {
    return count;
 }
 
-export function getOriginalCapital(province: Province): Tile | undefined {
-   for (const [tile, data] of RomeMap) {
+export function getOriginalCapital(province: Province): Şehir | undefined {
+   for (const [Şehir, data] of RomeMap) {
       if (data.province === province && data.isCapital) {
-         return tile;
+         return Şehir;
       }
    }
    return undefined;

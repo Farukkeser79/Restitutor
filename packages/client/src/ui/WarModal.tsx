@@ -6,7 +6,7 @@ import { NegotiateWhitePeaceAction } from "../game/actions/NegotiateWhitePeaceAc
 import { SignPeaceTreatyAction } from "../game/actions/SignPeaceTreatyAction";
 import { CasusBelli } from "../game/definitions/CasusBelli";
 import type { Province } from "../game/definitions/Province";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { TimedActions } from "../game/definitions/TimedAction";
 import { GameStateUpdated } from "../game/Events";
 import { showSuccess } from "../game/logic/AlertLogic";
@@ -36,7 +36,7 @@ import {
    WarLogFlag,
    WarResultNames,
    WarResultScore,
-   WhitePeaceCostPerTile,
+   WhitePeaceCostPerŞehir,
    warIsOngoingCondition,
 } from "../game/logic/WarLogic";
 import { WorldScene } from "../scenes/WorldScene";
@@ -52,7 +52,7 @@ import { colorNumber } from "./components/ColorNumber";
 import { FloatingTip } from "./components/FloatingTip";
 import { html } from "./components/RenderHTMLComp";
 import { PeaceTreatyTooltip } from "./PeaceTreatyTooltip";
-import { TilePage } from "./TilePage";
+import { ŞehirPage } from "./ŞehirPage";
 import { Grid3 } from "./UIConstant";
 import { WarChanceTooltip } from "./WarChanceTooltip";
 import { WarMonthlyConsequences } from "./WarMonthlyConsequences";
@@ -206,32 +206,32 @@ export function WarModal({ war }: { war: IWar }): React.ReactNode {
                   <MakeWarSpeechButton war={war} province={G.save.state.playerProvince} />
                   <FortifyOurBordersButton war={war} province={G.save.state.playerProvince} />
                   <HireMercenariesButton war={war} province={G.save.state.playerProvince} />
-                  <PlunderWarTilesButton war={war} province={G.save.state.playerProvince} />
+                  <PlunderWarŞehirsButton war={war} province={G.save.state.playerProvince} />
                   <ForceAttackButton war={war} province={G.save.state.playerProvince} />
                   <DecimateOurArmyButton war={war} province={G.save.state.playerProvince} />
                </div>
                <div className="h1">{$t(L.WarGoal)}</div>
                <div className="m10">
-                  {Array.from(war.tiles).map((tile) => {
-                     const tileData = G.save.state.tiles.get(tile);
-                     if (!tileData) {
+                  {Array.from(war.Şehirs).map((Şehir) => {
+                     const ŞehirData = G.save.state.Şehirs.get(Şehir);
+                     if (!ŞehirData) {
                         return null;
                      }
                      return (
-                        <div className="row my5" key={tile}>
-                           <div className="f1">{getTileName(tile, G.save)}</div>
+                        <div className="row my5" key={Şehir}>
+                           <div className="f1">{getŞehirName(Şehir, G.save)}</div>
                            <button
                               className="btn pointer text-sm"
-                              key={tile}
+                              key={Şehir}
                               onClick={() => {
                                  hideModal();
                                  G.scene
                                     .getCurrent(WorldScene)
-                                    ?.lookAt(tile, { time: 0.2 })
+                                    ?.lookAt(Şehir, { time: 0.2 })
                                     .then((scene) => {
-                                       scene.drawSelectors(new Set([tile]));
-                                       scene.drawProvinceOutline(tileData.province);
-                                       showPanel(TilePage, { tile });
+                                       scene.drawSelectors(new Set([Şehir]));
+                                       scene.drawProvinceOutline(ŞehirData.province);
+                                       showPanel(ŞehirPage, { Şehir });
                                     });
                               }}
                            >
@@ -361,7 +361,7 @@ function LeaveWarCoalitionButton({ war, province }: { war: IWar; province: Provi
             </>
          )}
          action={{
-            cost: { diplomatic: WhitePeaceCostPerTile * war.tiles.size },
+            cost: { diplomatic: WhitePeaceCostPerŞehir * war.Şehirs.size },
             condition: finalizeCondition([
                {
                   name: $t(L.WeAreACoAttackerOrCoDefenderOfTheWar),
@@ -535,7 +535,7 @@ function HireMercenariesButton({ war, province }: { war: IWar; province: Provinc
    );
 }
 
-function PlunderWarTilesButton({ war, province }: { war: IWar; province: Province }): React.ReactNode {
+function PlunderWarŞehirsButton({ war, province }: { war: IWar; province: Province }): React.ReactNode {
    if (war.attacker !== province) {
       return null;
    }
@@ -547,9 +547,9 @@ function PlunderWarTilesButton({ war, province }: { war: IWar; province: Provinc
       <ActionButton
          action={{
             condition: finalizeCondition([
-               ...timedActionConditions({ action: "PlunderWarTile" }, province, G.save),
+               ...timedActionConditions({ action: "PlunderWarŞehir" }, province, G.save),
                {
-                  name: $t(L.WeHaveNotPlunderedWarTilesYet),
+                  name: $t(L.WeHaveNotPlunderedWarŞehirsYet),
                   value: !hasFlag(war.flag, WarFlag.Plunder),
                },
                {
@@ -567,15 +567,15 @@ function PlunderWarTilesButton({ war, province }: { war: IWar; province: Provinc
             <>
                {element}
                <div className="divider" />
-               <div className="m10">{html($t(L.PlunderingWarTilesWillReduceTheRequiredWarScore))}</div>
+               <div className="m10">{html($t(L.PlunderingWarŞehirsWillReduceTheRequiredWarScore))}</div>
                <BreakdownComp breakdown={plunder.warScore} />
                <div className="divider" />
-               <div className="m10">{html($t(L.TheFollowingTileUpgradesWillBeReducedIfWeveWonTheWar))}</div>
-               <BreakdownComp breakdown={plunder.tiles} />
+               <div className="m10">{html($t(L.TheFollowingŞehirUpgradesWillBeReducedIfWeveWonTheWar))}</div>
+               <BreakdownComp breakdown={plunder.Şehirs} />
             </>
          )}
       >
-         {$t(L.PlunderWarTiles)}
+         {$t(L.PlunderWarŞehirs)}
       </ActionButton>
    );
 }

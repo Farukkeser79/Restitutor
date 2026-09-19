@@ -1,7 +1,7 @@
 // import { type CollisionDetector, CollisionPriority, CollisionType } from "@dnd-kit/abstract";
 // import { DragDropProvider, useDraggable, useDroppable } from "@dnd-kit/react";
 // import { range, useForceUpdate } from "@mantine/hooks";
-// import { createTile, type Tile, tileToPoint } from "@project/shared/src/utils/Helper";
+// import { createŞehir, type Şehir, ŞehirToPoint } from "@project/shared/src/utils/Helper";
 // import { TypedEvent } from "@project/shared/src/utils/TypedEvent";
 // import { useState } from "react";
 // import AntoninusPius from "../assets/images/relics/AntoninusPius.webp";
@@ -33,7 +33,7 @@
 //                   if (!sourceWidth || !sourceHeight) {
 //                      return;
 //                   }
-//                   const targetPoint = tileToPoint(e.operation.target.id as number);
+//                   const targetPoint = ŞehirToPoint(e.operation.target.id as number);
 //                   if (
 //                      canFit(
 //                         { x: targetPoint.x, y: targetPoint.y, width: sourceWidth, height: sourceHeight },
@@ -45,12 +45,12 @@
 //                      const ids = new Set<number>();
 //                      for (let x = 0; x < sourceWidth; x++) {
 //                         for (let y = 0; y < sourceHeight; y++) {
-//                            ids.add(createTile(targetPoint.x + x, targetPoint.y + y));
+//                            ids.add(createŞehir(targetPoint.x + x, targetPoint.y + y));
 //                         }
 //                      }
-//                      relicMoved.emit({ relicId: sourceId, tiles: ids });
+//                      relicMoved.emit({ relicId: sourceId, Şehirs: ids });
 //                   } else {
-//                      relicMoved.emit({ relicId: sourceId, tiles: new Set<Tile>() });
+//                      relicMoved.emit({ relicId: sourceId, Şehirs: new Set<Şehir>() });
 //                   }
 //                }
 //             }}
@@ -60,7 +60,7 @@
 //                if (source && target) {
 //                   const targetWidth = source.data.width as number;
 //                   const targetHeight = source.data.height as number;
-//                   const targetPoint = tileToPoint(target.id as number);
+//                   const targetPoint = ŞehirToPoint(target.id as number);
 //                   if (
 //                      canFit(
 //                         { x: targetPoint.x, y: targetPoint.y, width: targetWidth, height: targetHeight },
@@ -83,7 +83,7 @@
 //                   placedRelics.delete(source.id as string);
 //                   forceUpdate();
 //                }
-//                relicMoved.emit({ relicId: source?.id as string | undefined, tiles: new Set<Tile>() });
+//                relicMoved.emit({ relicId: source?.id as string | undefined, Şehirs: new Set<Şehir>() });
 //             }}
 //          >
 //             <div className="row m5 g5 fstart">
@@ -97,7 +97,7 @@
 //                      {range(0, GridSize * GridSize - 1).map((i) => {
 //                         const x = i % GridSize;
 //                         const y = Math.floor(i / GridSize);
-//                         const id = createTile(x, y);
+//                         const id = createŞehir(x, y);
 //                         return <GridItem key={id} id={id} />;
 //                      })}
 //                   </div>
@@ -143,19 +143,19 @@
 //    const [isHighlighted, setIsHighlighted] = useState(false);
 //    const [isUsed, setIsUsed] = useState(false);
 
-//    useTypedEvent(relicMoved, ({ relicId, tiles }) => {
-//       const shouldHighlight = tiles.has(id);
+//    useTypedEvent(relicMoved, ({ relicId, Şehirs }) => {
+//       const shouldHighlight = Şehirs.has(id);
 //       if (shouldHighlight !== isHighlighted) {
 //          setIsHighlighted(shouldHighlight);
 //       }
-//       const shouldUsed = isTileUsed(id, placedRelics, relicId);
+//       const shouldUsed = isŞehirUsed(id, placedRelics, relicId);
 //       if (shouldUsed !== isUsed) {
 //          setIsUsed(shouldUsed);
 //       }
 //    });
 
 //    useTypedEvent(relicUpdated, () => {
-//       const shouldUsed = isTileUsed(id, placedRelics);
+//       const shouldUsed = isŞehirUsed(id, placedRelics);
 //       if (shouldUsed !== isUsed) {
 //          setIsUsed(shouldUsed);
 //       }
@@ -220,7 +220,7 @@
 //    );
 // }
 
-// const relicMoved = new TypedEvent<{ relicId: string | undefined; tiles: Set<Tile> }>();
+// const relicMoved = new TypedEvent<{ relicId: string | undefined; Şehirs: Set<Şehir> }>();
 // const relicUpdated = new TypedEvent<void>();
 // const placedRelics = new Map<string, { x: number; y: number; width: number; height: number }>();
 
@@ -280,8 +280,8 @@
 //    return true;
 // }
 
-// function isTileUsed<T extends string | number>(tile: Tile, existingRects: Map<T, IRect>, excludeId?: T): boolean {
-//    const { x, y } = tileToPoint(tile);
+// function isŞehirUsed<T extends string | number>(Şehir: Şehir, existingRects: Map<T, IRect>, excludeId?: T): boolean {
+//    const { x, y } = ŞehirToPoint(Şehir);
 //    for (const [existingId, existingRect] of existingRects) {
 //       if (existingId === excludeId) {
 //          continue;
@@ -301,18 +301,18 @@
 // function getAdjacentRects<T extends string | number>(rect: [T, IRect], existingRects: Map<T, IRect>): [T, IRect][] {
 //    const [currId, currRect] = rect;
 //    const result: [T, IRect][] = [];
-//    // Convert current rect to a set of tiles
-//    const currTiles = new Set<Tile>();
+//    // Convert current rect to a set of Şehirs
+//    const currŞehirs = new Set<Şehir>();
 //    for (let dx = 0; dx < currRect.width; dx++) {
 //       for (let dy = 0; dy < currRect.height; dy++) {
-//          currTiles.add(createTile(currRect.x + dx, currRect.y + dy));
+//          currŞehirs.add(createŞehir(currRect.x + dx, currRect.y + dy));
 //       }
 //    }
 
 //    for (const [otherId, otherRect] of existingRects) {
 //       if (otherId === currId) continue;
 
-//       // For each edge tile of the other rect, check if it's adjacent
+//       // For each edge Şehir of the other rect, check if it's adjacent
 //       let isAdjacent = false;
 //       outer: for (let dx = 0; dx < otherRect.width; dx++) {
 //          for (let dy = 0; dy < otherRect.height; dy++) {
@@ -326,7 +326,7 @@
 //                [ox, oy - 1],
 //             ];
 //             for (const [nx, ny] of neighbors) {
-//                if (currTiles.has(createTile(nx, ny))) {
+//                if (currŞehirs.has(createŞehir(nx, ny))) {
 //                   isAdjacent = true;
 //                   break outer;
 //                }

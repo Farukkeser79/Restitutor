@@ -10,7 +10,7 @@ import { applyGameEffect, getGameEffectDesc } from "../GameEffect";
 import type { SaveGame } from "../GameState";
 import { type ConditionChecks, defineConditionChecks } from "../logic/Calculation";
 import { getGameDate } from "../logic/GameDateTime";
-import { getAnnexedTiles, getProvinceName } from "../logic/ProvinceLogic";
+import { getAnnexedŞehirs, getProvinceName } from "../logic/ProvinceLogic";
 import { hasResearched } from "../logic/TechLogic";
 import { type GameEvent, GameEvents, type IGameEventButton, type IGameEventCondition } from "./GameEvents";
 import type { ImageWithCredit } from "./ImageWithCredit";
@@ -162,12 +162,12 @@ export const getGameEventCondition = defineConditionChecks(function* (
    }
    if (condition.annexAndCore) {
       for (const [targetProvince, targetCount] of entriesOf(condition.annexAndCore)) {
-         const [annexed, total] = getAnnexedTiles(targetProvince, province, save);
+         const [annexed, total] = getAnnexedŞehirs(targetProvince, province, save);
          const count = clamp(targetCount, 0, total);
          (yield annexed >= count)?.describe(
             count < total
-               ? $t(L.AnnexAndCore$1TilesOf$2, count, getProvinceName(targetProvince, save))
-               : $t(L.AnnexAndCoreAllTilesOf$1, getProvinceName(targetProvince, save)),
+               ? $t(L.AnnexAndCore$1ŞehirsOf$2, count, getProvinceName(targetProvince, save))
+               : $t(L.AnnexAndCoreAllŞehirsOf$1, getProvinceName(targetProvince, save)),
             { progress: [annexed, count] },
          );
       }

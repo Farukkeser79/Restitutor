@@ -1,6 +1,6 @@
 import { $t, L } from "../../utils/i18n";
 import type { Province } from "../definitions/Province";
-import { getBorderingProvinces } from "../definitions/Tile";
+import { getBorderingProvinces } from "../definitions/Şehir";
 import { TimedActions } from "../definitions/TimedAction";
 import type { SaveGame } from "../GameState";
 import {
@@ -109,9 +109,9 @@ export function SubvertGarrisonAction(ourProvince: Province, theirProvince: Prov
       ]),
       effect: () => {
          if (tryUseInfiltration(SubvertGarrisonCost, ourProvince, theirProvince, save)) {
-            for (const [tile, tileData] of save.state.tiles) {
-               if (tileData.province === theirProvince && getBorderingProvinces(tile, save).includes(ourProvince)) {
-                  tileData.modifiers.Defense.push({
+            for (const [Şehir, ŞehirData] of save.state.Şehirs) {
+               if (ŞehirData.province === theirProvince && getBorderingProvinces(Şehir, save).includes(ourProvince)) {
+                  ŞehirData.modifiers.Defense.push({
                      type: "multiply",
                      name: $t(L.SubvertedBy$1, getProvinceName(ourProvince, save)),
                      value: -0.2,
@@ -142,9 +142,9 @@ export function InciteUnrestAction(ourProvince: Province, theirProvince: Provinc
       ]),
       effect: () => {
          if (tryUseInfiltration(InciteUnrestCost, ourProvince, theirProvince, save)) {
-            for (const [tile, tileData] of save.state.tiles) {
-               if (tileData.province === theirProvince && getBorderingProvinces(tile, save).includes(ourProvince)) {
-                  tileData.modifiers.Unrest.push({
+            for (const [Şehir, ŞehirData] of save.state.Şehirs) {
+               if (ŞehirData.province === theirProvince && getBorderingProvinces(Şehir, save).includes(ourProvince)) {
+                  ŞehirData.modifiers.Unrest.push({
                      type: "add",
                      name: $t(L.IncitedBy$1, getProvinceName(ourProvince, save)),
                      value: 20,

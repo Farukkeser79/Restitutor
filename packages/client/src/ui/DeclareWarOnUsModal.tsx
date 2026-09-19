@@ -1,5 +1,5 @@
 import { CasusBelli } from "../game/definitions/CasusBelli";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { EventImage } from "../game/events/EventImages";
 import type { IWar } from "../game/logic/WarLogic";
 import { G } from "../utils/Global";
@@ -10,8 +10,8 @@ import { GameEventButton } from "./GameEventModal";
 import { GenericEventModal } from "./GenericEventModal";
 
 export function DeclareWarOnUsModal({ war }: { war: IWar }): React.ReactNode {
-   const warGoal = Array.from(war.tiles)
-      .map((tile) => getTileName(tile, G.save))
+   const warGoal = Array.from(war.Şehirs)
+      .map((Şehir) => getŞehirName(Şehir, G.save))
       .join(", ");
    return (
       <GenericEventModal

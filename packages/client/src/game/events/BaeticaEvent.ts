@@ -1,14 +1,14 @@
 import { $t, L } from "../../utils/i18n";
-import { StraitOfGibraltarTiles } from "../definitions/TileConstants";
-import { getTileName } from "../definitions/TileName";
+import { StraitOfGibraltarŞehirs } from "../definitions/ŞehirConstants";
+import { getŞehirName } from "../definitions/ŞehirName";
 import type { ConditionChecks } from "../logic/Calculation";
 import {
-   allCoreTileChecks,
-   annexTiles,
+   allCoreŞehirChecks,
+   annexŞehirs,
    forcePatronageEffect,
    marriageChecks,
-   maxCoreTileChecks,
-   minCoreTileChecks,
+   maxCoreŞehirChecks,
+   minCoreŞehirChecks,
    provinceResourceChecks,
    warPowerChecks,
 } from "../logic/MissionLogic";
@@ -36,7 +36,7 @@ export const BaeticaEvent = {
             resources: { gold: -500 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -87,7 +87,7 @@ export const BaeticaEvent = {
             label: () => $t(L.ReopenTheImperialShafts),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
             },
          },
          {
@@ -121,7 +121,7 @@ export const BaeticaEvent = {
             label: () => $t(L.ReuseTheStoneInLivingCities),
             resources: { administrative: 50 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                Prestige: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
@@ -345,7 +345,7 @@ export const BaeticaEvent = {
       condition: {
          province: new Set(["Baetica"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* allCoreTileChecks(StraitOfGibraltarTiles, province, save);
+            yield* allCoreŞehirChecks(StraitOfGibraltarŞehirs, province, save);
          },
       },
       buttons: [
@@ -353,7 +353,7 @@ export const BaeticaEvent = {
             label: () => $t(L.DevelopThePortsOnBothShores),
             modifiers: {
                LandTax: { type: "multiply", value: 0.2, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.2, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.2, duration: 2 * 12 },
             },
          },
          {
@@ -374,7 +374,7 @@ export const BaeticaEvent = {
       condition: {
          province: new Set(["Baetica"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(15, province, save);
+            yield* minCoreŞehirChecks(15, province, save);
          },
       },
       buttons: [
@@ -404,7 +404,7 @@ export const BaeticaEvent = {
             yield* requirePeaceBetweenChecks(province, "Lusitania", save);
             yield* provinceResourceChecks("diplomatic", 200, province, save);
             yield* warPowerChecks(10_000, province, save);
-            yield* allCoreTileChecks([8978513], "Tarraconensis", save);
+            yield* allCoreŞehirChecks([8978513], "Tarraconensis", save);
          },
       },
       buttons: [
@@ -414,11 +414,11 @@ export const BaeticaEvent = {
             custom: [
                {
                   desc: (province, save) => {
-                     const tileNames = [8978513].map((tile) => getTileName(tile, save)).join(", ");
-                     return $t(L.$1Annexes$2, getProvinceName(province, save), tileNames);
+                     const ŞehirNames = [8978513].map((Şehir) => getŞehirName(Şehir, save)).join(", ");
+                     return $t(L.$1Annexes$2, getProvinceName(province, save), ŞehirNames);
                   },
                   effect: (province, save) => {
-                     annexTiles({ tiles: [8978513], province, save });
+                     annexŞehirs({ Şehirs: [8978513], province, save });
                   },
                },
             ],
@@ -440,8 +440,8 @@ export const BaeticaEvent = {
          onMap: { Lusitania: true },
          conditions: function* (province, save): ConditionChecks {
             yield* provinceResourceChecks("diplomatic", 200, province, save);
-            yield* minCoreTileChecks(20, province, save);
-            yield* maxCoreTileChecks(5, "Lusitania", save);
+            yield* minCoreŞehirChecks(20, province, save);
+            yield* maxCoreŞehirChecks(5, "Lusitania", save);
             yield* marriageChecks(province, "Lusitania", save);
          },
       },

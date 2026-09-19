@@ -124,7 +124,7 @@ export const RandomEvents = {
             resources: { gold: -1000 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.2, duration: 12 * 3 },
-               TileOutput: { type: "multiply", value: 0.2, duration: 12 * 3 },
+               ŞehirOutput: { type: "multiply", value: 0.2, duration: 12 * 3 },
             },
          },
          {

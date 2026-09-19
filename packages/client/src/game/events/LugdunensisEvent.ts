@@ -1,18 +1,18 @@
 import { fromEntries } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import { Province } from "../definitions/Province";
-import { GallicEmpireProvinces } from "../definitions/TileConstants";
-import { getOriginalTileCount } from "../GameState";
+import { GallicEmpireProvinces } from "../definitions/ŞehirConstants";
+import { getOriginalŞehirCount } from "../GameState";
 import type { ConditionChecks } from "../logic/Calculation";
 import { availableDiplomatChecks } from "../logic/DiplomacyLogic";
 import {
-   allCoreTileChecks,
-   anyCoreTileChecks,
+   allCoreŞehirChecks,
+   anyCoreŞehirChecks,
    forcePatronageEffect,
    manpowerChecks,
    marriageChecks,
-   maxCoreTileChecks,
-   minCoreCoastalTileChecks,
+   maxCoreŞehirChecks,
+   minCoreCoastalŞehirChecks,
    nullifyNegativeAttitudesEffect,
    provinceRevenueChecks,
    provinceUsedResourceChecks,
@@ -54,7 +54,7 @@ export const LugdunensisEvent = {
             label: () => $t(L.WeShallFocusOnOurInternalAffairs),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
             },
          },
       ],
@@ -76,7 +76,7 @@ export const LugdunensisEvent = {
             label: () => $t(L.LetUsBaskInProsperity),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
       ],
@@ -110,7 +110,7 @@ export const LugdunensisEvent = {
          province: new Set(["Lugdunensis"]),
          annexAndCore: { Belgica: 6 },
          conditions: function* (province, save): ConditionChecks {
-            yield* maxCoreTileChecks(4, "Belgica", save);
+            yield* maxCoreŞehirChecks(4, "Belgica", save);
          },
       },
       buttons: [
@@ -141,7 +141,7 @@ export const LugdunensisEvent = {
          conditions: function* (province, save): ConditionChecks {
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Belgica", save);
             yield* requirePeaceBetweenChecks(province, "Belgica", save);
-            yield* maxCoreTileChecks(3, "Belgica", save);
+            yield* maxCoreŞehirChecks(3, "Belgica", save);
             yield* marriageChecks(province, "Belgica", save);
             yield* availableDiplomatChecks(province, "Belgica", save);
             yield* requireMinimumAttitudeChecks("Belgica", province, 50, save);
@@ -191,7 +191,7 @@ export const LugdunensisEvent = {
          province: new Set(["Lugdunensis"]),
          annexAndCore: { Narbonensis: 5 },
          conditions: function* (province, save): ConditionChecks {
-            yield* anyCoreTileChecks([8978508, 8978507, 9044043, 9109579, 9175115], province, save);
+            yield* anyCoreŞehirChecks([8978508, 8978507, 9044043, 9109579, 9175115], province, save);
          },
       },
       buttons: [
@@ -199,7 +199,7 @@ export const LugdunensisEvent = {
             label: () => $t(L.GrantPrivilegesToTheMerchants),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                DiplomaticPoint: { type: "add", value: 1, duration: 2 * 12 },
             },
          },
@@ -228,7 +228,7 @@ export const LugdunensisEvent = {
       condition: {
          province: new Set(["Lugdunensis"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* allCoreTileChecks([9109568, 9044033, 8978497, 8978498, 8912963, 8847427], province, save);
+            yield* allCoreŞehirChecks([9109568, 9044033, 8978497, 8978498, 8912963, 8847427], province, save);
          },
       },
       buttons: [
@@ -268,7 +268,7 @@ export const LugdunensisEvent = {
       condition: {
          province: new Set(["Lugdunensis"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreCoastalTileChecks(15, province, save);
+            yield* minCoreCoastalŞehirChecks(15, province, save);
             yield* provinceUsedResourceChecks("gold", 20_000, province, save);
             yield* provinceUsedResourceChecks("administrative", 2000, province, save);
             yield* provinceUsedResourceChecks("diplomatic", 2000, province, save);
@@ -280,7 +280,7 @@ export const LugdunensisEvent = {
             label: () => $t(L.OpenTheHarboursToCommerce),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                DiplomaticPoint: { type: "add", value: 1, duration: 2 * 12 },
             },
          },
@@ -308,7 +308,7 @@ export const LugdunensisEvent = {
       desc: () => $t(L.TheIntegrationOfAquitaniaDesc),
       condition: {
          province: new Set(["Lugdunensis"]),
-         annexAndCore: { Aquitania: Math.floor(getOriginalTileCount("Aquitania") * 0.8) },
+         annexAndCore: { Aquitania: Math.floor(getOriginalŞehirCount("Aquitania") * 0.8) },
       },
       buttons: [
          {
@@ -329,7 +329,7 @@ export const LugdunensisEvent = {
             label: () => $t(L.SurveyAndSettleTheCountryside),
             modifiers: {
                PopulationUpgradeCost: { type: "multiply", value: -0.2, duration: 2 * 12 },
-               TileMaintenance: { type: "multiply", value: -0.2, duration: 2 * 12 },
+               ŞehirMaintenance: { type: "multiply", value: -0.2, duration: 2 * 12 },
             },
          },
       ],
@@ -395,7 +395,7 @@ export const LugdunensisEvent = {
             label: () => $t(L.WeMustRemainBalancedInOurPolicies),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
             resources: { diplomatic: -100 },
          },
@@ -505,7 +505,7 @@ export const LugdunensisEvent = {
             modifiers: {
                Stability: { type: "add", value: -10, duration: 2 * 12 },
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -542,7 +542,7 @@ export const LugdunensisEvent = {
             resources: { gold: -1000 },
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -736,7 +736,7 @@ export const LugdunensisEvent = {
             label: () => $t(L.EmployThemInOurRuralEstates),
             modifiers: {
                Stability: { type: "add", value: -10, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {

@@ -1,4 +1,4 @@
-import type { Tile } from "@project/shared/src/utils/Helper";
+import type { Şehir } from "@project/shared/src/utils/Helper";
 import type { Province, ProvinceResource, ProvinceStat } from "./Province";
 
 export const SpawnedProvinceBoostMonths = 12 * 20;
@@ -18,39 +18,39 @@ const BaseSpawnedProvinceData: SpawnedProvinceData = {
 export const _SpawnedProvinces = {
    Suebi: {
       ...BaseSpawnedProvinceData,
-      tiles: [8454222, 8388685, 8454220, 8454221, 8519756, 8454223, 8454224],
+      Şehirs: [8454222, 8388685, 8454220, 8454221, 8519756, 8454223, 8454224],
    },
    Visigoths: {
       ...BaseSpawnedProvinceData,
-      tiles: [8912972, 8781897, 8847433, 8912970, 8912971, 8912973],
+      Şehirs: [8912972, 8781897, 8847433, 8912970, 8912971, 8912973],
    },
    Vandals: {
       ...BaseSpawnedProvinceData,
-      tiles: [9371731, 9306195, 9306196, 9371732, 9240660, 9568338, 9371733],
+      Şehirs: [9371731, 9306195, 9306196, 9371732, 9240660, 9568338, 9371733],
    },
    Burgundians: {
       ...BaseSpawnedProvinceData,
-      tiles: [9044041, 9109576, 9109577, 9044042, 9109575, 9175112, 9044039],
+      Şehirs: [9044041, 9109576, 9109577, 9044042, 9109575, 9175112, 9044039],
    },
    Franks: {
       ...BaseSpawnedProvinceData,
-      tiles: [8978497, 8978498, 9044033, 9109568, 9109569, 9044034, 9109567],
+      Şehirs: [8978497, 8978498, 9044033, 9109568, 9109569, 9044034, 9109567],
    },
    Saxons: {
       ...BaseSpawnedProvinceData,
-      tiles: [8847424, 8847420, 8781885, 8847422, 8847423, 8912959, 8781884],
+      Şehirs: [8847424, 8847420, 8781885, 8847422, 8847423, 8912959, 8781884],
    },
    Alemanni: {
       ...BaseSpawnedProvinceData,
-      tiles: [9240647, 9175111, 9306183, 9240646, 9306182, 9371718, 9306181],
+      Şehirs: [9240647, 9175111, 9306183, 9240646, 9306182, 9371718, 9306181],
    },
    Ostrogoths: {
       ...BaseSpawnedProvinceData,
-      tiles: [9568328, 9633865, 9568329, 9633864, 9502792, 9437256, 9437257],
+      Şehirs: [9568328, 9633865, 9568329, 9633864, 9502792, 9437256, 9437257],
    },
    Huns: {
       ...BaseSpawnedProvinceData,
-      tiles: [
+      Şehirs: [
          9764935, 9764934, 9830471, 9830470, 9699397, 9896008, 9896007, 9896006, 9830469, 9961542, 9961543, 9764933,
       ],
    },
@@ -62,7 +62,7 @@ export interface SpawnedProvinceData {
 }
 
 export interface SpawnedProvinceConfig extends SpawnedProvinceData {
-   tiles: Tile[];
+   Şehirs: Şehir[];
 }
 
 export type SpawnedProvince = keyof typeof _SpawnedProvinces;

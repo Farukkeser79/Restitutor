@@ -1,10 +1,10 @@
-import { entriesOf, type Tile } from "@project/shared/src/utils/Helper";
+import { entriesOf, type Şehir } from "@project/shared/src/utils/Helper";
 import { memo } from "react";
 import { type Building, Buildings } from "../game/definitions/Building";
 import { Terrains } from "../game/definitions/Terrain";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { GameStateUpdated } from "../game/Events";
-import { getTileTerrain, isCapital } from "../game/logic/TileLogic";
+import { getŞehirTerrain, isCapital } from "../game/logic/ŞehirLogic";
 import { WorldScene } from "../scenes/WorldScene";
 import { G } from "../utils/Global";
 import { refreshOnTypedEvent, refreshOnTypedEventWhen } from "../utils/Hook";
@@ -14,15 +14,15 @@ import { BuildingConstructionButton, DemolishBuildingButton } from "./BuildingCo
 import { showPanel } from "./common/ShowPanel";
 import { FloatingTip } from "./components/FloatingTip";
 import { html } from "./components/RenderHTMLComp";
-import { TilePage } from "./TilePage";
+import { ŞehirPage } from "./ŞehirPage";
 import { UpgradeInfrastructureButton, UpgradePopulationButton, UpgradeProductionButton } from "./UpgradeButtons";
 
 const BuildingConstructionButtonStyle = { width: 30, height: 30, padding: 0 };
 const UpgradeButtonStyle = { minWidth: 40 };
-export function TileListSingletonModal(): React.ReactNode {
+export function ŞehirListSingletonModal(): React.ReactNode {
    refreshOnTypedEvent(GameStateUpdated);
    return (
-      <ModalComp size="xl" scrollbars="xy" title={<ModalTitleBar title={$t(L.TilesAndUpgrades)} dismiss />}>
+      <ModalComp size="xl" scrollbars="xy" title={<ModalTitleBar title={$t(L.ŞehirsAndUpgrades)} dismiss />}>
          <div className="m10">
             <table className="data-table">
                <thead>
@@ -46,11 +46,11 @@ export function TileListSingletonModal(): React.ReactNode {
                   </tr>
                </thead>
                <tbody>
-                  {Array.from(G.save.state.tiles).map(([tile, tileData]) => {
-                     if (tileData.province !== G.save.state.playerProvince) {
+                  {Array.from(G.save.state.Şehirs).map(([Şehir, ŞehirData]) => {
+                     if (ŞehirData.province !== G.save.state.playerProvince) {
                         return null;
                      }
-                     return <TileListRow key={tile} tile={tile} />;
+                     return <ŞehirListRow key={Şehir} Şehir={Şehir} />;
                   })}
                </tbody>
             </table>
@@ -62,44 +62,44 @@ export function TileListSingletonModal(): React.ReactNode {
 const ConstructionButton = <div className="mi sm">construction</div>;
 const DemolishButton = <div className="mi sm">delete</div>;
 
-const TileListRow = memo(_TileListRow, (prev, next) => {
-   return prev.tile === next.tile;
+const ŞehirListRow = memo(_ŞehirListRow, (prev, next) => {
+   return prev.Şehir === next.Şehir;
 });
 
-function _TileListRow({ tile }: { tile: Tile }): React.ReactNode {
-   const tileData = G.save.state.tiles.get(tile);
-   if (!tileData) {
+function _ŞehirListRow({ Şehir }: { Şehir: Şehir }): React.ReactNode {
+   const ŞehirData = G.save.state.Şehirs.get(Şehir);
+   if (!ŞehirData) {
       return null;
    }
    return (
       <tr>
          <td>
             <div className="row g5">
-               {getTileName(tile, G.save)}
-               {isCapital(tile, G.save) && <div className="mi sm text-yellow">stars</div>}
+               {getŞehirName(Şehir, G.save)}
+               {isCapital(Şehir, G.save) && <div className="mi sm text-yellow">stars</div>}
                <div className="f1" />
             </div>
             <div className="row g5">
-               <div className="text-xs text-dimmed text-italic">{Terrains[getTileTerrain(tile)].name()}</div>
+               <div className="text-xs text-dimmed text-italic">{Terrains[getŞehirTerrain(Şehir)].name()}</div>
                <div className="f1" />
             </div>
          </td>
          <td>
-            {tileData.coreProvinces.has(tileData.province) ? (
+            {ŞehirData.coreProvinces.has(ŞehirData.province) ? (
                <div className="mi sm text-green">check_circle</div>
             ) : (
                <div className="mi sm text-red">cancel</div>
             )}
          </td>
-         <td>{tileData.culture}</td>
-         <td>{tileData.religion}</td>
-         <UpgradeButtonsColumns tile={tile} />
+         <td>{ŞehirData.culture}</td>
+         <td>{ŞehirData.religion}</td>
+         <UpgradeButtonsColumns Şehir={Şehir} />
          <td>
             <button
                className="btn"
                onClick={() => {
-                  showPanel(TilePage, { tile });
-                  G.scene.getCurrent(WorldScene)?.drawSelectors(new Set([tile]));
+                  showPanel(ŞehirPage, { Şehir });
+                  G.scene.getCurrent(WorldScene)?.drawSelectors(new Set([Şehir]));
                   hideModal();
                }}
             >
@@ -107,58 +107,58 @@ function _TileListRow({ tile }: { tile: Tile }): React.ReactNode {
             </button>
          </td>
          {entriesOf(Buildings).map(([building, config]) => {
-            return <ConstructionButtonColumn key={building} building={building} tile={tile} />;
+            return <ConstructionButtonColumn key={building} building={building} Şehir={Şehir} />;
          })}
       </tr>
    );
 }
 
-function UpgradeButtonsColumns({ tile }: { tile: Tile }): React.ReactNode {
-   const tileData = G.save.state.tiles.get(tile);
+function UpgradeButtonsColumns({ Şehir }: { Şehir: Şehir }): React.ReactNode {
+   const ŞehirData = G.save.state.Şehirs.get(Şehir);
    refreshOnTypedEventWhen(GameStateUpdated, () => {
-      const data = G.save.state.tiles.get(tile);
+      const data = G.save.state.Şehirs.get(Şehir);
       return [data?.infrastructure, data?.production, data?.population, data?.upgradeCount];
    });
-   if (!tileData) {
+   if (!ŞehirData) {
       return null;
    }
-   const totalUpgrades = tileData.infrastructure + tileData.production + tileData.population;
+   const totalUpgrades = ŞehirData.infrastructure + ŞehirData.production + ŞehirData.population;
    return (
       <>
          <td>
             <UpgradeInfrastructureButton
                className="text-roman"
-               id={`TileListModal_UpgradeInfrastructure_${tile}`}
+               id={`ŞehirListModal_UpgradeInfrastructure_${Şehir}`}
                style={UpgradeButtonStyle}
-               tile={tile}
+               Şehir={Şehir}
             >
-               {tileData.infrastructure}
+               {ŞehirData.infrastructure}
             </UpgradeInfrastructureButton>
          </td>
          <td>
             <UpgradeProductionButton
                className="text-roman"
-               id={`TileListModal_UpgradeProduction_${tile}`}
+               id={`ŞehirListModal_UpgradeProduction_${Şehir}`}
                style={UpgradeButtonStyle}
-               tile={tile}
+               Şehir={Şehir}
             >
-               {tileData.production}
+               {ŞehirData.production}
             </UpgradeProductionButton>
          </td>
          <td>
             <UpgradePopulationButton
                className="text-roman"
-               id={`TileListModal_UpgradePopulation_${tile}`}
+               id={`ŞehirListModal_UpgradePopulation_${Şehir}`}
                style={UpgradeButtonStyle}
-               tile={tile}
+               Şehir={Şehir}
             >
-               {tileData.population}
+               {ŞehirData.population}
             </UpgradePopulationButton>
          </td>
          <td>
-            <FloatingTip label={html($t(L.TotalUpgrades$1UpgradeTimes$2, totalUpgrades, tileData.upgradeCount))}>
+            <FloatingTip label={html($t(L.TotalUpgrades$1UpgradeTimes$2, totalUpgrades, ŞehirData.upgradeCount))}>
                <div>
-                  {totalUpgrades}/{tileData.upgradeCount}
+                  {totalUpgrades}/{ŞehirData.upgradeCount}
                </div>
             </FloatingTip>
          </td>
@@ -166,23 +166,23 @@ function UpgradeButtonsColumns({ tile }: { tile: Tile }): React.ReactNode {
    );
 }
 
-function ConstructionButtonColumn({ building, tile }: { building: Building; tile: Tile }): React.ReactNode {
-   const tileData = G.save.state.tiles.get(tile);
+function ConstructionButtonColumn({ building, Şehir }: { building: Building; Şehir: Şehir }): React.ReactNode {
+   const ŞehirData = G.save.state.Şehirs.get(Şehir);
    refreshOnTypedEventWhen(GameStateUpdated, () => {
-      const data = G.save.state.tiles.get(tile);
+      const data = G.save.state.Şehirs.get(Şehir);
       return [data?.buildings.has(building)];
    });
-   if (!tileData) {
+   if (!ŞehirData) {
       return null;
    }
    return (
       <td key={building}>
-         {tileData.buildings.has(building) ? (
-            <DemolishBuildingButton style={BuildingConstructionButtonStyle} building={building} tile={tile}>
+         {ŞehirData.buildings.has(building) ? (
+            <DemolishBuildingButton style={BuildingConstructionButtonStyle} building={building} Şehir={Şehir}>
                {DemolishButton}
             </DemolishBuildingButton>
          ) : (
-            <BuildingConstructionButton style={BuildingConstructionButtonStyle} building={building} tile={tile}>
+            <BuildingConstructionButton style={BuildingConstructionButtonStyle} building={building} Şehir={Şehir}>
                {ConstructionButton}
             </BuildingConstructionButton>
          )}

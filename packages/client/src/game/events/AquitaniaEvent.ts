@@ -1,10 +1,10 @@
 import { $t, L } from "../../utils/i18n";
 import { OfferAllianceAction } from "../actions/TreatyActions";
 import { Province } from "../definitions/Province";
-import { getOriginalTileCount } from "../GameState";
+import { getOriginalŞehirCount } from "../GameState";
 import type { ConditionChecks } from "../logic/Calculation";
 import { availableDiplomatChecks } from "../logic/DiplomacyLogic";
-import { forcePatronageEffect, isCoreTileChecks, maxCoreTileChecks } from "../logic/MissionLogic";
+import { forcePatronageEffect, isCoreŞehirChecks, maxCoreŞehirChecks } from "../logic/MissionLogic";
 import { getProvinceResource, getProvinceStability } from "../logic/ProvinceLogic";
 import {
    requireMinimumAttitudeChecks,
@@ -29,7 +29,7 @@ export const AquitaniaEvent = {
             resources: { gold: -500 },
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -53,7 +53,7 @@ export const AquitaniaEvent = {
          {
             label: () => $t(L.EmpowerTheGreatLandowners),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.15, duration: 2 * 12 },
                LandTax: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
@@ -289,7 +289,7 @@ export const AquitaniaEvent = {
             label: () => $t(L.InvestInTheFailingVineyards),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -339,7 +339,7 @@ export const AquitaniaEvent = {
          province: new Set(["Aquitania"]),
          annexAndCore: { Narbonensis: 2 },
          conditions: function* (province, save): ConditionChecks {
-            yield* isCoreTileChecks(8978507, province, save);
+            yield* isCoreŞehirChecks(8978507, province, save);
          },
       },
       buttons: [
@@ -347,7 +347,7 @@ export const AquitaniaEvent = {
             label: () => $t(L.ChannelTradeThroughAgatha),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
             casusBelli: {
                Narbonensis: { casusBelli: "ConquestMission", duration: 10 * 12 },
@@ -371,12 +371,12 @@ export const AquitaniaEvent = {
       desc: () => $t(L.TheSubmissionOfNarbonensisDesc),
       condition: {
          province: new Set(["Aquitania"]),
-         annexAndCore: { Narbonensis: Math.ceil(getOriginalTileCount("Narbonensis") * 0.7) },
+         annexAndCore: { Narbonensis: Math.ceil(getOriginalŞehirCount("Narbonensis") * 0.7) },
          conditions: function* (province, save): ConditionChecks {
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Narbonensis", save);
             yield* requirePeaceBetweenChecks(province, "Narbonensis", save);
             yield* availableDiplomatChecks(province, "Narbonensis", save);
-            yield* maxCoreTileChecks(5, "Narbonensis", save);
+            yield* maxCoreŞehirChecks(5, "Narbonensis", save);
             return;
          },
       },

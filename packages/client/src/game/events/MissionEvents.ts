@@ -6,11 +6,11 @@ import {
    EasternMediterraneanProvinces,
    WesternMediterraneanProvinces,
    WesternRomanEmpireProvinces,
-} from "../definitions/TileConstants";
-import { RefreshTiles } from "../Events";
-import { getOriginalTileCount } from "../GameState";
+} from "../definitions/ŞehirConstants";
+import { RefreshŞehirs } from "../Events";
+import { getOriginalŞehirCount } from "../GameState";
 import type { ConditionChecks } from "../logic/Calculation";
-import { allyCountChecks, minCoreTileChecks, techCountChecks } from "../logic/MissionLogic";
+import { allyCountChecks, minCoreŞehirChecks, techCountChecks } from "../logic/MissionLogic";
 import { isGreatPowerChecks, setProvinceNameOverride } from "../logic/ProvinceLogic";
 import { EventImage } from "./EventImages";
 import type { IGameEventConfig } from "./GameEvents";
@@ -48,7 +48,7 @@ export const MissionEvents = {
       condition: {
          conditions: function* (province, save): ConditionChecks {
             yield* isGreatPowerChecks(province, save);
-            yield* minCoreTileChecks(getOriginalTileCount(province) + 5, province, save);
+            yield* minCoreŞehirChecks(getOriginalŞehirCount(province) + 5, province, save);
          },
       },
       achievement: "BecomeGreatPower",
@@ -64,7 +64,7 @@ export const MissionEvents = {
             label: () => $t(L.ChannelOurStrengthIntoProduction),
             modifiers: {
                ProductionCapacity: { type: "add", value: 5 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
             },
          },
       ],
@@ -75,7 +75,7 @@ export const MissionEvents = {
       desc: () => $t(L.AProvinceTransformedDesc),
       condition: {
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(getOriginalTileCount(province) * 2, province, save);
+            yield* minCoreŞehirChecks(getOriginalŞehirCount(province) * 2, province, save);
          },
       },
       buttons: [
@@ -157,7 +157,7 @@ export const MissionEvents = {
                {
                   effect: (province, save) => {
                      setProvinceNameOverride(province, "WesternRomanEmpire", save);
-                     RefreshTiles.emit({ tiles: [], options: { visual: true } });
+                     RefreshŞehirs.emit({ Şehirs: [], options: { visual: true } });
                   },
                   desc: () => {
                      return $t(L.OurProvinceIsNowKnownAsThe$1, ProvinceNameOverrides.WesternRomanEmpire());

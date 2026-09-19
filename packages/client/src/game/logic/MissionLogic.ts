@@ -1,4 +1,4 @@
-import { filterInPlace, formatNumber, formatPercent, type Tile } from "@project/shared/src/utils/Helper";
+import { filterInPlace, formatNumber, formatPercent, type Şehir } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import type { ICondition } from "../actions/GameAction";
 import { OfferPatronageAction } from "../actions/TreatyActions";
@@ -11,16 +11,16 @@ import {
    ProvinceStatNames,
 } from "../definitions/Province";
 import { Religion, type Religion as ReligionType } from "../definitions/Religion";
-import { RefreshTiles } from "../Events";
+import { RefreshŞehirs } from "../Events";
 import type { ICustomEffect } from "../GameEffect";
 import type { SaveGame } from "../GameState";
-import { getProvinceCoreTilesCached } from "./CacheLogic";
+import { getProvinceCoreŞehirsCached } from "./CacheLogic";
 import type { ConditionChecks } from "./Calculation";
 import { getMarriageAlliance, getRelation } from "./DiplomacyLogic";
 import {
    getCulturePercentage,
-   getMediterraneanCoastalTiles,
-   getProvinceCoreCoastalTileCount,
+   getMediterraneanCoastalŞehirs,
+   getProvinceCoreCoastalŞehirCount,
    getProvinceGoverningCost,
    getProvinceIncome,
    getProvinceManpower,
@@ -28,12 +28,12 @@ import {
    getProvinceResource,
    getProvinceStat,
    getReligionPercentage,
-   getTileUpgradeTimes,
+   getŞehirUpgradeTimes,
    getTotalUpgrades,
    getWarPower,
    provinceResourceOf,
 } from "./ProvinceLogic";
-import { isCoreTile } from "./TileLogic";
+import { isCoreŞehir } from "./ŞehirLogic";
 import { dissolveAllTreaties, getAllies } from "./TreatyLogic";
 
 export function provinceRevenueCondition(minimum: number, province: Province, save: SaveGame): ICondition {
@@ -93,35 +93,35 @@ export function victoryCountCondition(minimum: number, province: Province, save:
 export function makeCoreCountCondition(minimum: number, province: Province, save: SaveGame): ICondition {
    const makeCoreCount = getProvinceStat("makeCoreCount", province, save);
    return {
-      name: $t(L.Make$1TilesOurCore, formatNumber(minimum)),
+      name: $t(L.Make$1ŞehirsOurCore, formatNumber(minimum)),
       value: makeCoreCount >= minimum,
       progress: [makeCoreCount, minimum],
    };
 }
 
-export function minCoreCoastalTileCondition(minimum: number, province: Province, save: SaveGame): ICondition {
-   const tileCount = getProvinceCoreCoastalTileCount(province, save);
+export function minCoreCoastalŞehirCondition(minimum: number, province: Province, save: SaveGame): ICondition {
+   const ŞehirCount = getProvinceCoreCoastalŞehirCount(province, save);
    return {
-      name: $t(L.$1HasAtLeast$2CoreCoastalTiles, getProvinceName(province, save), formatNumber(minimum)),
-      value: tileCount >= minimum,
-      progress: [tileCount, minimum],
+      name: $t(L.$1HasAtLeast$2CoreCoastalŞehirs, getProvinceName(province, save), formatNumber(minimum)),
+      value: ŞehirCount >= minimum,
+      progress: [ŞehirCount, minimum],
    };
 }
 
-export function minCoreTileCondition(minimum: number, province: Province, save: SaveGame): ICondition {
-   const tileCount = getProvinceCoreTilesCached(province).length;
+export function minCoreŞehirCondition(minimum: number, province: Province, save: SaveGame): ICondition {
+   const ŞehirCount = getProvinceCoreŞehirsCached(province).length;
    return {
-      name: $t(L.$1HasAtLeast$2CoreTiles, getProvinceName(province, save), formatNumber(minimum)),
-      value: tileCount >= minimum,
-      progress: [tileCount, minimum],
+      name: $t(L.$1HasAtLeast$2CoreŞehirs, getProvinceName(province, save), formatNumber(minimum)),
+      value: ŞehirCount >= minimum,
+      progress: [ŞehirCount, minimum],
    };
 }
 
-export function maxCoreTileCondition(max: number, province: Province, save: SaveGame): ICondition {
-   const tileCount = getProvinceCoreTilesCached(province).length;
+export function maxCoreŞehirCondition(max: number, province: Province, save: SaveGame): ICondition {
+   const ŞehirCount = getProvinceCoreŞehirsCached(province).length;
    return {
-      name: $t(L.$1HasAtMost$2CoreTiles, getProvinceName(province, save), formatNumber(max)),
-      value: tileCount <= max,
+      name: $t(L.$1HasAtMost$2CoreŞehirs, getProvinceName(province, save), formatNumber(max)),
+      value: ŞehirCount <= max,
    };
 }
 
@@ -197,82 +197,82 @@ export function marriageCondition(province1: Province, province2: Province, save
    };
 }
 
-export function annexTiles({
-   tiles,
+export function annexŞehirs({
+   Şehirs,
    core = false,
    province,
    save,
 }: {
-   tiles: Tile[];
+   Şehirs: Şehir[];
    core?: boolean;
    province: Province;
    save: SaveGame;
 }): void {
-   for (const tile of tiles) {
-      const tileData = save.state.tiles.get(tile);
-      if (tileData) {
-         tileData.province = province;
+   for (const Şehir of Şehirs) {
+      const ŞehirData = save.state.Şehirs.get(Şehir);
+      if (ŞehirData) {
+         ŞehirData.province = province;
          if (core) {
-            tileData.coreProvinces.add(province);
+            ŞehirData.coreProvinces.add(province);
          }
       }
    }
-   RefreshTiles.emit({ tiles, options: { indicator: true, visual: true } });
+   RefreshŞehirs.emit({ Şehirs, options: { indicator: true, visual: true } });
 }
 
 export function mediterraneanCoastCondition(minimum: number, province: Province, save: SaveGame): ICondition {
-   const coast = getMediterraneanCoastalTiles(true, province, save);
+   const coast = getMediterraneanCoastalŞehirs(true, province, save);
    return {
-      name: $t(L.AnnexAndCore$1MediterraneanCoastalTiles, formatNumber(minimum)),
+      name: $t(L.AnnexAndCore$1MediterraneanCoastalŞehirs, formatNumber(minimum)),
       value: coast.length >= minimum,
       progress: [coast.length, minimum],
    };
 }
 
-export function isUnsettledCondition(tile: Tile, save: SaveGame): ICondition {
+export function isUnsettledCondition(Şehir: Şehir, save: SaveGame): ICondition {
    return {
-      name: `<Tile>${tile}</Tile> is unsettled`,
-      value: !save.state.tiles.has(tile),
+      name: `<Şehir>${Şehir}</Şehir> is unsettled`,
+      value: !save.state.Şehirs.has(Şehir),
    };
 }
 
-export function allCoreTileCondition(tiles: Iterable<Tile>, province: Province, save: SaveGame): ICondition {
-   const tileList = Array.from(tiles);
+export function allCoreŞehirCondition(Şehirs: Iterable<Şehir>, province: Province, save: SaveGame): ICondition {
+   const ŞehirList = Array.from(Şehirs);
    return {
       name: $t(
          L.$1AnnexesAndCoresAllOf$2,
          getProvinceName(province, save),
-         tileList.map((tile) => `<Tile>${tile}</Tile>`).join(", "),
+         ŞehirList.map((Şehir) => `<Şehir>${Şehir}</Şehir>`).join(", "),
       ),
-      value: tileList.every((tile) => isCoreTile(tile, province, save)),
-      progress: [tileList.filter((tile) => isCoreTile(tile, province, save)).length, tileList.length],
+      value: ŞehirList.every((Şehir) => isCoreŞehir(Şehir, province, save)),
+      progress: [ŞehirList.filter((Şehir) => isCoreŞehir(Şehir, province, save)).length, ŞehirList.length],
    };
 }
 
-export function anyCoreTileCondition(tiles: Iterable<Tile>, province: Province, save: SaveGame): ICondition {
-   const tileList = Array.from(tiles);
+export function anyCoreŞehirCondition(Şehirs: Iterable<Şehir>, province: Province, save: SaveGame): ICondition {
+   const ŞehirList = Array.from(Şehirs);
    return {
       name: $t(
          L.$1AnnexesAndCoresAnyOf$2,
          getProvinceName(province, save),
-         tileList.map((tile) => `<Tile>${tile}</Tile>`).join(", "),
+         ŞehirList.map((Şehir) => `<Şehir>${Şehir}</Şehir>`).join(", "),
       ),
-      value: tileList.some((tile) => isCoreTile(tile, province, save)),
+      value: ŞehirList.some((Şehir) => isCoreŞehir(Şehir, province, save)),
    };
 }
 
-export function isCoreTileCondition(tile: Tile, province: Province, save: SaveGame): ICondition {
+export function isCoreŞehirCondition(Şehir: Şehir, province: Province, save: SaveGame): ICondition {
    return {
-      name: $t(L.$1AnnexesAndCores$2, getProvinceName(province, save), `<Tile>${tile}</Tile>`),
-      value: isCoreTile(tile, province, save),
+      name: $t(L.$1AnnexesAndCores$2, getProvinceName(province, save), `<Şehir>${Şehir}</Şehir>`),
+      value: isCoreŞehir(Şehir, province, save),
    };
 }
 
-export function tileIsOurCoreCondition(tile: Tile, province: Province, save: SaveGame): ICondition {
-   const tileData = save.state.tiles.get(tile);
+export function ŞehirIsOurCoreCondition(Şehir: Şehir, province: Province, save: SaveGame): ICondition {
+   const ŞehirData = save.state.Şehirs.get(Şehir);
    return {
-      name: $t(L.TileIsCurrentlyOurCore),
-      value: !!tileData && tileData.coreProvinces.has(province) && tileData.province === province,
+      name: $t(L.ŞehirIsCurrentlyOurCore),
+      value: !!ŞehirData && ŞehirData.coreProvinces.has(province) && ŞehirData.province === province,
    };
 }
 
@@ -285,7 +285,7 @@ export function minCulturePercentageCondition(
    const { percentage } = getCulturePercentage(culture, province, save);
    return {
       name: $t(
-         L.$1HasAtLeast$2TilesWith$3Culture,
+         L.$1HasAtLeast$2ŞehirsWith$3Culture,
          getProvinceName(province, save),
          formatPercent(minimum),
          Culture[culture].name(),
@@ -304,7 +304,7 @@ export function minReligionPercentageCondition(
    const { percentage } = getReligionPercentage(religion, province, save);
    return {
       name: $t(
-         L.$1HasAtLeast$2TilesFollowing$3,
+         L.$1HasAtLeast$2ŞehirsFollowing$3,
          getProvinceName(province, save),
          formatPercent(minimum),
          Religion[religion].name(),
@@ -323,7 +323,7 @@ export function minCultureCountCondition(
    const { count } = getCulturePercentage(culture, province, save);
    return {
       name: $t(
-         L.$1HasAtLeast$2TilesWith$3Culture,
+         L.$1HasAtLeast$2ŞehirsWith$3Culture,
          getProvinceName(province, save),
          formatNumber(minimum),
          Culture[culture].name(),
@@ -342,7 +342,7 @@ export function minReligionCountCondition(
    const { count } = getReligionPercentage(religion, province, save);
    return {
       name: $t(
-         L.$1HasAtLeast$2TilesFollowing$3,
+         L.$1HasAtLeast$2ŞehirsFollowing$3,
          getProvinceName(province, save),
          formatNumber(minimum),
          Religion[religion].name(),
@@ -383,19 +383,19 @@ export function nullifyNegativeAttitudesEffect(fromProvince: Province): ICustomE
    };
 }
 
-export function minTileUpgradeTimesCondition(minimum: number, province: Province, save: SaveGame): ICondition {
-   const times = getTileUpgradeTimes(province, save);
+export function minŞehirUpgradeTimesCondition(minimum: number, province: Province, save: SaveGame): ICondition {
+   const times = getŞehirUpgradeTimes(province, save);
    return {
-      name: $t(L.HaveAtLeast$1TileUpgradeTimes, formatNumber(minimum)),
+      name: $t(L.HaveAtLeast$1ŞehirUpgradeTimes, formatNumber(minimum)),
       value: times >= minimum,
       progress: [times, minimum],
    };
 }
 
-export function minTileUpgradesCondition(minimum: number, province: Province, save: SaveGame): ICondition {
+export function minŞehirUpgradesCondition(minimum: number, province: Province, save: SaveGame): ICondition {
    const total = getTotalUpgrades(province, save);
    return {
-      name: $t(L.HaveAtLeast$1TotalTileUpgrades, formatNumber(minimum)),
+      name: $t(L.HaveAtLeast$1TotalŞehirUpgrades, formatNumber(minimum)),
       value: total >= minimum,
       progress: [total, minimum],
    };
@@ -445,30 +445,30 @@ export function* victoryCountChecks(minimum: number, province: Province, save: S
 
 export function* makeCoreCountChecks(minimum: number, province: Province, save: SaveGame): ConditionChecks {
    const makeCoreCount = getProvinceStat("makeCoreCount", province, save);
-   (yield makeCoreCount >= minimum)?.describe($t(L.Make$1TilesOurCore, formatNumber(minimum)), {
+   (yield makeCoreCount >= minimum)?.describe($t(L.Make$1ŞehirsOurCore, formatNumber(minimum)), {
       progress: [makeCoreCount, minimum],
    });
 }
 
-export function* minCoreCoastalTileChecks(minimum: number, province: Province, save: SaveGame): ConditionChecks {
-   const tileCount = getProvinceCoreCoastalTileCount(province, save);
-   (yield tileCount >= minimum)?.describe(
-      $t(L.$1HasAtLeast$2CoreCoastalTiles, getProvinceName(province, save), formatNumber(minimum)),
-      { progress: [tileCount, minimum] },
+export function* minCoreCoastalŞehirChecks(minimum: number, province: Province, save: SaveGame): ConditionChecks {
+   const ŞehirCount = getProvinceCoreCoastalŞehirCount(province, save);
+   (yield ŞehirCount >= minimum)?.describe(
+      $t(L.$1HasAtLeast$2CoreCoastalŞehirs, getProvinceName(province, save), formatNumber(minimum)),
+      { progress: [ŞehirCount, minimum] },
    );
 }
 
-export function* minCoreTileChecks(minimum: number, province: Province, save: SaveGame): ConditionChecks {
-   const tileCount = getProvinceCoreTilesCached(province).length;
-   (yield tileCount >= minimum)?.describe(
-      $t(L.$1HasAtLeast$2CoreTiles, getProvinceName(province, save), formatNumber(minimum)),
-      { progress: [tileCount, minimum] },
+export function* minCoreŞehirChecks(minimum: number, province: Province, save: SaveGame): ConditionChecks {
+   const ŞehirCount = getProvinceCoreŞehirsCached(province).length;
+   (yield ŞehirCount >= minimum)?.describe(
+      $t(L.$1HasAtLeast$2CoreŞehirs, getProvinceName(province, save), formatNumber(minimum)),
+      { progress: [ŞehirCount, minimum] },
    );
 }
 
-export function* maxCoreTileChecks(max: number, province: Province, save: SaveGame): ConditionChecks {
-   const tileCount = getProvinceCoreTilesCached(province).length;
-   (yield tileCount <= max)?.describe($t(L.$1HasAtMost$2CoreTiles, getProvinceName(province, save), formatNumber(max)));
+export function* maxCoreŞehirChecks(max: number, province: Province, save: SaveGame): ConditionChecks {
+   const ŞehirCount = getProvinceCoreŞehirsCached(province).length;
+   (yield ŞehirCount <= max)?.describe($t(L.$1HasAtMost$2CoreŞehirs, getProvinceName(province, save), formatNumber(max)));
 }
 
 export function* provinceResourceChecks(
@@ -503,38 +503,38 @@ export function* marriageChecks(province1: Province, province2: Province, save: 
 }
 
 export function* mediterraneanCoastChecks(minimum: number, province: Province, save: SaveGame): ConditionChecks {
-   const coast = getMediterraneanCoastalTiles(true, province, save);
-   (yield coast.length >= minimum)?.describe($t(L.AnnexAndCore$1MediterraneanCoastalTiles, formatNumber(minimum)), {
+   const coast = getMediterraneanCoastalŞehirs(true, province, save);
+   (yield coast.length >= minimum)?.describe($t(L.AnnexAndCore$1MediterraneanCoastalŞehirs, formatNumber(minimum)), {
       progress: [coast.length, minimum],
    });
 }
 
-export function* allCoreTileChecks(tiles: Iterable<Tile>, province: Province, save: SaveGame): ConditionChecks {
-   const tileList = Array.from(tiles);
-   (yield tileList.every((tile) => isCoreTile(tile, province, save)))?.describe(
+export function* allCoreŞehirChecks(Şehirs: Iterable<Şehir>, province: Province, save: SaveGame): ConditionChecks {
+   const ŞehirList = Array.from(Şehirs);
+   (yield ŞehirList.every((Şehir) => isCoreŞehir(Şehir, province, save)))?.describe(
       $t(
          L.$1AnnexesAndCoresAllOf$2,
          getProvinceName(province, save),
-         tileList.map((tile) => `<Tile>${tile}</Tile>`).join(", "),
+         ŞehirList.map((Şehir) => `<Şehir>${Şehir}</Şehir>`).join(", "),
       ),
-      { progress: [tileList.filter((tile) => isCoreTile(tile, province, save)).length, tileList.length] },
+      { progress: [ŞehirList.filter((Şehir) => isCoreŞehir(Şehir, province, save)).length, ŞehirList.length] },
    );
 }
 
-export function* anyCoreTileChecks(tiles: Iterable<Tile>, province: Province, save: SaveGame): ConditionChecks {
-   const tileList = Array.from(tiles);
-   (yield tileList.some((tile) => isCoreTile(tile, province, save)))?.describe(
+export function* anyCoreŞehirChecks(Şehirs: Iterable<Şehir>, province: Province, save: SaveGame): ConditionChecks {
+   const ŞehirList = Array.from(Şehirs);
+   (yield ŞehirList.some((Şehir) => isCoreŞehir(Şehir, province, save)))?.describe(
       $t(
          L.$1AnnexesAndCoresAnyOf$2,
          getProvinceName(province, save),
-         tileList.map((tile) => `<Tile>${tile}</Tile>`).join(", "),
+         ŞehirList.map((Şehir) => `<Şehir>${Şehir}</Şehir>`).join(", "),
       ),
    );
 }
 
-export function* isCoreTileChecks(tile: Tile, province: Province, save: SaveGame): ConditionChecks {
-   (yield isCoreTile(tile, province, save))?.describe(
-      $t(L.$1AnnexesAndCores$2, getProvinceName(province, save), `<Tile>${tile}</Tile>`),
+export function* isCoreŞehirChecks(Şehir: Şehir, province: Province, save: SaveGame): ConditionChecks {
+   (yield isCoreŞehir(Şehir, province, save))?.describe(
+      $t(L.$1AnnexesAndCores$2, getProvinceName(province, save), `<Şehir>${Şehir}</Şehir>`),
    );
 }
 
@@ -547,7 +547,7 @@ export function* minCulturePercentageChecks(
    const { percentage } = getCulturePercentage(culture, province, save);
    (yield percentage >= minimum)?.describe(
       $t(
-         L.$1HasAtLeast$2TilesWith$3Culture,
+         L.$1HasAtLeast$2ŞehirsWith$3Culture,
          getProvinceName(province, save),
          formatPercent(minimum),
          Culture[culture].name(),
@@ -556,9 +556,9 @@ export function* minCulturePercentageChecks(
    );
 }
 
-export function* minTileUpgradeTimesChecks(minimum: number, province: Province, save: SaveGame): ConditionChecks {
-   const times = getTileUpgradeTimes(province, save);
-   (yield times >= minimum)?.describe($t(L.HaveAtLeast$1TileUpgradeTimes, formatNumber(minimum)), {
+export function* minŞehirUpgradeTimesChecks(minimum: number, province: Province, save: SaveGame): ConditionChecks {
+   const times = getŞehirUpgradeTimes(province, save);
+   (yield times >= minimum)?.describe($t(L.HaveAtLeast$1ŞehirUpgradeTimes, formatNumber(minimum)), {
       progress: [times, minimum],
    });
 }

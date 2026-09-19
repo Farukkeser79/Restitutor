@@ -7,12 +7,12 @@ Shared infrastructure lives in `src/game/logic/Calculation.ts`. Existing getters
 Migrated getters default to the existing breakdown result and accept a final `"value"` argument for a primitive:
 
 ```ts
-getTileManpower(tile, save); // IValueBreakdown
-getTileManpower(tile, save, "breakdown"); // IValueBreakdown
-getTileManpower(tile, save, "value"); // number
+getŞehirManpower(Şehir, save); // IValueBreakdown
+getŞehirManpower(Şehir, save, "breakdown"); // IValueBreakdown
+getŞehirManpower(Şehir, save, "value"); // number
 ```
 
-These calls illustrate the intended API; only migrated getters support explicit modes. Conditions follow the same convention, returning `IConditionBreakdown` or `boolean`. Currently, `getTileUpgradeCost`, `getTileMaintenanceCost`, and `getGameEventCondition` are migrated at the top level. Custom game-event conditions and their reusable condition helpers produce lazy `ConditionChecks`.
+These calls illustrate the intended API; only migrated getters support explicit modes. Conditions follow the same convention, returning `IConditionBreakdown` or `boolean`. Currently, `getŞehirUpgradeCost`, `getŞehirMaintenanceCost`, and `getGameEventCondition` are migrated at the top level. Custom game-event conditions and their reusable condition helpers produce lazy `ConditionChecks`.
 
 `EvaluationResult<M, B>` describes the mode/result relationship. `EvaluationGetter<Args, B>` provides the public overloads for an arbitrary parameter tuple, including a union return for a runtime-variable mode. `EvaluationFunction<Key, B>` is its keyed `(key, save, mode?)` alias. `EvaluationImplementation<Key, B>` describes an internal generic implementation with a required mode.
 
@@ -22,9 +22,9 @@ Use `defineValueGetter` instead of repeating overloads for each uncached value g
 
 ```ts
 export const getPopulationValue = defineValueGetter(
-   (tile: Tile, save: SaveGame, mode: EvaluationMode = "breakdown") => {
+   (Şehir: Şehir, save: SaveGame, mode: EvaluationMode = "breakdown") => {
       const calc = new ValueCalculation({ mode });
-      const data = save.state.tiles.get(tile);
+      const data = save.state.Şehirs.get(Şehir);
       if (data) {
          calc.add(data.population * 1000)?.describe($t(L.Population));
       }
@@ -32,9 +32,9 @@ export const getPopulationValue = defineValueGetter(
    },
 );
 
-getPopulationValue(tile, save); // IValueBreakdown
-getPopulationValue(tile, save, "breakdown"); // IValueBreakdown
-getPopulationValue(tile, save, "value"); // number
+getPopulationValue(Şehir, save); // IValueBreakdown
+getPopulationValue(Şehir, save, "breakdown"); // IValueBreakdown
+getPopulationValue(Şehir, save, "value"); // number
 ```
 
 The helper infers all preceding parameters from the implementation. The existing `defineConditionGetter` works identically with `ConditionCalculation`, exposing `IConditionBreakdown` and `boolean` results. For automatic short-circuiting, prefer the generator-based `defineConditionChecks` API described below.
@@ -136,8 +136,8 @@ Raw `ConditionChecks` producers compose directly with `yield*`:
 
 ```ts
 function* eventChecks(province: Province, save: SaveGame): ConditionChecks {
-   yield* minCoreTileChecks(10, province, save);
-   yield* anyCoreTileChecks(targetTiles, province, save);
+   yield* minCoreŞehirChecks(10, province, save);
+   yield* anyCoreŞehirChecks(targetŞehirs, province, save);
 }
 
 export const getEventChecks = defineConditionChecks(eventChecks);
@@ -156,41 +156,41 @@ Unlike the identity declaration helpers, `defineConditionChecks` has a runtime d
 `ModifierLogic.ts` provides additive, accumulator-based counterparts:
 
 - `attachModifiersToCalculation(type, calc, province, save)`
-- `attachTileModifiersToCalculation(modifiers, calc)`
+- `attachŞehirModifiersToCalculation(modifiers, calc)`
 
 They preserve static/dynamic modifier order and the existing duration-description rules. Formatting happens only through optional explanation calls. Both return the original accumulator.
 
-Keep using `attachModifiers` and `attachTileModifiers` in legacy implementations. Do not build temporary legacy breakdowns to feed migrated calculations.
+Keep using `attachModifiers` and `attachŞehirModifiers` in legacy implementations. Do not build temporary legacy breakdowns to feed migrated calculations.
 
 `PersonTrait.ts` provides `attachProvinceTraitsToCalculation(trait, value, calc, province, save)` for multiplier contributions from matching governor and selected-advisor traits. It preserves trait order and descriptions while skipping presentation work in value mode. Keep using `getProvinceTraits` in legacy implementations.
 
 ## Cached getters
 
-Use `cacheTileEvaluation` or `cacheProvinceEvaluation` from `CacheLogic.ts` for migrated keyed getters. They expose the public overloads while supplying a required mode to the implementation:
+Use `cacheŞehirEvaluation` or `cacheProvinceEvaluation` from `CacheLogic.ts` for migrated keyed getters. They expose the public overloads while supplying a required mode to the implementation:
 
 ```ts
-export const getExample = cacheTileEvaluation<IValueBreakdown>((tile, save, mode) => {
+export const getExample = cacheŞehirEvaluation<IValueBreakdown>((Şehir, save, mode) => {
    const calc = new ValueCalculation({ mode });
-   const data = save.state.tiles.get(tile);
+   const data = save.state.Şehirs.get(Şehir);
    if (data) {
       calc.add(data.population * 1000)?.describe($t(L.Population));
    }
    return calc.finish();
 });
 
-getExample(tile, save); // IValueBreakdown
-getExample(tile, save, "value"); // number
+getExample(Şehir, save); // IValueBreakdown
+getExample(Şehir, save, "value"); // number
 ```
 
 The callback is contextually generic in its mode, so `calc.finish()` has the appropriate conditional return type without gameplay casts. Explicitly supplying the breakdown type also makes the wrapper's public result contract clear.
 
 For uncached getters, use the declaration helpers described above. The cache wrappers already supply public overloads and the default mode; their callbacks do not need `defineValueGetter` or `defineConditionGetter`.
 
-All four public cache helpers share the same keyed storage and `GameStateUpdated` invalidation. The session has one global `SaveGame`, so cache entries are keyed only by wrapper identity and tile/province, not by save. The public `save` argument is still forwarded to calculations. Each wrapper has an opaque namespace; function names are not cache keys. Weak references allow discarded wrappers to be collected. Lookups do not allocate result wrappers or cache maps; storage is created only when inserting a result.
+All four public cache helpers share the same keyed storage and `GameStateUpdated` invalidation. The session has one global `SaveGame`, so cache entries are keyed only by wrapper identity and Şehir/province, not by save. The public `save` argument is still forwarded to calculations. Each wrapper has an opaque namespace; function names are not cache keys. Weak references allow discarded wrappers to be collected. Lookups do not allocate result wrappers or cache maps; storage is created only when inserting a result.
 
-`cacheTile` and `cacheProvince` cache any normal return value, including `0`, `false`, `null`, and `undefined`. They use explicit presence checks rather than treating falsy values as cache misses.
+`cacheŞehir` and `cacheProvince` cache any normal return value, including `0`, `false`, `null`, and `undefined`. They use explicit presence checks rather than treating falsy values as cache misses.
 
-Evaluation cache behavior (`cacheTileEvaluation` and `cacheProvinceEvaluation`):
+Evaluation cache behavior (`cacheŞehirEvaluation` and `cacheProvinceEvaluation`):
 
 | Cached entry | Requested mode | Behavior |
 | --- | --- | --- |
@@ -209,7 +209,7 @@ The first value miss creates cache storage if needed. Repeated value requests av
 
 Create wrappers at module scope, like the existing cached getters. The caches retain the existing event-based freshness contract: mutations between update events are not automatically detected. Returned breakdowns should be treated as read-only by consumers.
 
-The `cacheTile` and `cacheProvince` signatures remain compatible with existing callers. Their storage uses collision-free wrapper identities and correctly caches falsy results. They are not mode-aware and must not wrap a migrated getter.
+The `cacheŞehir` and `cacheProvince` signatures remain compatible with existing callers. Their storage uses collision-free wrapper identities and correctly caches falsy results. They are not mode-aware and must not wrap a migrated getter.
 
 ## Incremental migration rules
 

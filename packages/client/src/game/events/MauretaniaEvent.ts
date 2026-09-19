@@ -1,13 +1,13 @@
 import { $t, L } from "../../utils/i18n";
 import { Province } from "../definitions/Province";
-import { StraitOfGibraltarTiles } from "../definitions/TileConstants";
-import { getTileName } from "../definitions/TileName";
+import { StraitOfGibraltarŞehirs } from "../definitions/ŞehirConstants";
+import { getŞehirName } from "../definitions/ŞehirName";
 import type { ConditionChecks } from "../logic/Calculation";
 import {
-   allCoreTileChecks,
-   annexTiles,
-   isCoreTileChecks,
-   minCoreTileChecks,
+   allCoreŞehirChecks,
+   annexŞehirs,
+   isCoreŞehirChecks,
+   minCoreŞehirChecks,
    provinceResourceChecks,
 } from "../logic/MissionLogic";
 import { EventImage } from "./EventImages";
@@ -43,7 +43,7 @@ export const MauretaniaEvent = {
             resources: { military: 100 },
             modifiers: {
                WarPower: { type: "multiply", value: 0.15, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: -0.05, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.05, duration: 2 * 12 },
             },
          },
       ],
@@ -147,7 +147,7 @@ export const MauretaniaEvent = {
          {
             label: () => $t(L.TurnTheAlmsIntoGrainRelief),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                Prestige: { type: "multiply", value: -0.05, duration: 2 * 12 },
             },
          },
@@ -315,7 +315,7 @@ export const MauretaniaEvent = {
             resources: { administrative: 75 },
             modifiers: {
                Stability: { type: "add", value: 10, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.05, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.05, duration: 2 * 12 },
             },
          },
          {
@@ -349,7 +349,7 @@ export const MauretaniaEvent = {
             label: () => $t(L.EmpowerTheCityCouncils),
             modifiers: {
                Stability: { type: "add", value: 10, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                LandTax: { type: "multiply", value: -0.05, duration: 2 * 12 },
             },
          },
@@ -371,7 +371,7 @@ export const MauretaniaEvent = {
          province: new Set(["Mauretania"]),
          annexAndCore: { Baetica: 2 },
          conditions: function* (province, save): ConditionChecks {
-            yield* allCoreTileChecks(StraitOfGibraltarTiles, province, save);
+            yield* allCoreŞehirChecks(StraitOfGibraltarŞehirs, province, save);
          },
       },
       buttons: [
@@ -386,7 +386,7 @@ export const MauretaniaEvent = {
             label: () => $t(L.OpenTheStraitToMerchants),
             modifiers: {
                DiplomaticPoint: { type: "add", value: 1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -411,7 +411,7 @@ export const MauretaniaEvent = {
             label: () => $t(L.MakeBaeticaFundTheAdvance),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
             casusBelli: {
                Lusitania: { casusBelli: "ConquestMission", duration: 5 * 12 },
@@ -440,7 +440,7 @@ export const MauretaniaEvent = {
          province: new Set(["Mauretania"]),
          conditions: function* (province, save): ConditionChecks {
             yield* provinceResourceChecks("gold", 10_000, province, save);
-            yield* isCoreTileChecks(8978513, "Tarraconensis", save);
+            yield* isCoreŞehirChecks(8978513, "Tarraconensis", save);
          },
       },
       buttons: [
@@ -450,9 +450,9 @@ export const MauretaniaEvent = {
             custom: [
                {
                   desc: (province, save) =>
-                     $t(L.$1Becomes$2sCoreTile, getTileName(8978513, save), Province[province].name()),
+                     $t(L.$1Becomes$2sCoreŞehir, getŞehirName(8978513, save), Province[province].name()),
                   effect: (province, save) => {
-                     annexTiles({ tiles: [8978513], core: true, province, save });
+                     annexŞehirs({ Şehirs: [8978513], core: true, province, save });
                   },
                },
             ],
@@ -554,7 +554,7 @@ export const MauretaniaEvent = {
       condition: {
          province: new Set(["Mauretania"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(40, province, save);
+            yield* minCoreŞehirChecks(40, province, save);
          },
       },
       buttons: [

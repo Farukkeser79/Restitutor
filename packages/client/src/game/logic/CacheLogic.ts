@@ -1,32 +1,32 @@
-import { mapSafePush, pointToTile, type Tile, tileToPoint } from "@project/shared/src/utils/Helper";
+import { mapSafePush, pointToŞehir, type Şehir, ŞehirToPoint } from "@project/shared/src/utils/Helper";
 import { G } from "../../utils/Global";
 import type { Province } from "../definitions/Province";
-import { GameStateUpdated, RefreshTiles } from "../Events";
+import { GameStateUpdated, RefreshŞehirs } from "../Events";
 import type { SaveGame } from "../GameState";
 import { MapGrid } from "../MapGrid";
 import type { EvaluationBreakdown, EvaluationFunction, EvaluationImplementation, EvaluationMode } from "./Calculation";
 
 let _keyedCaches = new WeakMap<object, Map<unknown, unknown>>();
 
-export const _cachedProvinceTiles = new Map<Province, Tile[]>();
-export const _cachedProvinceCoreTiles = new Map<Province, Tile[]>();
+export const _cachedProvinceŞehirs = new Map<Province, Şehir[]>();
+export const _cachedProvinceCoreŞehirs = new Map<Province, Şehir[]>();
 
-function _populateProvinceTileCache(save: SaveGame): void {
-   _cachedProvinceTiles.clear();
-   _cachedProvinceCoreTiles.clear();
-   for (const [tile, data] of save.state.tiles) {
+function _populateProvinceŞehirCache(save: SaveGame): void {
+   _cachedProvinceŞehirs.clear();
+   _cachedProvinceCoreŞehirs.clear();
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province) {
-         mapSafePush(_cachedProvinceTiles, data.province, tile);
+         mapSafePush(_cachedProvinceŞehirs, data.province, Şehir);
       }
       if (data.coreProvinces.has(data.province)) {
-         mapSafePush(_cachedProvinceCoreTiles, data.province, tile);
+         mapSafePush(_cachedProvinceCoreŞehirs, data.province, Şehir);
       }
    }
 }
 
 GameStateUpdated.on(() => {
    _keyedCaches = new WeakMap();
-   _populateProvinceTileCache(G.save);
+   _populateProvinceŞehirCache(G.save);
 });
 
 type KeyedFunc<Key, T> = (key: Key, save: SaveGame) => T;
@@ -56,7 +56,7 @@ export function cacheProvince<T>(func: KeyedFunc<Province, T>): KeyedFunc<Provin
    return cacheResult(func);
 }
 
-export function cacheTile<T>(func: KeyedFunc<Tile, T>): KeyedFunc<Tile, T> {
+export function cacheŞehir<T>(func: KeyedFunc<Şehir, T>): KeyedFunc<Şehir, T> {
    return cacheResult(func);
 }
 
@@ -80,9 +80,9 @@ export function cacheProvinceEvaluation<B extends EvaluationBreakdown>(
    return cacheEvaluation(func);
 }
 
-export function cacheTileEvaluation<B extends EvaluationBreakdown>(
-   func: EvaluationImplementation<Tile, B>,
-): EvaluationFunction<Tile, B> {
+export function cacheŞehirEvaluation<B extends EvaluationBreakdown>(
+   func: EvaluationImplementation<Şehir, B>,
+): EvaluationFunction<Şehir, B> {
    return cacheEvaluation(func);
 }
 
@@ -110,63 +110,63 @@ function cacheEvaluation<Key, B extends EvaluationBreakdown>(
    return evaluate as EvaluationFunction<Key, B>;
 }
 
-const _tilesConnectedToCapital = new Map<Province, Set<Tile>>();
+const _ŞehirsConnectedToCapital = new Map<Province, Set<Şehir>>();
 
-RefreshTiles.on(({ tiles }) => {
+RefreshŞehirs.on(({ Şehirs }) => {
    const provinces = new Set<Province>();
-   for (const tile of tiles) {
-      const province = G.save.state.tiles.get(tile)?.province;
+   for (const Şehir of Şehirs) {
+      const province = G.save.state.Şehirs.get(Şehir)?.province;
       if (province) {
          provinces.add(province);
       }
    }
    for (const province of provinces) {
-      calculateTilesConnectedToCapital(province, G.save);
+      calculateŞehirsConnectedToCapital(province, G.save);
    }
 });
 
-export function calculateTilesConnectedToCapital(province: Province, save: SaveGame): void {
-   const connectedTiles = new Set<Tile>();
-   _tilesConnectedToCapital.set(province, connectedTiles);
+export function calculateŞehirsConnectedToCapital(province: Province, save: SaveGame): void {
+   const connectedŞehirs = new Set<Şehir>();
+   _ŞehirsConnectedToCapital.set(province, connectedŞehirs);
 
    const capital = save.state.provinces[province]?.capital;
-   if (capital === undefined || save.state.tiles.get(capital)?.province !== province) {
+   if (capital === undefined || save.state.Şehirs.get(capital)?.province !== province) {
       return;
    }
 
-   connectedTiles.add(capital);
-   const queue: Tile[] = [capital];
+   connectedŞehirs.add(capital);
+   const queue: Şehir[] = [capital];
    for (let i = 0; i < queue.length; i++) {
-      for (const neighborPoint of MapGrid.getNeighbors(tileToPoint(queue[i]))) {
-         const neighbor = pointToTile(neighborPoint);
-         if (!connectedTiles.has(neighbor) && save.state.tiles.get(neighbor)?.province === province) {
-            connectedTiles.add(neighbor);
+      for (const neighborPoint of MapGrid.getNeighbors(ŞehirToPoint(queue[i]))) {
+         const neighbor = pointToŞehir(neighborPoint);
+         if (!connectedŞehirs.has(neighbor) && save.state.Şehirs.get(neighbor)?.province === province) {
+            connectedŞehirs.add(neighbor);
             queue.push(neighbor);
          }
       }
    }
 }
 
-export function isConnectedToCapital(tile: Tile, save: SaveGame): boolean {
-   const province = save.state.tiles.get(tile)?.province;
+export function isConnectedToCapital(Şehir: Şehir, save: SaveGame): boolean {
+   const province = save.state.Şehirs.get(Şehir)?.province;
    if (province === undefined) {
       return false;
    }
-   let cache = _tilesConnectedToCapital.get(province);
+   let cache = _ŞehirsConnectedToCapital.get(province);
    if (cache === undefined) {
-      calculateTilesConnectedToCapital(province, save);
+      calculateŞehirsConnectedToCapital(province, save);
    }
-   cache = _tilesConnectedToCapital.get(province);
+   cache = _ŞehirsConnectedToCapital.get(province);
    if (cache === undefined) {
       return false;
    }
-   return cache.has(tile);
+   return cache.has(Şehir);
 }
 
-export function getProvinceTilesCached(province: Province): Tile[] {
-   return _cachedProvinceTiles.get(province) ?? [];
+export function getProvinceŞehirsCached(province: Province): Şehir[] {
+   return _cachedProvinceŞehirs.get(province) ?? [];
 }
 
-export function getProvinceCoreTilesCached(province: Province): Tile[] {
-   return _cachedProvinceCoreTiles.get(province) ?? [];
+export function getProvinceCoreŞehirsCached(province: Province): Şehir[] {
+   return _cachedProvinceCoreŞehirs.get(province) ?? [];
 }

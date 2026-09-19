@@ -83,9 +83,9 @@ export function getOffspringChance(
       breakdown.add.push({ name: $t(L.WifesAgeBelow$1, "15"), value: 0 });
       return finalizeBreakdown(breakdown);
    }
-   // Only apply Fertile trait of the governor!
-   if (family.male === save.state.provinces[province]?.governor.male && family.male.traits.has("Fertile")) {
-      breakdown.add.push({ name: $t(L.GovernorsTrait$1, PersonTrait.Fertile.name()), value: 2 });
+   // Only apply FerŞehir trait of the governor!
+   if (family.male === save.state.provinces[province]?.governor.male && family.male.traits.has("FerŞehir")) {
+      breakdown.add.push({ name: $t(L.GovernorsTrait$1, PersonTrait.FerŞehir.name()), value: 2 });
    }
    const age = female.age;
    if (age >= 15 && age <= 35) {

@@ -1,4 +1,4 @@
-import { createTile, keysOf, type Tile } from "@project/shared/src/utils/Helper";
+import { createŞehir, keysOf, type Şehir } from "@project/shared/src/utils/Helper";
 import { Province } from "./Province";
 import { SpawnedProvinces } from "./SpawnedProvince";
 
@@ -86,16 +86,16 @@ export const PalmyreneEmpireProvinces: Province[] = [
    "Lycia",
 ] as const;
 
-export const Tiles = {
-   Constantinople: createTile(158, 79),
-   Rome: createTile(145, 77),
-   Durocortorum: createTile(138, 67),
-   Lutetia: createTile(137, 68),
-} as const satisfies Record<string, Tile>;
+export const Şehirs = {
+   Constantinople: createŞehir(158, 79),
+   Rome: createŞehir(145, 77),
+   Durocortorum: createŞehir(138, 67),
+   Lutetia: createŞehir(137, 68),
+} as const satisfies Record<string, Şehir>;
 
-export const StraitOfGibraltarTiles = [8585300, 8519765] as const satisfies Tile[];
+export const StraitOfGibraltarŞehirs = [8585300, 8519765] as const satisfies Şehir[];
 
-export const MediterraneanTiles: Set<Tile> = new Set([
+export const MediterraneanŞehirs: Set<Şehir> = new Set([
    8585301, 8650836, 8650837, 8716372, 8716373, 8781907, 8781908, 8847441, 8847442, 8847443, 8847444, 8912975, 8912976,
    8912977, 8912978, 8912979, 8978511, 8978512, 8978514, 8978515, 9044044, 9044045, 9044046, 9044047, 9044048, 9044049,
    9044050, 9044051, 9109580, 9109581, 9109582, 9109583, 9109584, 9109585, 9109586, 9109587, 9175116, 9175117, 9175118,
@@ -117,7 +117,7 @@ export const MediterraneanTiles: Set<Tile> = new Set([
    10616921, 10682452, 10682453, 10682454, 10682455, 10682456, 10747988, 10747990,
 ]);
 
-export const BlackSeaTiles: Set<Tile> = new Set([
+export const BlackSeaŞehirs: Set<Şehir> = new Set([
    10354763, 10354764, 10354765, 10420297, 10420298, 10420299, 10420300, 10420301, 10420302, 10485832, 10485833,
    10485834, 10485835, 10485836, 10485837, 10485838, 10551368, 10551369, 10551370, 10551371, 10551372, 10551373,
    10616904, 10616906, 10616907, 10616908, 10616909, 10682442, 10682443, 10682444, 10682445, 10747976, 10747977,

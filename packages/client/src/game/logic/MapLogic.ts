@@ -1,24 +1,24 @@
-import { createTile, pointToTile, type Tile, tileToPoint } from "@project/shared/src/utils/Helper";
+import { createŞehir, pointToŞehir, type Şehir, ŞehirToPoint } from "@project/shared/src/utils/Helper";
 import type { IHaveXY } from "@project/shared/src/utils/Vector2";
-import { MapGrid, TileWidth } from "../MapGrid";
+import { MapGrid, ŞehirWidth } from "../MapGrid";
 
-export function findProvinceLabelPosition(provinceTiles: Set<Tile>, textWidth: number): IHaveXY {
-   const rows: Array<{ start: Tile; end: Tile; x: number; y: number; length: number }> = [];
+export function findProvinceLabelPosition(provinceŞehirs: Set<Şehir>, textWidth: number): IHaveXY {
+   const rows: Array<{ start: Şehir; end: Şehir; x: number; y: number; length: number }> = [];
    let maximumRowWidth = 0;
-   for (const tile of provinceTiles) {
-      const { x, y } = tileToPoint(tile);
-      if (provinceTiles.has(createTile(x - 1, y))) {
+   for (const Şehir of provinceŞehirs) {
+      const { x, y } = ŞehirToPoint(Şehir);
+      if (provinceŞehirs.has(createŞehir(x - 1, y))) {
          continue;
       }
       let length = 1;
-      while (provinceTiles.has(createTile(x + length, y))) {
+      while (provinceŞehirs.has(createŞehir(x + length, y))) {
          length++;
       }
-      rows.push({ start: tile, end: createTile(x + length - 1, y), x, y, length });
+      rows.push({ start: Şehir, end: createŞehir(x + length - 1, y), x, y, length });
       maximumRowWidth = Math.max(maximumRowWidth, length);
    }
 
-   const labelWidthInGrids = Math.max(1, Math.ceil(textWidth / TileWidth));
+   const labelWidthInGrids = Math.max(1, Math.ceil(textWidth / ŞehirWidth));
    const minimumRowWidth = Math.min(labelWidthInGrids, maximumRowWidth);
    let bestRow = rows[0];
    let bestClearance = Number.NEGATIVE_INFINITY;
@@ -30,11 +30,11 @@ export function findProvinceLabelPosition(provinceTiles: Set<Tile>, textWidth: n
       }
       const middleX = row.x + Math.floor(row.length / 2);
       let { clearance, neighborEdges, totalSpace } = getProvinceLabelClearance(
-         createTile(middleX, row.y),
-         provinceTiles,
+         createŞehir(middleX, row.y),
+         provinceŞehirs,
       );
       if (row.length % 2 === 0) {
-         const leftScore = getProvinceLabelClearance(createTile(middleX - 1, row.y), provinceTiles);
+         const leftScore = getProvinceLabelClearance(createŞehir(middleX - 1, row.y), provinceŞehirs);
          clearance = Math.min(clearance, leftScore.clearance);
          neighborEdges = Math.min(neighborEdges, leftScore.neighborEdges);
          totalSpace = Math.min(totalSpace, leftScore.totalSpace);
@@ -55,16 +55,16 @@ export function findProvinceLabelPosition(provinceTiles: Set<Tile>, textWidth: n
       }
    }
 
-   const start = MapGrid.gridToPosition(tileToPoint(bestRow.start));
-   const end = MapGrid.gridToPosition(tileToPoint(bestRow.end));
+   const start = MapGrid.gridToPosition(ŞehirToPoint(bestRow.start));
+   const end = MapGrid.gridToPosition(ŞehirToPoint(bestRow.end));
    return { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 };
 }
 
 function getProvinceLabelClearance(
-   tile: Tile,
-   provinceTiles: Set<Tile>,
+   Şehir: Şehir,
+   provinceŞehirs: Set<Şehir>,
 ): { clearance: number; totalSpace: number; neighborEdges: number } {
-   const start = tileToPoint(tile);
+   const start = ŞehirToPoint(Şehir);
    let clearance = Number.POSITIVE_INFINITY;
    let totalSpace = 0;
    let neighborEdges = 0;
@@ -73,7 +73,7 @@ function getProvinceLabelClearance(
       let point = start;
       while (true) {
          point = MapGrid.getNeighbor(point, direction);
-         if (!provinceTiles.has(pointToTile(point))) {
+         if (!provinceŞehirs.has(pointToŞehir(point))) {
             break;
          }
          distance++;

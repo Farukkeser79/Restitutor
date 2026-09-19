@@ -8,7 +8,7 @@ import { getProvinceUpgradeDesc, ProvinceUpgrades } from "../game/definitions/Pr
 import { Religion } from "../game/definitions/Religion";
 import { GameEvents } from "../game/events/GameEvents";
 import { GameOptionFlag } from "../game/GameOption";
-import { getOriginalTileCount } from "../game/GameState";
+import { getOriginalŞehirCount } from "../game/GameState";
 import { saveGame } from "../game/LoadSave";
 import { getLegacyPointsNextRun, rebirth } from "../game/logic/LegacyUpgradeLogic";
 import { getProvinceName, getProvinceOriginalGreatWorks } from "../game/logic/ProvinceLogic";
@@ -117,17 +117,17 @@ export function RebirthPage(): React.ReactNode {
          </div>
          <div className="box m10">
             <div className="h3 row">
-               <div className="f1">{$t(L.Tiles)}</div>
-               <div>{getOriginalTileCount(province)}</div>
+               <div className="f1">{$t(L.Şehirs)}</div>
+               <div>{getOriginalŞehirCount(province)}</div>
             </div>
             <div className="m10">
                {Array.from(RomeMap)
-                  .filter(([tile, tileData]) => tileData.province === province)
-                  .map(([tile, tileData], idx) => (
-                     <span key={tile}>
+                  .filter(([Şehir, ŞehirData]) => ŞehirData.province === province)
+                  .map(([Şehir, ŞehirData], idx) => (
+                     <span key={Şehir}>
                         {idx > 0 && ", "}
-                        {renderMarkup(`<Tile>${tile}</Tile>`)}
-                        {tileData.isCapital && "*"}
+                        {renderMarkup(`<Şehir>${Şehir}</Şehir>`)}
+                        {ŞehirData.isCapital && "*"}
                      </span>
                   ))}
             </div>

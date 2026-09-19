@@ -7,7 +7,7 @@ import {
    keysOf,
    randOne,
    shuffle,
-   type Tile,
+   type Şehir,
 } from "@project/shared/src/utils/Helper";
 import { G, GameFlags, isDev } from "../../utils/Global";
 import { AppeaseAction } from "../actions/AppeaseAction";
@@ -49,7 +49,7 @@ import type { Religion } from "../definitions/Religion";
 import { SocialClass } from "../definitions/SocialClass";
 import { MaxRaidMonths, SpawnedProvinces } from "../definitions/SpawnedProvince";
 import type { SaveGame } from "../GameState";
-import { getProvinceTilesCached } from "./CacheLogic";
+import { getProvinceŞehirsCached } from "./CacheLogic";
 import {
    cancelImproveRelations,
    getAttitudeTowards,
@@ -81,7 +81,7 @@ import {
    trySpendProvinceResources,
 } from "./ProvinceLogic";
 import { getCheapestLockedTech } from "./TechLogic";
-import { getBuildingSlot, getTileUnrest, getTileWar } from "./TileLogic";
+import { getBuildingSlot, getŞehirUnrest, getŞehirWar } from "./ŞehirLogic";
 import {
    getTimedActionCooldownLeft,
    getTimedActionTimeLeft,
@@ -97,7 +97,7 @@ import {
    getWarParticipants,
    getWarScore,
    getWarSuccessChance,
-   getWarTiles,
+   getWarŞehirs,
    MaxArmyMaintenance,
    MaxConscription,
    MinArmyMaintenance,
@@ -119,12 +119,12 @@ export function tickAI(save: SaveGame): void {
       if (!hasFlag(G.flags, GameFlags.Sandbox) && province === save.state.playerProvince) {
          return;
       }
-      const tiles = getProvinceTilesCached(province).flatMap((tile) => {
-         const tileData = save.state.tiles.get(tile);
-         return tileData ? [[tile, tileData] as const] : [];
+      const Şehirs = getProvinceŞehirsCached(province).flatMap((Şehir) => {
+         const ŞehirData = save.state.Şehirs.get(Şehir);
+         return ŞehirData ? [[Şehir, ŞehirData] as const] : [];
       });
-      tiles.sort(([tileA, tileDataA], [tileB, tileDataB]) => {
-         return tileDataA.upgradeCount - tileDataB.upgradeCount;
+      Şehirs.sort(([ŞehirA, ŞehirDataA], [ŞehirB, ŞehirDataB]) => {
+         return ŞehirDataA.upgradeCount - ŞehirDataB.upgradeCount;
       });
 
       let remainingCapacity =
@@ -141,9 +141,9 @@ export function tickAI(save: SaveGame): void {
       } else {
          administrativeActions.delete("Research");
       }
-      for (const [tile, tileData] of tiles) {
-         if (tileData.province === province && !tileData.coreProvinces.has(province)) {
-            const action = MakeCoreAction(tile, province, save);
+      for (const [Şehir, ŞehirData] of Şehirs) {
+         if (ŞehirData.province === province && !ŞehirData.coreProvinces.has(province)) {
+            const action = MakeCoreAction(Şehir, province, save);
             if (action.cost && !hasEnoughProvinceResources(action.cost, province, save)) {
                administrativeActions.clear();
             }
@@ -162,11 +162,11 @@ export function tickAI(save: SaveGame): void {
             }
             break;
          case "Upgrade":
-            for (const [tile, tileData] of tiles) {
+            for (const [Şehir, ŞehirData] of Şehirs) {
                if (remainingCapacity <= 1) {
                   break;
                }
-               if (tryDoHeadless(UpgradeInfrastructureAction(tile, province, save), "Upgrade", province, save)) {
+               if (tryDoHeadless(UpgradeInfrastructureAction(Şehir, province, save), "Upgrade", province, save)) {
                   --remainingCapacity;
                }
             }
@@ -191,11 +191,11 @@ export function tickAI(save: SaveGame): void {
             }
             break;
          case "Upgrade":
-            for (const [tile, tileData] of tiles) {
+            for (const [Şehir, ŞehirData] of Şehirs) {
                if (remainingCapacity <= 1) {
                   break;
                }
-               if (tryDoHeadless(UpgradeProductionAction(tile, province, save), "Upgrade", province, save)) {
+               if (tryDoHeadless(UpgradeProductionAction(Şehir, province, save), "Upgrade", province, save)) {
                   --remainingCapacity;
                }
             }
@@ -219,15 +219,15 @@ export function tickAI(save: SaveGame): void {
       if (!hasEnoughProvinceResources({ military: warMilitaryPointCost }, province, save)) {
          militaryActions.clear();
       }
-      for (const [tile, tileData] of tiles) {
-         if (tileData.rebellion >= 10) {
-            const action = CrackDownAction(tile, province, save);
+      for (const [Şehir, ŞehirData] of Şehirs) {
+         if (ŞehirData.rebellion >= 10) {
+            const action = CrackDownAction(Şehir, province, save);
             if (action.cost && !hasEnoughProvinceResources(action.cost, province, save)) {
                militaryActions.clear();
             }
             tryDoHeadless(action, "CrackDown", province, save);
-         } else if (tileData.rebellion >= 5) {
-            const action = AppeaseAction(tile, province, save);
+         } else if (ŞehirData.rebellion >= 5) {
+            const action = AppeaseAction(Şehir, province, save);
             if (action.cost && !hasEnoughProvinceResources(action.cost, province, save)) {
                administrativeActions.clear();
                diplomaticActions.clear();
@@ -242,14 +242,14 @@ export function tickAI(save: SaveGame): void {
             }
             break;
          case "Upgrade":
-            for (const [tile, tileData] of tiles) {
-               if (getTileUnrest(tile, save).value > -3) {
+            for (const [Şehir, ŞehirData] of Şehirs) {
+               if (getŞehirUnrest(Şehir, save).value > -3) {
                   continue;
                }
                if (remainingCapacity <= 1) {
                   break;
                }
-               if (tryDoHeadless(UpgradePopulationAction(tile, province, save), "Upgrade", province, save)) {
+               if (tryDoHeadless(UpgradePopulationAction(Şehir, province, save), "Upgrade", province, save)) {
                   --remainingCapacity;
                }
             }
@@ -331,19 +331,19 @@ function getCultureToTolerate(province: Province, save: SaveGame): Culture | und
    const counts = new Map<Culture, number>();
    let mostCommon: Culture | undefined;
    let highestCount = 0;
-   for (const tileData of save.state.tiles.values()) {
+   for (const ŞehirData of save.state.Şehirs.values()) {
       if (
-         tileData.province !== province ||
-         tileData.culture === state.culture ||
-         state.toleratedCultures.has(tileData.culture)
+         ŞehirData.province !== province ||
+         ŞehirData.culture === state.culture ||
+         state.toleratedCultures.has(ŞehirData.culture)
       ) {
          continue;
       }
-      const count = (counts.get(tileData.culture) ?? 0) + 1;
-      counts.set(tileData.culture, count);
+      const count = (counts.get(ŞehirData.culture) ?? 0) + 1;
+      counts.set(ŞehirData.culture, count);
       if (count > highestCount) {
          highestCount = count;
-         mostCommon = tileData.culture;
+         mostCommon = ŞehirData.culture;
       }
    }
    return mostCommon;
@@ -357,19 +357,19 @@ function getReligionToTolerate(province: Province, save: SaveGame): Religion | u
    const counts = new Map<Religion, number>();
    let mostCommon: Religion | undefined;
    let highestCount = 0;
-   for (const tileData of save.state.tiles.values()) {
+   for (const ŞehirData of save.state.Şehirs.values()) {
       if (
-         tileData.province !== province ||
-         tileData.religion === state.religion ||
-         state.toleratedReligions.has(tileData.religion)
+         ŞehirData.province !== province ||
+         ŞehirData.religion === state.religion ||
+         state.toleratedReligions.has(ŞehirData.religion)
       ) {
          continue;
       }
-      const count = (counts.get(tileData.religion) ?? 0) + 1;
-      counts.set(tileData.religion, count);
+      const count = (counts.get(ŞehirData.religion) ?? 0) + 1;
+      counts.set(ŞehirData.religion, count);
       if (count > highestCount) {
          highestCount = count;
-         mostCommon = tileData.religion;
+         mostCommon = ŞehirData.religion;
       }
    }
    return mostCommon;
@@ -393,7 +393,7 @@ function doDenounce(province: Province, save: SaveGame): void {
    if (!result) {
       return;
    }
-   const targetProvince = save.state.tiles.get(result.tile)?.province;
+   const targetProvince = save.state.Şehirs.get(result.Şehir)?.province;
    if (!targetProvince) {
       return;
    }
@@ -473,37 +473,37 @@ function doRaid(province: Province, save: SaveGame): void {
       if (!candidateState) {
          continue;
       }
-      const tiles = Array.from(save.state.tiles.entries())
+      const Şehirs = Array.from(save.state.Şehirs.entries())
          .filter(
-            ([t, tileData]) => tileData.province === candidate && candidateState.capital !== t && !getTileWar(t, save),
+            ([t, ŞehirData]) => ŞehirData.province === candidate && candidateState.capital !== t && !getŞehirWar(t, save),
          )
-         .sort(([_tileA, tileDataA], [_tileB, tileDataB]) => {
-            const totalUpgradeA = tileDataA.infrastructure + tileDataA.production + tileDataA.population;
-            const totalUpgradeB = tileDataB.infrastructure + tileDataB.production + tileDataB.population;
+         .sort(([_ŞehirA, ŞehirDataA], [_ŞehirB, ŞehirDataB]) => {
+            const totalUpgradeA = ŞehirDataA.infrastructure + ŞehirDataA.production + ŞehirDataA.population;
+            const totalUpgradeB = ŞehirDataB.infrastructure + ŞehirDataB.production + ŞehirDataB.population;
             return totalUpgradeA - totalUpgradeB;
          });
-      if (tiles.length === 0) {
+      if (Şehirs.length === 0) {
          continue;
       }
-      const [tile, tileData] = tiles[0];
-      const relation = getRelation(province, tileData.province, save);
+      const [Şehir, ŞehirData] = Şehirs[0];
+      const relation = getRelation(province, ŞehirData.province, save);
       if (relation) {
          relation.casusBelli.set("BarbarianRaid", {
             monthsLeft: MaxRaidMonths,
          });
       }
-      const { coAttackers, coDefenders } = getWarParticipants(province, tileData.province, save);
+      const { coAttackers, coDefenders } = getWarParticipants(province, ŞehirData.province, save);
       const action = DeclareWarAction(
          province,
          coAttackers,
-         tileData.province,
+         ŞehirData.province,
          coDefenders,
-         new Set([tile]),
+         new Set([Şehir]),
          "BarbarianRaid",
          save,
       );
       if (tryDoHeadless(action, "DeclareWar", province, save)) {
-         logAI(`${province} starts a raid on ${tileData.province}\n${printAction(action, province, save)}`);
+         logAI(`${province} starts a raid on ${ŞehirData.province}\n${printAction(action, province, save)}`);
          return;
       }
    }
@@ -551,36 +551,36 @@ function doWar(province: Province, save: SaveGame): void {
    if (!warGoal) {
       return;
    }
-   const { tile, estimatedMonth } = warGoal;
-   const tileData = save.state.tiles.get(tile);
+   const { Şehir, estimatedMonth } = warGoal;
+   const ŞehirData = save.state.Şehirs.get(Şehir);
    const maxWarMonths = getMaxWarMonths(province, save);
    if (estimatedMonth > maxWarMonths) {
-      if (tileData) {
+      if (ŞehirData) {
          logAI(
-            `${province} skips declaring war on ${tileData.province} because it takes too long (${estimatedMonth} > ${maxWarMonths})`,
+            `${province} skips declaring war on ${ŞehirData.province} because it takes too long (${estimatedMonth} > ${maxWarMonths})`,
          );
       }
       return;
    }
-   if (tileData) {
-      // This is necessary because declaring war validates casus belli.
-      const relation = getRelation(province, tileData.province, save);
+   if (ŞehirData) {
+      // This is necessary because declaring war validates Savaş Sebebi.
+      const relation = getRelation(province, ŞehirData.province, save);
       if (relation) {
          relation.casusBelli.set("ConquestMission", {
             monthsLeft: 12,
          });
       }
-      const { coAttackers, coDefenders } = getWarParticipants(province, tileData.province, save);
+      const { coAttackers, coDefenders } = getWarParticipants(province, ŞehirData.province, save);
       const action = DeclareWarAction(
          province,
          coAttackers,
-         tileData.province,
+         ŞehirData.province,
          coDefenders,
-         new Set([tile]),
+         new Set([Şehir]),
          "ConquestMission",
          save,
       );
-      logAI(`${province} declares war on ${tileData.province}\n${printAction(action, province, save)}`);
+      logAI(`${province} declares war on ${ŞehirData.province}\n${printAction(action, province, save)}`);
       tryDoHeadless(action, "DeclareWar", province, save);
    }
 }
@@ -705,31 +705,31 @@ const BuildingOrder = keysOf(Buildings).sort((a, b) => {
 });
 
 function constructBuildings(province: Province, save: SaveGame): void {
-   const tiles = getProvinceTilesCached(province).sort((tileA, tileB) => {
-      return (save.state.tiles.get(tileA)?.buildings.size ?? 0) - (save.state.tiles.get(tileB)?.buildings.size ?? 0);
+   const Şehirs = getProvinceŞehirsCached(province).sort((ŞehirA, ŞehirB) => {
+      return (save.state.Şehirs.get(ŞehirA)?.buildings.size ?? 0) - (save.state.Şehirs.get(ŞehirB)?.buildings.size ?? 0);
    });
    let budget = getProvinceIncome(province, save).income;
    if (budget < 0) {
       return;
    }
-   for (const tile of tiles) {
-      const tileData = save.state.tiles.get(tile);
-      if (!tileData) {
+   for (const Şehir of Şehirs) {
+      const ŞehirData = save.state.Şehirs.get(Şehir);
+      if (!ŞehirData) {
          continue;
       }
-      if (tileData.buildings.size >= getBuildingSlot(tile, save).value) {
+      if (ŞehirData.buildings.size >= getBuildingSlot(Şehir, save).value) {
          continue;
       }
 
       for (const building of BuildingOrder) {
-         if (tileData.buildings.has(building)) {
+         if (ŞehirData.buildings.has(building)) {
             continue;
          }
          const maintenance = Buildings[building].maintenance.gold ?? 0;
          if (budget < maintenance) {
             continue;
          }
-         const action = ConstructBuildingAction(building, tile, province, save);
+         const action = ConstructBuildingAction(building, Şehir, province, save);
          if (action.cost && !hasEnoughProvinceResources(action.cost, province, save)) {
             return;
          }
@@ -832,15 +832,15 @@ function lookForSpouse(family: IFamily, province: Province, save: SaveGame): voi
    });
 }
 
-function findWarGoal(province: Province, save: SaveGame): { tile: Tile; estimatedMonth: number } | undefined {
+function findWarGoal(province: Province, save: SaveGame): { Şehir: Şehir; estimatedMonth: number } | undefined {
    let neighbors = getProvincesInRange(1, province, save);
    if (neighbors.size <= 0) {
       neighbors = getProvincesInRange(2, province, save);
    }
-   let bestTile: Tile | undefined;
+   let bestŞehir: Şehir | undefined;
    let bestEstimatedTime = Number.POSITIVE_INFINITY;
-   const warTiles = getWarTiles(save);
-   for (const [otherProvince, otherTiles] of neighbors) {
+   const warŞehirs = getWarŞehirs(save);
+   for (const [otherProvince, otherŞehirs] of neighbors) {
       // NPC should not attack the player until they have declared their 2nd war!
       if (
          !hasFlag(G.flags, GameFlags.Sandbox) &&
@@ -860,13 +860,13 @@ function findWarGoal(province: Province, save: SaveGame): { tile: Tile; estimate
       if (!relation.casusBelli.has("ConquestMission")) {
          relation.casusBelli.set("ConquestMission", { monthsLeft: 0 });
       }
-      const filteredTiles = otherTiles.filter((tile) => !warTiles.has(tile));
+      const filteredŞehirs = otherŞehirs.filter((Şehir) => !warŞehirs.has(Şehir));
       const action = DeclareWarAction(
          province,
          coAttackers,
          otherProvince,
          coDefenders,
-         new Set(filteredTiles),
+         new Set(filteredŞehirs),
          "ConquestMission",
          save,
       );
@@ -877,20 +877,20 @@ function findWarGoal(province: Province, save: SaveGame): { tile: Tile; estimate
       if (successChance <= 0.5) {
          continue;
       }
-      for (const otherTile of shuffle(filteredTiles)) {
-         if (warTiles.has(otherTile)) {
+      for (const otherŞehir of shuffle(filteredŞehirs)) {
+         if (warŞehirs.has(otherŞehir)) {
             continue;
          }
-         const warScore = getWarScore(province, otherProvince, new Set([otherTile]), "ConquestMission", save).value;
+         const warScore = getWarScore(province, otherProvince, new Set([otherŞehir]), "ConquestMission", save).value;
          const estimatedTime = getWarEstimatedTime(warScore, successChance);
          if (estimatedTime < bestEstimatedTime) {
             bestEstimatedTime = estimatedTime;
-            bestTile = otherTile;
+            bestŞehir = otherŞehir;
          }
       }
    }
-   if (bestTile) {
-      return { tile: bestTile, estimatedMonth: bestEstimatedTime };
+   if (bestŞehir) {
+      return { Şehir: bestŞehir, estimatedMonth: bestEstimatedTime };
    }
    return undefined;
 }
@@ -898,9 +898,9 @@ function findWarGoal(province: Province, save: SaveGame): { tile: Tile; estimate
 function getAverageUnrest(province: Province, save: SaveGame): number {
    let unrest = 0;
    let count = 0;
-   for (const [tile, tileData] of save.state.tiles) {
-      if (tileData.province === province) {
-         unrest += getTileUnrest(tile, save).value;
+   for (const [Şehir, ŞehirData] of save.state.Şehirs) {
+      if (ŞehirData.province === province) {
+         unrest += getŞehirUnrest(Şehir, save).value;
          ++count;
       }
    }

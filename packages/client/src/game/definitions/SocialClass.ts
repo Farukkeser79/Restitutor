@@ -42,7 +42,7 @@ export const _SocialClass = {
       color: hslToHex(210, ColorS, ColorL),
       icon: Equites,
       dominant: {
-         TileOutput: { type: "multiply", value: -0.2 },
+         ŞehirOutput: { type: "multiply", value: -0.2 },
       },
       disloyal: {
          DiplomaticPoint: { type: "add", value: -1 },
@@ -203,10 +203,10 @@ const _SocialClassBonuses = {
       supporting: ["LowerClass", "MilitaryClass"],
       opposing: ["UpperClass", "MiddleClass"],
    },
-   TileOutput: {
+   ŞehirOutput: {
       effect: {
          modifiers: {
-            TileOutput: { type: "multiply", value: 0.1, duration: DefaultDuration },
+            ŞehirOutput: { type: "multiply", value: 0.1, duration: DefaultDuration },
          },
       },
       supporting: ["MiddleClass", "LowerClass"],

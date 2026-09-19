@@ -1,7 +1,7 @@
 import { forEach, fromEntries, hasFlag } from "@project/shared/src/utils/Helper";
 import { isPaused, revertSpeed } from "../../utils/Global";
 import { $t, L } from "../../utils/i18n";
-import { GallicEmpireProvinces, PalmyreneEmpireProvinces } from "../definitions/TileConstants";
+import { GallicEmpireProvinces, PalmyreneEmpireProvinces } from "../definitions/ŞehirConstants";
 import { GameOptionFlag } from "../GameOption";
 import { getRelation } from "../logic/DiplomacyLogic";
 import { EventImage } from "./EventImages";
@@ -82,7 +82,7 @@ export const HistoricalEvents = {
          {
             label: () => $t(L.WeShallHelpThem),
             modifiers: {
-               TileMaintenance: { type: "multiply", value: 0.2, duration: 12 },
+               ŞehirMaintenance: { type: "multiply", value: 0.2, duration: 12 },
             },
          },
       ],
@@ -150,7 +150,7 @@ export const HistoricalEvents = {
             label: () => $t(L.GraduallyRollOutCitizenship),
             modifiers: {
                LandTax: { type: "multiply", value: 0.5, duration: 12 },
-               TileOutput: { type: "multiply", value: 0.5, duration: 12 },
+               ŞehirOutput: { type: "multiply", value: 0.5, duration: 12 },
             },
          },
       ],
@@ -551,7 +551,7 @@ export const HistoricalEvents = {
             label: () => $t(L.WeShallFocusOnOurOwnAffairs),
             modifiers: {
                LandTax: { type: "multiply", value: 0.25, duration: 10 * 12 },
-               TileOutput: { type: "multiply", value: 0.25, duration: 10 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.25, duration: 10 * 12 },
             },
          },
       ],
@@ -629,7 +629,7 @@ export const HistoricalEvents = {
             resources: { christianity: 20 },
             modifiers: {
                Stability: { type: "add", value: 10, duration: 5 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 5 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 5 * 12 },
             },
          },
       ],

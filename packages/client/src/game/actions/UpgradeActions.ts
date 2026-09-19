@@ -1,63 +1,63 @@
-import type { Tile } from "@project/shared/src/utils/Helper";
+import type { Şehir } from "@project/shared/src/utils/Helper";
 import type { Province } from "../definitions/Province";
 import type { SaveGame } from "../GameState";
-import { tileIsOurCoreCondition } from "../logic/MissionLogic";
-import { getTileUpgradeCost } from "../logic/TileLogic";
+import { ŞehirIsOurCoreCondition } from "../logic/MissionLogic";
+import { getŞehirUpgradeCost } from "../logic/ŞehirLogic";
 import { timedActionConditions } from "../logic/TimedActionLogic";
 import { EmptyGameAction } from "./EmptyGameAction";
 import type { IGameAction } from "./GameAction";
 import { finalizeCondition } from "./GameAction";
 
-export function UpgradePopulationAction(tile: Tile, province: Province, save: SaveGame): IGameAction {
-   const tileData = save.state.tiles.get(tile);
-   if (!tileData) {
+export function UpgradePopulationAction(Şehir: Şehir, province: Province, save: SaveGame): IGameAction {
+   const ŞehirData = save.state.Şehirs.get(Şehir);
+   if (!ŞehirData) {
       return EmptyGameAction;
    }
    return {
       condition: finalizeCondition([
          ...timedActionConditions({ action: "UpgradePopulation" }, province, save),
-         tileIsOurCoreCondition(tile, province, save),
+         ŞehirIsOurCoreCondition(Şehir, province, save),
       ]),
-      cost: { military: getTileUpgradeCost(tile, "military", save, "value") },
+      cost: { military: getŞehirUpgradeCost(Şehir, "military", save, "value") },
       effect: () => {
-         ++tileData.upgradeCount;
-         ++tileData.population;
+         ++ŞehirData.upgradeCount;
+         ++ŞehirData.population;
       },
    };
 }
 
-export function UpgradeProductionAction(tile: Tile, province: Province, save: SaveGame): IGameAction {
-   const tileData = save.state.tiles.get(tile);
-   if (!tileData) {
+export function UpgradeProductionAction(Şehir: Şehir, province: Province, save: SaveGame): IGameAction {
+   const ŞehirData = save.state.Şehirs.get(Şehir);
+   if (!ŞehirData) {
       return EmptyGameAction;
    }
    return {
-      cost: { diplomatic: getTileUpgradeCost(tile, "diplomatic", save, "value") },
+      cost: { diplomatic: getŞehirUpgradeCost(Şehir, "diplomatic", save, "value") },
       condition: finalizeCondition([
          ...timedActionConditions({ action: "UpgradeProduction" }, province, save),
-         tileIsOurCoreCondition(tile, province, save),
+         ŞehirIsOurCoreCondition(Şehir, province, save),
       ]),
       effect: () => {
-         ++tileData.upgradeCount;
-         ++tileData.production;
+         ++ŞehirData.upgradeCount;
+         ++ŞehirData.production;
       },
    };
 }
 
-export function UpgradeInfrastructureAction(tile: Tile, province: Province, save: SaveGame): IGameAction {
-   const tileData = save.state.tiles.get(tile);
-   if (!tileData) {
+export function UpgradeInfrastructureAction(Şehir: Şehir, province: Province, save: SaveGame): IGameAction {
+   const ŞehirData = save.state.Şehirs.get(Şehir);
+   if (!ŞehirData) {
       return EmptyGameAction;
    }
    return {
-      cost: { administrative: getTileUpgradeCost(tile, "administrative", save, "value") },
+      cost: { administrative: getŞehirUpgradeCost(Şehir, "administrative", save, "value") },
       condition: finalizeCondition([
          ...timedActionConditions({ action: "UpgradeInfrastructure" }, province, save),
-         tileIsOurCoreCondition(tile, province, save),
+         ŞehirIsOurCoreCondition(Şehir, province, save),
       ]),
       effect: () => {
-         ++tileData.upgradeCount;
-         ++tileData.infrastructure;
+         ++ŞehirData.upgradeCount;
+         ++ŞehirData.infrastructure;
       },
    };
 }

@@ -9,7 +9,7 @@ import { addProvinceResource, getProvinceIncome } from "./ProvinceLogic";
 
 export function getLoanAmount(province: Province, save: SaveGame): number {
    let result = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === province) {
          result += data.infrastructure;
          result += data.production;

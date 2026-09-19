@@ -48,7 +48,7 @@ export function attachModifiersToCalculation<M extends EvaluationMode>(
    save: SaveGame,
 ): ValueCalculation<M> {
    const state = save.state.provinces[province];
-   attachTileModifiersToCalculation(state?.modifiers[type], calc);
+   attachŞehirModifiersToCalculation(state?.modifiers[type], calc);
    const dynamicModifiers = state?.dynamicModifiers[type];
    if (dynamicModifiers) {
       for (const modifier of dynamicModifiers) {
@@ -61,7 +61,7 @@ export function attachModifiersToCalculation<M extends EvaluationMode>(
    return calc;
 }
 
-export function attachTileModifiersToCalculation<M extends EvaluationMode>(
+export function attachŞehirModifiersToCalculation<M extends EvaluationMode>(
    modifiers: IModifier[] | undefined,
    calc: ValueCalculation<M>,
 ): ValueCalculation<M> {
@@ -90,7 +90,7 @@ export function addMonthlyModifier(type: Modifier, value: IModifier, province: P
    }
 }
 
-export function attachTileModifiers(modifiers: IModifier[] | undefined, breakdown: IValueBreakdown): IValueBreakdown {
+export function attachŞehirModifiers(modifiers: IModifier[] | undefined, breakdown: IValueBreakdown): IValueBreakdown {
    if (modifiers) {
       for (const modifier of modifiers) {
          breakdown[modifier.type].push({

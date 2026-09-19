@@ -20,7 +20,7 @@ You can open language translations from above, click the **Edit** icon on the to
 
 - Translate texts within double quote `"`.
 - Do not translate placeholder tokens like `$1`, `$2`, etc.
-- Preserve HTML and Chronicle tags (`<i>`, `<b>`, `<Province>`, `<Tile>`, etc.)
+- Preserve HTML and Chronicle tags (`<i>`, `<b>`, `<Province>`, `<Şehir>`, etc.)
 
 After you are happy with your changes, click **Propose changes**
 

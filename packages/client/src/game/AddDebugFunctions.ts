@@ -1,4 +1,4 @@
-import { entriesOf, forEach, keysOf, randInt, range, type Tile, uuid4 } from "@project/shared/src/utils/Helper";
+import { entriesOf, forEach, keysOf, randInt, range, type Şehir, uuid4 } from "@project/shared/src/utils/Helper";
 import { WorldScene } from "../scenes/WorldScene";
 import { BarbarianRaidModal } from "../ui/BarbarianRaidModal";
 import { ChronicleModal } from "../ui/ChronicleModal";
@@ -17,16 +17,16 @@ import { type IFamily, PersonFlags } from "./definitions/Family";
 import { GreatWork } from "./definitions/GreatWork";
 import type { Province } from "./definitions/Province";
 import { SpawnedProvinces } from "./definitions/SpawnedProvince";
-import { TileName } from "./definitions/TileName";
+import { ŞehirName } from "./definitions/ŞehirName";
 import type { TimedAction } from "./definitions/TimedAction";
-import { GameStateUpdated, RefreshTiles } from "./Events";
+import { GameStateUpdated, RefreshŞehirs } from "./Events";
 import { resetGame, saveGame } from "./LoadSave";
 import { monthToDate } from "./logic/GameDateTime";
 import { ensureHeir, findFamilyById } from "./logic/GovernorLogic";
 import { rebirth } from "./logic/LegacyUpgradeLogic";
 import { addProvinceResource, GovernorMaxExcl, GovernorMinIncl, spawnProvince } from "./logic/ProvinceLogic";
 import { addGameEvent } from "./logic/TickProvince";
-import { settleTile } from "./logic/TileLogic";
+import { settleŞehir } from "./logic/ŞehirLogic";
 import { startTimedAction } from "./logic/TimedActionLogic";
 import { type IWar, WarFlag, WarLogFlag } from "./logic/WarLogic";
 import { randomFemaleName, randomMaleName } from "./RomanNames";
@@ -96,7 +96,7 @@ export function addDebugFunctions(): void {
       coAttackers: new Map(),
       defender: G.save.state.playerProvince,
       coDefenders: new Map(),
-      tiles: new Set([G.save.state.provinces.Lugdunensis?.capital ?? 0]),
+      Şehirs: new Set([G.save.state.provinces.Lugdunensis?.capital ?? 0]),
       casusBelli: "ConquestMission",
       requiredWarScore: 100,
       actualWarScore: 0,
@@ -117,7 +117,7 @@ export function addDebugFunctions(): void {
       coAttackers: new Map(),
       defender: "Germania",
       coDefenders: new Map([[G.save.state.playerProvince, { value: true, breakdown: [] }]]),
-      tiles: new Set([G.save.state.provinces.Germania?.capital ?? 0]),
+      Şehirs: new Set([G.save.state.provinces.Germania?.capital ?? 0]),
       casusBelli: "ConquestMission",
       requiredWarScore: 100,
       actualWarScore: 0,
@@ -159,22 +159,22 @@ export function addDebugFunctions(): void {
       GameStateUpdated.emit();
    };
    // @ts-expect-error
-   globalThis.selectTiles = (tiles: number[]) => {
+   globalThis.selectŞehirs = (Şehirs: number[]) => {
       const scene = G.scene.getCurrent(WorldScene);
       if (!scene) {
          return;
       }
-      scene.drawSelectors(new Set(tiles));
+      scene.drawSelectors(new Set(Şehirs));
    };
    // @ts-expect-error
    globalThis.spawnProvinces = () => {
-      const tiles: Tile[] = [];
+      const Şehirs: Şehir[] = [];
       forEach(SpawnedProvinces, (province) => {
-         spawnProvince(province, "Debug", G.save).forEach((tile) => {
-            tiles.push(tile);
+         spawnProvince(province, "Debug", G.save).forEach((Şehir) => {
+            Şehirs.push(Şehir);
          });
       });
-      RefreshTiles.emit({ tiles: tiles, options: { visual: true, indicator: true } });
+      RefreshŞehirs.emit({ Şehirs: Şehirs, options: { visual: true, indicator: true } });
       GameStateUpdated.emit();
    };
    // @ts-expect-error
@@ -202,8 +202,8 @@ export function addDebugFunctions(): void {
    };
 
    // @ts-expect-error
-   globalThis.showNamedTiles = () => {
-      G.scene.getCurrent(WorldScene)?.drawSelectors(new Set(keysOf(TileName)));
+   globalThis.showNamedŞehirs = () => {
+      G.scene.getCurrent(WorldScene)?.drawSelectors(new Set(keysOf(ŞehirName)));
    };
 
    // @ts-expect-error
@@ -213,13 +213,13 @@ export function addDebugFunctions(): void {
 
    // @ts-expect-error
    globalThis.showGreatWorks = () => {
-      G.scene.getCurrent(WorldScene)?.drawSelectors(new Set(entriesOf(GreatWork).map(([key, value]) => value.tile)));
+      G.scene.getCurrent(WorldScene)?.drawSelectors(new Set(entriesOf(GreatWork).map(([key, value]) => value.Şehir)));
    };
 
    // @ts-expect-error
-   globalThis.settle = (tile: Tile, province: Province) => {
-      settleTile(tile, province, G.save);
-      RefreshTiles.emit({ tiles: [tile], options: { indicator: true, visual: true } });
+   globalThis.settle = (Şehir: Şehir, province: Province) => {
+      settleŞehir(Şehir, province, G.save);
+      RefreshŞehirs.emit({ Şehirs: [Şehir], options: { indicator: true, visual: true } });
    };
 
    // @ts-expect-error

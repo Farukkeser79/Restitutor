@@ -26,7 +26,7 @@ const _ProvinceUpgrades = {
       name: () => $t(L.ReligiousUnrest),
       modifiers: {
          LandTax: { type: "multiply", value: -0.2 },
-         TileOutput: { type: "multiply", value: -0.2 },
+         ŞehirOutput: { type: "multiply", value: -0.2 },
          Manpower: { type: "multiply", value: -0.2 },
          Stability: { type: "add", value: -20 },
       },
@@ -70,13 +70,13 @@ const _ProvinceUpgrades = {
    MiddleClassGoodsTax: {
       name: () => $t(L.NegotiatedTariffTreaties),
       modifiers: {
-         TileOutput: { type: "multiply", value: 0.1 },
+         ŞehirOutput: { type: "multiply", value: 0.1 },
       },
    },
    MiddleClassGoodsTaxRelief: {
       name: () => $t(L.GoodsTariffRelief),
       modifiers: {
-         TileOutput: { type: "multiply", value: -0.05 },
+         ŞehirOutput: { type: "multiply", value: -0.05 },
       },
    },
    LowerClassMilitaryPoint: {
@@ -108,8 +108,8 @@ const _ProvinceUpgrades = {
       desc: () => $t(L.CavalryPredominanceDesc),
    },
    TradeProfitForEachTrade: {
-      name: () => $t(L.MercantileSynergy),
-      desc: () => $t(L.MercantileSynergyDesc),
+      name: () => $t(L.MercanŞehirSynergy),
+      desc: () => $t(L.MercanŞehirSynergyDesc),
    },
    ChristianFervor: {
       name: () => $t(L.ChristianFervor),
@@ -189,7 +189,7 @@ const _ProvinceUpgrades = {
    },
    PaxLusitana: {
       name: () => $t(L.PaxLusitana),
-      desc: () => $t(L.$1TileOutputWhileNotAtWar, "+20%"),
+      desc: () => $t(L.$1ŞehirOutputWhileNotAtWar, "+20%"),
    },
    CommandOfThePillars: {
       name: () => $t(L.CommandOfThePillars),
@@ -231,7 +231,7 @@ const _ProvinceUpgrades = {
    },
    CoastalAdministration: {
       name: () => $t(L.CoastalAdministration),
-      desc: () => $t(L.$1GoverningCostOnCoreCoastalTiles, "-20%"),
+      desc: () => $t(L.$1GoverningCostOnCoreCoastalŞehirs, "-20%"),
    },
    TheTwoShores: {
       name: () => $t(L.TheTwoShores),
@@ -239,18 +239,18 @@ const _ProvinceUpgrades = {
    },
    MoorishMuster: {
       name: () => $t(L.MoorishMuster),
-      desc: () => $t(L.$1WarPowerForEvery$2CoreTiles, "+5%", "10"),
+      desc: () => $t(L.$1WarPowerForEvery$2CoreŞehirs, "+5%", "10"),
    },
    MaritimeRenown: {
       name: () => $t(L.MaritimeRenown),
-      desc: () => $t(L.$1PrestigeForEachCoreCoastalTileUpTo$2, "+1%", "+50%"),
+      desc: () => $t(L.$1PrestigeForEachCoreCoastalŞehirUpTo$2, "+1%", "+50%"),
    },
    LittoralTaxDistricts: {
       name: () => $t(L.LittoralTaxDistricts),
       desc: () => $t(L.LittoralTaxDistrictsDesc$1$2, "+1%", "3"),
    },
-   MercantileMobilization: {
-      name: () => $t(L.MercantileMobilization),
+   MercanŞehirMobilization: {
+      name: () => $t(L.MercanŞehirMobilization),
       desc: () => $t(L.$1WarPowerForEachActiveTrade, "+10%"),
    },
    GranaryOfTheEmpire: {
@@ -263,11 +263,11 @@ const _ProvinceUpgrades = {
    },
    NavalTradition: {
       name: () => $t(L.NavalTradition),
-      desc: () => $t(L.$1WarPowerForEachCoreCoastalTileUpTo$2, "+0.5%", "+50%"),
+      desc: () => $t(L.$1WarPowerForEachCoreCoastalŞehirUpTo$2, "+0.5%", "+50%"),
    },
    CoastalMandate: {
       name: () => $t(L.CoastalMandate),
-      desc: () => $t(L.Gain$1ConsulPointWhenCoringACoastalTile, "1"),
+      desc: () => $t(L.Gain$1ConsulPointWhenCoringACoastalŞehir, "1"),
    },
    MastersOfThePasses: {
       name: () => $t(L.MastersOfThePasses),
@@ -303,7 +303,7 @@ const _ProvinceUpgrades = {
    },
    WartimeAdministration: {
       name: () => $t(L.WartimeAdministration),
-      desc: () => $t(L.$1TileMaintenanceWhileAtWar, "-10%"),
+      desc: () => $t(L.$1ŞehirMaintenanceWhileAtWar, "-10%"),
    },
 } as const satisfies Record<string, IProvinceUpgrade>;
 

@@ -17,7 +17,7 @@ import type { ConditionChecks } from "./Calculation";
 import { getFamilyMemberFrom } from "./GovernorLogic";
 import { attachModifiers } from "./ModifierLogic";
 import { getProvinceName } from "./ProvinceLogic";
-import { UpgradeCostGrowthFactor } from "./TileLogic";
+import { UpgradeCostGrowthFactor } from "./ŞehirLogic";
 
 export const MaxImprovedRelations = 50;
 export const RivalAttitudeModifier = -20;
@@ -299,7 +299,7 @@ export function getAnnexClientCost(
    let diplomatic = 0;
    let military = 0;
    let gold = 0;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === clientProvince) {
          range(0, data.infrastructure).forEach((i) => {
             administrative += 50 * UpgradeCostGrowthFactor ** i;
@@ -342,9 +342,9 @@ export function getDiplomaticDistance(ourProvince: Province, theirProvince: Prov
       return 0;
    }
    let distance = Number.POSITIVE_INFINITY;
-   for (const [tile, data] of save.state.tiles) {
+   for (const [Şehir, data] of save.state.Şehirs) {
       if (data.province === ourProvince) {
-         distance = Math.min(distance, MapGrid.distanceTile(tile, theirCapital));
+         distance = Math.min(distance, MapGrid.distanceŞehir(Şehir, theirCapital));
       }
       // Exit early as the minimum distance is 1
       if (distance === 1) {
@@ -423,8 +423,8 @@ export function getRevealedConsulVotes(province: Province, save: SaveGame): Map<
    return result;
 }
 
-export const getImproveRelationsRate = makeModifierGetter("ImproveRelationsRate", 1, (result, province, save) => {});
-export const getInfiltrationRate = makeModifierGetter("InfiltrationRate", 1, (result, province, save) => {});
+export const getImproveRelationsRate = makeModifierGetter("ImproveRelationsRate", 1, (result, province, save) => { });
+export const getInfiltrationRate = makeModifierGetter("InfiltrationRate", 1, (result, province, save) => { });
 
 export function fixRelations(save: SaveGame): void {
    forEach(save.state.provinces, (province, state) => {

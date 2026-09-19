@@ -6,7 +6,7 @@ import { Goods } from "../game/definitions/Goods";
 import { type Province, TreatyNames } from "../game/definitions/Province";
 import { SocialClass } from "../game/definitions/SocialClass";
 import { Tech } from "../game/definitions/Tech";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { TimedActions } from "../game/definitions/TimedAction";
 import type { SaveGame } from "../game/GameState";
 import { getCurrentRelations, getDiplomats, getRelations } from "../game/logic/DiplomacyLogic";
@@ -23,7 +23,7 @@ import {
 import { isSocialClassDisloyal, isSocialClassDominant } from "../game/logic/SocialClassLogic";
 import { getTechsCanBeResearched, hasResearched } from "../game/logic/TechLogic";
 import { PendingGameEventTimeoutMonths } from "../game/logic/TickProvince";
-import { getTileUnrest } from "../game/logic/TileLogic";
+import { getŞehirUnrest } from "../game/logic/ŞehirLogic";
 import { getTimedActionTimeLeft, makeGameAction } from "../game/logic/TimedActionLogic";
 import {
    getCurrentGeneral,
@@ -154,7 +154,7 @@ const Rebellions: ITodo = {
    name: (save) => $t(L.CurrentlyOrAboutToRebel),
    icon: (save) => IconCatalog.Rebellion,
    className: (save) => {
-      for (const [tile, data] of save.state.tiles) {
+      for (const [Şehir, data] of save.state.Şehirs) {
          if (data.province === save.state.playerProvince) {
             if (data.rebellion >= 10) {
                return "red animate-bounce-right";
@@ -166,12 +166,12 @@ const Rebellions: ITodo = {
    tooltip: (save) => {
       const current = new Set<string>();
       const aboutTo = new Set<string>();
-      for (const [tile, data] of save.state.tiles) {
+      for (const [Şehir, data] of save.state.Şehirs) {
          if (data.province === save.state.playerProvince) {
             if (data.rebellion >= 10) {
-               current.add(getTileName(tile, save));
-            } else if (data.rebellion >= 8 && getTileUnrest(tile, save).value >= 0) {
-               aboutTo.add(getTileName(tile, save));
+               current.add(getŞehirName(Şehir, save));
+            } else if (data.rebellion >= 8 && getŞehirUnrest(Şehir, save).value >= 0) {
+               aboutTo.add(getŞehirName(Şehir, save));
             }
          }
       }
@@ -180,8 +180,8 @@ const Rebellions: ITodo = {
       }
       return (
          <div className="m10">
-            {current.size > 0 && <div>{html($t(L.TilesCurrentlyInRebellion$1, Array.from(current).join(", ")))}</div>}
-            {aboutTo.size > 0 && <div>{html($t(L.TilesAboutToRebel$1, Array.from(aboutTo).join(", ")))}</div>}
+            {current.size > 0 && <div>{html($t(L.ŞehirsCurrentlyInRebellion$1, Array.from(current).join(", ")))}</div>}
+            {aboutTo.size > 0 && <div>{html($t(L.ŞehirsAboutToRebel$1, Array.from(aboutTo).join(", ")))}</div>}
             <div>{$t(L.ClickToViewDetails)}</div>
          </div>
       );
@@ -445,7 +445,7 @@ const IdleDiplomats: ITodo = {
       }
       return <div className="m10">{$t(L.IdleDiplomatsTooltip$1, idleDiplomats)}</div>;
    },
-   onClick: (save) => {},
+   onClick: (save) => { },
 };
 
 const OutstandingLoans: ITodo = {
@@ -567,20 +567,20 @@ const EmptyAdvisorSlots: ITodo = {
 
 const CanMakeCore: ITodo = {
    id: "LeftPanel_CanMakeCore",
-   name: (save) => $t(L.NonCoreTiles),
+   name: (save) => $t(L.NonCoreŞehirs),
    icon: (save) => IconCatalog.Core,
    className: (save) => "yellow",
    tooltip: (save) => {
-      const tiles = new Set<string>();
-      for (const [tile, data] of save.state.tiles) {
+      const Şehirs = new Set<string>();
+      for (const [Şehir, data] of save.state.Şehirs) {
          if (data.province === save.state.playerProvince && !data.coreProvinces.has(data.province)) {
-            tiles.add(getTileName(tile, save));
+            Şehirs.add(getŞehirName(Şehir, save));
          }
       }
-      if (tiles.size === 0) return null;
+      if (Şehirs.size === 0) return null;
       return (
          <div className="m10">
-            {html($t(L.TilesThatAreNotOurCore$1ClickToViewDetails, Array.from(tiles).join(", ")))}
+            {html($t(L.ŞehirsThatAreNotOurCore$1ClickToViewDetails, Array.from(Şehirs).join(", ")))}
          </div>
       );
    },

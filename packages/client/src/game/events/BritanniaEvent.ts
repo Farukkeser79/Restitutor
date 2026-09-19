@@ -1,13 +1,13 @@
 import { $t, L } from "../../utils/i18n";
 import type { ConditionChecks } from "../logic/Calculation";
 import {
-   allCoreTileChecks,
+   allCoreŞehirChecks,
    forcePatronageEffect,
-   isCoreTileChecks,
+   isCoreŞehirChecks,
    manpowerChecks,
-   maxCoreTileChecks,
+   maxCoreŞehirChecks,
    mediterraneanCoastChecks,
-   minCoreTileChecks,
+   minCoreŞehirChecks,
    provinceRevenueChecks,
 } from "../logic/MissionLogic";
 import {
@@ -70,7 +70,7 @@ export const BritanniaEvent = {
             resources: { administrative: -50 },
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -149,7 +149,7 @@ export const BritanniaEvent = {
             resources: { gold: -500 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.15, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -293,7 +293,7 @@ export const BritanniaEvent = {
             label: () => $t(L.DefendTheWalledCities),
             modifiers: {
                Stability: { type: "add", value: 10, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
       ],
@@ -410,7 +410,7 @@ export const BritanniaEvent = {
       condition: {
          province: new Set(["Britannia"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* allCoreTileChecks([8978497, 8978498, 8912963, 8847427], province, save);
+            yield* allCoreŞehirChecks([8978497, 8978498, 8912963, 8847427], province, save);
             return;
          },
       },
@@ -448,8 +448,8 @@ export const BritanniaEvent = {
             Belgica: 5,
          },
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(30, province, save);
-            yield* maxCoreTileChecks(5, "Belgica", save);
+            yield* minCoreŞehirChecks(30, province, save);
+            yield* maxCoreŞehirChecks(5, "Belgica", save);
             yield* requirePeaceBetweenChecks(province, "Belgica", save);
             yield* requireAnyTreatyBetweenChecks(["DefensePact", "Alliance"], province, "Belgica", save);
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Belgica", save);
@@ -474,7 +474,7 @@ export const BritanniaEvent = {
             Lugdunensis: 5,
          },
          conditions: function* (province, save): ConditionChecks {
-            yield* isCoreTileChecks(8978500, province, save);
+            yield* isCoreŞehirChecks(8978500, province, save);
             return;
          },
       },
@@ -523,7 +523,7 @@ export const BritanniaEvent = {
             label: () => $t(L.ReconcileTheGallicCities),
             modifiers: {
                DiplomaticPoint: { type: "add", value: 1, duration: 10 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 5 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 5 * 12 },
             },
          },
          {

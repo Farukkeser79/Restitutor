@@ -31,9 +31,9 @@ export function ConvertToChristianityAction(province: Province, save: SaveGame):
          if (province === save.state.playerProvince) {
             unlockAchievement("AdoptChristianity");
          }
-         for (const [tile, tileData] of save.state.tiles) {
-            if (tileData.province === province && tileData.coreProvinces.has(province)) {
-               tileData.religion = "Christianity";
+         for (const [Şehir, ŞehirData] of save.state.Şehirs) {
+            if (ŞehirData.province === province && ŞehirData.coreProvinces.has(province)) {
+               ŞehirData.religion = "Christianity";
             }
          }
       },

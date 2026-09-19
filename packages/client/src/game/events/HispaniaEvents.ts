@@ -1,10 +1,10 @@
 import { fromEntries } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
-import { HispaniaProvinces } from "../definitions/TileConstants";
+import { HispaniaProvinces } from "../definitions/ŞehirConstants";
 import { TimedActions } from "../definitions/TimedAction";
-import { getOriginalTileCount } from "../GameState";
+import { getOriginalŞehirCount } from "../GameState";
 import type { ConditionChecks } from "../logic/Calculation";
-import { allCoreTileChecks, anyCoreTileChecks, isCoreTileChecks, minCoreTileChecks } from "../logic/MissionLogic";
+import { allCoreŞehirChecks, anyCoreŞehirChecks, isCoreŞehirChecks, minCoreŞehirChecks } from "../logic/MissionLogic";
 import { getProvinceName } from "../logic/ProvinceLogic";
 import { getTimedActionTimeLeft } from "../logic/TimedActionLogic";
 import { EventImage } from "./EventImages";
@@ -18,8 +18,8 @@ export const HispaniaEvent = {
       condition: {
          province: new Set(HispaniaProvinces),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(getOriginalTileCount(province) + 10, province, save);
-            yield* anyCoreTileChecks([8781900, 8847436, 8847437, 8912973, 8978509], province, save);
+            yield* minCoreŞehirChecks(getOriginalŞehirCount(province) + 10, province, save);
+            yield* anyCoreŞehirChecks([8781900, 8847436, 8847437, 8912973, 8978509], province, save);
             return;
          },
       },
@@ -51,8 +51,8 @@ export const HispaniaEvent = {
       condition: {
          province: new Set(HispaniaProvinces),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(getOriginalTileCount(province) + 2, province, save);
-            yield* isCoreTileChecks(8585300, province, save);
+            yield* minCoreŞehirChecks(getOriginalŞehirCount(province) + 2, province, save);
+            yield* isCoreŞehirChecks(8585300, province, save);
             return;
          },
       },
@@ -124,7 +124,7 @@ export const HispaniaEvent = {
          onMap: { Mauretania: true },
          province: new Set(HispaniaProvinces),
          conditions: function* (province, save): ConditionChecks {
-            yield* allCoreTileChecks([8519765, 8519766, 8585302], province, save);
+            yield* allCoreŞehirChecks([8519765, 8519766, 8585302], province, save);
             return;
          },
       },

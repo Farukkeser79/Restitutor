@@ -19,7 +19,7 @@ export const _CasusBelli = {
    },
    ConquestMission: {
       name: () => $t(L.ConquestMission),
-      effect: () => $t(L.$1WarScoreWhenWarGoalHasMoreThanOneTile, "-10%"),
+      effect: () => $t(L.$1WarScoreWhenWarGoalHasMoreThanOneŞehir, "-10%"),
    },
    ReligiousWar: {
       name: () => $t(L.ReligiousWar),
@@ -35,7 +35,7 @@ export const _CasusBelli = {
    },
    Reconquista: {
       name: () => $t(L.Reconquista),
-      effect: () => $t(L.TilesOriginallyOwnedByUsContribute$1LessToWarScore, "20%"),
+      effect: () => $t(L.ŞehirsOriginallyOwnedByUsContribute$1LessToWarScore, "20%"),
    },
    BarbarianRaid: {
       name: () => $t(L.BarbarianRaid),

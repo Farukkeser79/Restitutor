@@ -1,39 +1,39 @@
 import { Progress, Slider } from "@mantine/core";
-import { clamp, formatNumber, formatPercent, type Tile } from "@project/shared/src/utils/Helper";
+import { clamp, formatNumber, formatPercent, type Şehir } from "@project/shared/src/utils/Helper";
 import { Fragment } from "react/jsx-runtime";
 import { finalizeCondition } from "../game/actions/GameAction";
 import { Buildings } from "../game/definitions/Building";
 import { Culture } from "../game/definitions/Culture";
 import { CultureReligionStatus } from "../game/definitions/CultureReligionStatus";
 import { Goods, Price } from "../game/definitions/Goods";
-import { GreatWork, TileToGreatWork } from "../game/definitions/GreatWork";
+import { GreatWork, ŞehirToGreatWork } from "../game/definitions/GreatWork";
 import { modifierToString } from "../game/definitions/Modifier";
 import { isChristianReligion, Religion } from "../game/definitions/Religion";
 import { Terrains } from "../game/definitions/Terrain";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { RelocateCapitalModifier, TimedActions } from "../game/definitions/TimedAction";
-import { GameStateUpdated, RefreshTiles } from "../game/Events";
+import { GameStateUpdated, RefreshŞehirs } from "../game/Events";
 import { getGameDate } from "../game/logic/GameDateTime";
 import { MapBackgroundColors } from "../game/logic/MapColor";
-import { tileIsOurCoreCondition } from "../game/logic/MissionLogic";
+import { ŞehirIsOurCoreCondition } from "../game/logic/MissionLogic";
 import { addModifier } from "../game/logic/ModifierLogic";
 import { getProvinceName, getProvinceStat } from "../game/logic/ProvinceLogic";
 import {
    getCultureStatus,
    getReligionStatus,
-   getTileDefense,
-   getTileGoodsTax,
-   getTileGoverningCost,
-   getTileLandTax,
-   getTileMaintenanceCost,
-   getTileManpower,
-   getTileOutput,
-   getTileTerrain,
-   getTileUnrest,
-} from "../game/logic/TileLogic";
+   getŞehirDefense,
+   getŞehirGoodsTax,
+   getŞehirGoverningCost,
+   getŞehirLandTax,
+   getŞehirMaintenanceCost,
+   getŞehirManpower,
+   getŞehirOutput,
+   getŞehirTerrain,
+   getŞehirUnrest,
+} from "../game/logic/ŞehirLogic";
 import { TimedActionDescComp } from "../game/logic/TimedActionDescComp";
 import { startTimedAction, timedActionConditions } from "../game/logic/TimedActionLogic";
-import { getWarForTile } from "../game/logic/WarLogic";
+import { getWarForŞehir } from "../game/logic/WarLogic";
 import { G, isDev } from "../utils/Global";
 import { refreshOnTypedEvent } from "../utils/Hook";
 import { $t, L } from "../utils/i18n";
@@ -50,73 +50,73 @@ import { html } from "./components/RenderHTMLComp";
 import { DiplomacyPage } from "./DiplomacyPage";
 import { GreatWorkComponent } from "./GreatWorkComponent";
 import { MakeCoreButton } from "./MakeCoreButton";
-import { TileBuildingsModal } from "./TileBuildingsModal";
+import { ŞehirBuildingsModal } from "./ŞehirBuildingsModal";
 import { Grid2 } from "./UIConstant";
 import { UpgradeInfrastructureButton, UpgradePopulationButton, UpgradeProductionButton } from "./UpgradeButtons";
 import { WarTooltip } from "./WarTooltip";
 
-export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
+export function ŞehirPage({ Şehir }: { Şehir: Şehir }): React.ReactNode {
    refreshOnTypedEvent(GameStateUpdated);
-   const tileData = G.save.state.tiles.get(tile);
-   if (!tileData) {
+   const ŞehirData = G.save.state.Şehirs.get(Şehir);
+   if (!ŞehirData) {
       return null;
    }
-   const state = G.save.state.provinces[tileData.province];
+   const state = G.save.state.provinces[ŞehirData.province];
    if (!state) {
       return null;
    }
-   const cultureStatus = CultureReligionStatus[getCultureStatus(tile, G.save)];
-   const religionStatus = CultureReligionStatus[getReligionStatus(tile, G.save)];
-   const totalUpgrades = tileData.infrastructure + tileData.production + tileData.population;
-   const isMyProvince = tileData.province === G.save.state.playerProvince;
-   const war = getWarForTile(tile, G.save);
-   const tileProduction = getTileOutput(tile, G.save);
-   const goodsTaxRate = getProvinceStat("goodsTaxRate", tileData.province, G.save) / 100;
-   const goodsTax = goodsTaxRate * tileProduction.value * Price[tileData.goods];
+   const cultureStatus = CultureReligionStatus[getCultureStatus(Şehir, G.save)];
+   const religionStatus = CultureReligionStatus[getReligionStatus(Şehir, G.save)];
+   const totalUpgrades = ŞehirData.infrastructure + ŞehirData.production + ŞehirData.population;
+   const isMyProvince = ŞehirData.province === G.save.state.playerProvince;
+   const war = getWarForŞehir(Şehir, G.save);
+   const ŞehirProduction = getŞehirOutput(Şehir, G.save);
+   const goodsTaxRate = getProvinceStat("goodsTaxRate", ŞehirData.province, G.save) / 100;
+   const goodsTax = goodsTaxRate * ŞehirProduction.value * Price[ŞehirData.goods];
    if (isDev()) {
-      console.assert(goodsTax === getTileGoodsTax(tile, G.save), "Goods tax calculation is correct");
+      console.assert(goodsTax === getŞehirGoodsTax(Şehir, G.save), "Goods tax calculation is correct");
    }
    return (
       <SidebarComp
-         title={<SidebarImageHeader image={Terrains[getTileTerrain(tile)].image} title={getTileName(tile, G.save)} />}
+         title={<SidebarImageHeader image={Terrains[getŞehirTerrain(Şehir)].image} title={getŞehirName(Şehir, G.save)} />}
       >
          <div className="m10">
             <div className="row my5">
                <div className="f1">{$t(L.Province)}</div>
                <button
-                  onClick={() => showPanel(DiplomacyPage, { province: tileData.province })}
+                  onClick={() => showPanel(DiplomacyPage, { province: ŞehirData.province })}
                   className="btn text-sm"
                >
                   {$t(L.Diplomacy)}
                </button>
-               <div style={{ color: `#${MapBackgroundColors[tileData.province].toString(16)}` }}>
-                  {getProvinceName(tileData.province, G.save)}
+               <div style={{ color: `#${MapBackgroundColors[ŞehirData.province].toString(16)}` }}>
+                  {getProvinceName(ŞehirData.province, G.save)}
                </div>
             </div>
 
             <div className="row my5">
                <div className="f1">{$t(L.Capital)}</div>
-               {state.capital !== tile && isMyProvince && (
+               {state.capital !== Şehir && isMyProvince && (
                   <ActionButton
                      className="text-sm"
                      action={{
                         cost: { mandate: 1 },
                         condition: finalizeCondition([
                            ...timedActionConditions({ action: "RelocateCapital" }, G.save.state.playerProvince, G.save),
-                           tileIsOurCoreCondition(tile, G.save.state.playerProvince, G.save),
-                           { name: $t(L.TileIsNotAtWar), value: !war },
+                           ŞehirIsOurCoreCondition(Şehir, G.save.state.playerProvince, G.save),
+                           { name: $t(L.ŞehirIsNotAtWar), value: !war },
                         ]),
                         effect: () => {
-                           startTimedAction("RelocateCapital", tileData.province, G.save);
+                           startTimedAction("RelocateCapital", ŞehirData.province, G.save);
                            addModifier({
                               ...RelocateCapitalModifier,
                               name: TimedActions.RelocateCapital.name(),
-                              province: tileData.province,
+                              province: ŞehirData.province,
                               save: G.save,
                            });
                            const oldCapital = state.capital;
-                           state.capital = tile;
-                           RefreshTiles.emit({ tiles: [tile, oldCapital], options: { indicator: true, visual: true } });
+                           state.capital = Şehir;
+                           RefreshŞehirs.emit({ Şehirs: [Şehir, oldCapital], options: { indicator: true, visual: true } });
                         },
                      }}
                      tooltip={(element) => (
@@ -134,23 +134,23 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                      {$t(L.RelocateCapital)}
                   </ActionButton>
                )}
-               {state.capital === tile && <div className="mi sm text-green">check_circle</div>}
-               {state.capital !== tile && <div className="mi sm text-red">cancel</div>}
+               {state.capital === Şehir && <div className="mi sm text-green">check_circle</div>}
+               {state.capital !== Şehir && <div className="mi sm text-red">cancel</div>}
             </div>
 
             <div className="row my5">
                <div className="f1">{$t(L.Core)}</div>
-               <MakeCoreButton className="text-sm" tile={tile} />
+               <MakeCoreButton className="text-sm" Şehir={Şehir} />
                <FloatingTip
                   label={$t(
-                     L.ProvincesWithACoreClaimOnThisTile$1,
-                     Array.from(tileData.coreProvinces)
+                     L.ProvincesWithACoreClaimOnThisŞehir$1,
+                     Array.from(ŞehirData.coreProvinces)
                         .map((province) => getProvinceName(province, G.save))
                         .join(", "),
                   )}
                >
                   <div>
-                     {Array.from(tileData.coreProvinces).map((province, idx) => (
+                     {Array.from(ŞehirData.coreProvinces).map((province, idx) => (
                         <Fragment key={province}>
                            {idx > 0 && ", "}
                            {getProvinceName(province, G.save)}
@@ -161,11 +161,11 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
             </div>
             <div className="row my5">
                <div className="f1">{$t(L.Terrain)}</div>
-               <div>{Terrains[getTileTerrain(tile)].name()}</div>
+               <div>{Terrains[getŞehirTerrain(Şehir)].name()}</div>
             </div>
             <div className="row my5 g5">
                <div className="f1">{$t(L.Culture)}</div>
-               <div>{Culture[tileData.culture].name()}</div>
+               <div>{Culture[ŞehirData.culture].name()}</div>
                <FloatingTip label={cultureStatus.name()}>
                   <CircleComp color={cultureStatus.color} />
                </FloatingTip>
@@ -177,33 +177,33 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                      action={{
                         cost: { christianity: totalUpgrades },
                         condition: finalizeCondition([
-                           ...timedActionConditions({ action: "EvangelizeTile" }, G.save.state.playerProvince, G.save),
-                           tileIsOurCoreCondition(tile, G.save.state.playerProvince, G.save),
+                           ...timedActionConditions({ action: "EvangelizeŞehir" }, G.save.state.playerProvince, G.save),
+                           ŞehirIsOurCoreCondition(Şehir, G.save.state.playerProvince, G.save),
                            {
                               name: $t(L.OurProvinceReligionIsChristian),
                               value: isChristianReligion(state.religion),
                            },
                            {
-                              name: $t(L.TileReligionIsNotChristian),
-                              value: !isChristianReligion(tileData.religion),
+                              name: $t(L.ŞehirReligionIsNotChristian),
+                              value: !isChristianReligion(ŞehirData.religion),
                            },
                         ]),
                         effect: () => {
-                           tileData.religion = state.religion;
+                           ŞehirData.religion = state.religion;
                         },
                      }}
                      tooltip={(element) => (
                         <>
-                           <TimedActionDescComp action="EvangelizeTile" />
+                           <TimedActionDescComp action="EvangelizeŞehir" />
                            {element}
                         </>
                      )}
                      className="btn text-sm"
                   >
-                     {TimedActions.EvangelizeTile.name()}
+                     {TimedActions.EvangelizeŞehir.name()}
                   </ActionButton>
                )}
-               <div>{Religion[tileData.religion].name()}</div>
+               <div>{Religion[ŞehirData.religion].name()}</div>
                <FloatingTip label={religionStatus.name()}>
                   <CircleComp color={religionStatus.color} />
                </FloatingTip>
@@ -215,7 +215,7 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                   label={
                      <>
                         <div className="m10">
-                           {$t(L.$1IsCurrentlyContestedInAnOngoingWar, getTileName(tile, G.save))}
+                           {$t(L.$1IsCurrentlyContestedInAnOngoingWar, getŞehirName(Şehir, G.save))}
                         </div>
                         <WarTooltip war={war} />
                      </>
@@ -232,16 +232,16 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
          </div>
          <div className="h1 my10">{$t(L.Upgrades)}</div>
          <div className="row mx10">
-            <UpgradeInfrastructureButton tile={tile} className="f1 btn py5">
-               <div className="text-roman">{tileData.infrastructure}</div>
+            <UpgradeInfrastructureButton Şehir={Şehir} className="f1 btn py5">
+               <div className="text-roman">{ŞehirData.infrastructure}</div>
                <div className="text-sm text-display">{$t(L.Infrastructure)}</div>
             </UpgradeInfrastructureButton>
-            <UpgradeProductionButton tile={tile} className="f1 btn py5">
-               <div className="text-roman">{tileData.production}</div>
+            <UpgradeProductionButton Şehir={Şehir} className="f1 btn py5">
+               <div className="text-roman">{ŞehirData.production}</div>
                <div className="text-sm text-display">{$t(L.Production)}</div>
             </UpgradeProductionButton>
-            <UpgradePopulationButton tile={tile} className="f1 btn py5">
-               <div className="text-roman">{tileData.population}</div>
+            <UpgradePopulationButton Şehir={Şehir} className="f1 btn py5">
+               <div className="text-roman">{ŞehirData.population}</div>
                <div className="text-sm text-display">{$t(L.Population)}</div>
             </UpgradePopulationButton>
          </div>
@@ -251,29 +251,29 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                <div className="f1">{$t(L.TotalUpgrades)}</div>
                <div>{totalUpgrades}</div>
             </div>
-            <BreakdownRow className="my5" name={$t(L.GoverningCost)} breakdown={getTileGoverningCost(tile, G.save)} />
-            <BreakdownRow className="my5" name={$t(L.Defense)} breakdown={getTileDefense(tile, G.save)} />
-            <BreakdownRow className="my5" name={$t(L.Manpower)} breakdown={getTileManpower(tile, G.save)} />
+            <BreakdownRow className="my5" name={$t(L.GoverningCost)} breakdown={getŞehirGoverningCost(Şehir, G.save)} />
+            <BreakdownRow className="my5" name={$t(L.Defense)} breakdown={getŞehirDefense(Şehir, G.save)} />
+            <BreakdownRow className="my5" name={$t(L.Manpower)} breakdown={getŞehirManpower(Şehir, G.save)} />
          </div>
          <div className="h1 my10">{$t(L.Revenue)}</div>
          <div className="mx10">
-            <BreakdownRow className="my5" name={$t(L.LandTax)} breakdown={getTileLandTax(tile, G.save)} />
+            <BreakdownRow className="my5" name={$t(L.LandTax)} breakdown={getŞehirLandTax(Şehir, G.save)} />
          </div>
          <div className="divider my10" />
          <div className="mx10 row">
             <div>
                <img
-                  src={Goods[tileData.goods].icon}
+                  src={Goods[ŞehirData.goods].icon}
                   style={{ width: "3rem", height: "3rem" }}
                   className="frame display-block"
                />
             </div>
             <div className="f1">
-               <BreakdownTooltip breakdown={tileProduction}>
+               <BreakdownTooltip breakdown={ŞehirProduction}>
                   <div className="row my5">
-                     <div className="f1">{$t(L.TileOutput)}</div>
+                     <div className="f1">{$t(L.ŞehirOutput)}</div>
                      <div>
-                        {formatNumber(tileProduction.value)} {Goods[tileData.goods].name()}
+                        {formatNumber(ŞehirProduction.value)} {Goods[ŞehirData.goods].name()}
                      </div>
                   </div>
                </BreakdownTooltip>
@@ -283,21 +283,21 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                   label={
                      <div className="m10">
                         <div className="row my5">
-                           <div className="f1">{$t(L.TileOutput)}</div>
+                           <div className="f1">{$t(L.ŞehirOutput)}</div>
                            <div>
-                              {formatNumber(tileProduction.value)} {Goods[tileData.goods].name()}
+                              {formatNumber(ŞehirProduction.value)} {Goods[ŞehirData.goods].name()}
                            </div>
                         </div>
                         <div className="row my5">
-                           <div className="f1">{$t(L.$1Price, Goods[tileData.goods].name())}</div>
+                           <div className="f1">{$t(L.$1Price, Goods[ŞehirData.goods].name())}</div>
                            <div>
-                              {formatNumber(Price[tileData.goods])} {$t(L.Gold)}
+                              {formatNumber(Price[ŞehirData.goods])} {$t(L.Gold)}
                            </div>
                         </div>
                         <div className="row my5">
                            <div className="f1">{$t(L.TaxableValue)}</div>
                            <div>
-                              {formatNumber(tileProduction.value * Price[tileData.goods])} {$t(L.Gold)}
+                              {formatNumber(ŞehirProduction.value * Price[ŞehirData.goods])} {$t(L.Gold)}
                            </div>
                         </div>
                         <div className="row my5">
@@ -313,22 +313,22 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                >
                   <div className="row my5">
                      <div className="f1">{$t(L.GoodsTax)}</div>
-                     <div>{formatNumber(getTileGoodsTax(tile, G.save))}</div>
+                     <div>{formatNumber(getŞehirGoodsTax(Şehir, G.save))}</div>
                   </div>
                </FloatingTip>
             </div>
          </div>
          <div className="h1 my10">{$t(L.Expense)}</div>
          <div className="mx10">
-            <BreakdownRow className="my5" name={$t(L.Maintenance)} breakdown={getTileMaintenanceCost(tile, G.save)} />
+            <BreakdownRow className="my5" name={$t(L.Maintenance)} breakdown={getŞehirMaintenanceCost(Şehir, G.save)} />
          </div>
          <div className="h1 my10">{$t(L.Buildings)}</div>
-         <TileGreatWorkComponent tile={tile} />
+         <ŞehirGreatWorkComponent Şehir={Şehir} />
          <div
             className="mx10"
             style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: "0.625rem" }}
          >
-            {Array.from(tileData.buildings).map((building) => (
+            {Array.from(ŞehirData.buildings).map((building) => (
                <FloatingTip
                   key={building}
                   label={
@@ -348,7 +348,7 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                disabled={!isMyProvince}
                className="btn"
                style={{ width: "100%", aspectRatio: "1 / 1" }}
-               onClick={() => showPanel(TileBuildingsModal, { tile })}
+               onClick={() => showPanel(ŞehirBuildingsModal, { Şehir })}
             >
                <div className="mi lg">add</div>
             </button>
@@ -361,9 +361,9 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                   min={0}
                   max={100}
                   step={1}
-                  value={tileData.autonomy}
+                  value={ŞehirData.autonomy}
                   onChange={(value) => {
-                     tileData.autonomy = value;
+                     ŞehirData.autonomy = value;
                      GameStateUpdated.emit();
                   }}
                />
@@ -380,7 +380,7 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                   {isMyProvince && (
                      <>
                         <div className="h2">{$t(L.SettleUnrest)}</div>
-                        <div className="m10">{$t(L.SettlingUnrestAdjustsAutonomySoThatTileUnrestIsAtMost$1, "0")}</div>
+                        <div className="m10">{$t(L.SettlingUnrestAdjustsAutonomySoThatŞehirUnrestIsAtMost$1, "0")}</div>
                      </>
                   )}
                </>
@@ -392,20 +392,20 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                   <button
                      className="btn text-sm"
                      onClick={() => {
-                        const unrest = getTileUnrest(tile, G.save).value;
-                        tileData.autonomy = clamp(tileData.autonomy + Math.ceil(unrest), 0, 100);
+                        const unrest = getŞehirUnrest(Şehir, G.save).value;
+                        ŞehirData.autonomy = clamp(ŞehirData.autonomy + Math.ceil(unrest), 0, 100);
                         GameStateUpdated.emit();
                      }}
                   >
                      {$t(L.SettleUnrest)}
                   </button>
                )}
-               <div>{tileData.autonomy}</div>
+               <div>{ŞehirData.autonomy}</div>
             </div>
          </FloatingTip>
          <div className="h1 my10">{$t(L.Rebellion)}</div>
-         {tileData.rebellion >= 10 && (
-            <div className="mx10 my5 text-red">{$t(L.$1IsInCurrentRebellion, getTileName(tile, G.save))}</div>
+         {ŞehirData.rebellion >= 10 && (
+            <div className="mx10 my5 text-red">{$t(L.$1IsInCurrentRebellion, getŞehirName(Şehir, G.save))}</div>
          )}
          <div className="mx10">
             <BreakdownRow
@@ -416,25 +416,25 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
                      <div className="m10">
                         {html($t(L.UnrestDescription))}
                         <div className="text-dimmed text-italic">
-                           {html($t(L.ExampleAutonomyAt$1$2ReducesTileOutputBy$3$4, "25", "25%", "-15", "15%"))}
+                           {html($t(L.ExampleAutonomyAt$1$2ReducesŞehirOutputBy$3$4, "25", "25%", "-15", "15%"))}
                         </div>
                      </div>
                      <div className="divider my10"></div>
                      {element}
                   </>
                )}
-               breakdown={getTileUnrest(tile, G.save)}
+               breakdown={getŞehirUnrest(Şehir, G.save)}
                formatFunc={colorNumberReverse}
             />
             <div className="row my5">
                <div className="f1">{$t(L.Rebellion)}</div>
-               <div>{tileData.rebellion}/10</div>
+               <div>{ŞehirData.rebellion}/10</div>
             </div>
-            <Progress value={tileData.rebellion * 10} />
+            <Progress value={ŞehirData.rebellion * 10} />
             {isMyProvince && (
                <div style={Grid2} className="mt10">
-                  <AppeaseButton tile={tile} />
-                  <CrackDownButton tile={tile} />
+                  <AppeaseButton Şehir={Şehir} />
+                  <CrackDownButton Şehir={Şehir} />
                </div>
             )}
          </div>
@@ -442,8 +442,8 @@ export function TilePage({ tile }: { tile: Tile }): React.ReactNode {
    );
 }
 
-function TileGreatWorkComponent({ tile }: { tile: Tile }): React.ReactNode {
-   const greatWork = TileToGreatWork.get(tile);
+function ŞehirGreatWorkComponent({ Şehir }: { Şehir: Şehir }): React.ReactNode {
+   const greatWork = ŞehirToGreatWork.get(Şehir);
    if (!greatWork) {
       return null;
    }

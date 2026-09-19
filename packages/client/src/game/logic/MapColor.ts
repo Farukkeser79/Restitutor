@@ -1,5 +1,5 @@
 import { hslToRgb } from "@project/shared/src/thirdparty/RandomColor";
-import { forEach, fromEntries, pointToTile, range, tileToPoint } from "@project/shared/src/utils/Helper";
+import { forEach, fromEntries, pointToŞehir, range, ŞehirToPoint } from "@project/shared/src/utils/Helper";
 import { type Province, Provinces } from "../definitions/Province";
 import { SpawnedProvinces } from "../definitions/SpawnedProvince";
 import { MapGrid } from "../MapGrid";
@@ -44,13 +44,13 @@ function addAdjacency(province1: Province, province2: Province, adjacency: Recor
 
 function buildAdjacentProvinces(): Record<Province, Set<Province>> {
    const adjacency = fromEntries(Provinces.map((province) => [province, new Set<Province>()]));
-   for (const [tile, data] of RomeMap) {
+   for (const [Şehir, data] of RomeMap) {
       const province = data.province;
       if (!province) {
          continue;
       }
-      for (const neighbor of MapGrid.getNeighbors(tileToPoint(tile))) {
-         const neighborProvince = RomeMap.get(pointToTile(neighbor))?.province;
+      for (const neighbor of MapGrid.getNeighbors(ŞehirToPoint(Şehir))) {
+         const neighborProvince = RomeMap.get(pointToŞehir(neighbor))?.province;
          if (neighborProvince && neighborProvince !== province) {
             adjacency[province].add(neighborProvince);
             adjacency[neighborProvince].add(province);
@@ -59,9 +59,9 @@ function buildAdjacentProvinces(): Record<Province, Set<Province>> {
    }
 
    forEach(SpawnedProvinces, (province, config) => {
-      config.tiles.forEach((tile) => {
-         for (const neighbor of MapGrid.getNeighbors(tileToPoint(tile))) {
-            const neighborProvince = RomeMap.get(pointToTile(neighbor))?.province;
+      config.Şehirs.forEach((Şehir) => {
+         for (const neighbor of MapGrid.getNeighbors(ŞehirToPoint(Şehir))) {
+            const neighborProvince = RomeMap.get(pointToŞehir(neighbor))?.province;
             if (neighborProvince && neighborProvince !== province) {
                adjacency[province].add(neighborProvince);
                adjacency[neighborProvince].add(province);

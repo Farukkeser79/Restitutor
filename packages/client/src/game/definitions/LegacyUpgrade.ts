@@ -247,32 +247,32 @@ export class LegacyUpgradeDefinitions {
          ImproveRelationsRate: { type: "multiply", value: 0.5 },
       },
    } as const;
-   TileOutput1: ILegacyUpgradeModifier = {
+   ŞehirOutput1: ILegacyUpgradeModifier = {
       requires: ["Diplomatic1"],
       position: [2, 1],
       modifiers: {
-         TileOutput: { type: "multiply", value: 0.1 },
+         ŞehirOutput: { type: "multiply", value: 0.1 },
       },
    } as const;
-   TileOutput2: ILegacyUpgradeModifier = {
-      requires: ["TileOutput1"],
+   ŞehirOutput2: ILegacyUpgradeModifier = {
+      requires: ["ŞehirOutput1"],
       position: [3, 1],
       modifiers: {
-         TileOutput: { type: "multiply", value: 0.1 },
+         ŞehirOutput: { type: "multiply", value: 0.1 },
       },
    } as const;
-   TileOutput3: ILegacyUpgradeModifier = {
-      requires: ["TileOutput2"],
+   ŞehirOutput3: ILegacyUpgradeModifier = {
+      requires: ["ŞehirOutput2"],
       position: [4, 1],
       modifiers: {
-         TileOutput: { type: "multiply", value: 0.1 },
+         ŞehirOutput: { type: "multiply", value: 0.1 },
       },
    } as const;
-   TileOutput4: ILegacyUpgradeModifier = {
-      requires: ["TileOutput3"],
+   ŞehirOutput4: ILegacyUpgradeModifier = {
+      requires: ["ŞehirOutput3"],
       position: [5, 1],
       modifiers: {
-         TileOutput: { type: "multiply", value: 0.1 },
+         ŞehirOutput: { type: "multiply", value: 0.1 },
       },
    } as const;
    ProductionUpgrade1: ILegacyUpgradeModifier = {
@@ -289,7 +289,7 @@ export class LegacyUpgradeDefinitions {
       position: [-4, 3],
    } as const;
    InfiltrationRate1: ILegacyUpgradeModifier = {
-      requires: ["TileOutput1"],
+      requires: ["ŞehirOutput1"],
       position: [3, 2],
       modifiers: {
          InfiltrationRate: { type: "multiply", value: 0.5 },
@@ -364,15 +364,15 @@ export class LegacyUpgradeDefinitions {
          Manpower: { type: "multiply", value: 0.1 },
       },
    } as const;
-   TileMaintenance1: ILegacyUpgradeModifier = {
+   ŞehirMaintenance1: ILegacyUpgradeModifier = {
       requires: ["Manpower1"],
       position: [-3, -4],
       modifiers: {
-         TileMaintenance: { type: "multiply", value: -0.1 },
+         ŞehirMaintenance: { type: "multiply", value: -0.1 },
       },
    } as const;
    ToleratedCulture1: ILegacyUpgradeModifier = {
-      requires: ["TileMaintenance1"],
+      requires: ["ŞehirMaintenance1"],
       position: [-3, -5],
       modifiers: {
          ToleratedCulture: { type: "add", value: 1 },

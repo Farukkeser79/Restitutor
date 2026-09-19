@@ -4,10 +4,10 @@ import {
    forcePatronageEffect,
    makeCoreCountChecks,
    marriageChecks,
-   maxCoreTileChecks,
+   maxCoreŞehirChecks,
    mediterraneanCoastChecks,
-   minCoreTileChecks,
-   minTileUpgradeTimesChecks,
+   minCoreŞehirChecks,
+   minŞehirUpgradeTimesChecks,
    provinceResourceChecks,
    victoryCountChecks,
 } from "../logic/MissionLogic";
@@ -34,7 +34,7 @@ export const PannoniaEvent = {
             label: () => $t(L.FundTheNewColoniasWorks),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
                Prestige: { type: "multiply", value: 0.05, duration: 2 * 12 },
             },
          },
@@ -139,7 +139,7 @@ export const PannoniaEvent = {
             label: () => $t(L.FinishTheCanalWithPaidLabor),
             resources: { gold: -750 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.15, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.15, duration: 3 * 12 },
             },
          },
          {
@@ -155,7 +155,7 @@ export const PannoniaEvent = {
             resources: { administrative: 50 },
             modifiers: {
                Manpower: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
                Prestige: { type: "multiply", value: -0.05, duration: 2 * 12 },
             },
          },
@@ -246,7 +246,7 @@ export const PannoniaEvent = {
             resources: { gold: -500 },
             modifiers: {
                Defense: { type: "multiply", value: 0.15, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: -0.05, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.05, duration: 2 * 12 },
             },
          },
          {
@@ -290,7 +290,7 @@ export const PannoniaEvent = {
             resources: { gold: -500 },
             modifiers: {
                Stability: { type: "add", value: 10, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
          {
@@ -354,7 +354,7 @@ export const PannoniaEvent = {
             label: () => $t(L.RebuildThePublicBuildings),
             resources: { gold: -1000 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.15, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.15, duration: 3 * 12 },
             },
          },
          {
@@ -382,7 +382,7 @@ export const PannoniaEvent = {
       condition: {
          province: new Set(["Pannonia"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minTileUpgradeTimesChecks(10, province, save);
+            yield* minŞehirUpgradeTimesChecks(10, province, save);
             yield* provinceResourceChecks("gold", 1000, province, save);
          },
       },
@@ -429,8 +429,8 @@ export const PannoniaEvent = {
       condition: {
          province: new Set(["Pannonia"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(15, province, save);
-            yield* maxCoreTileChecks(5, "Noricum", save);
+            yield* minCoreŞehirChecks(15, province, save);
+            yield* maxCoreŞehirChecks(5, "Noricum", save);
             yield* marriageChecks(province, "Noricum", save);
             yield* requireAnyTreatyBetweenChecks(["DefensePact", "Alliance"], province, "Noricum", save);
             yield* requirePeaceBetweenChecks(province, "Noricum", save);
@@ -488,7 +488,7 @@ export const PannoniaEvent = {
             label: () => $t(L.PrepareAWesternCampaign),
             modifiers: {
                WarPower: { type: "multiply", value: 0.1, duration: 10 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 10 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 10 * 12 },
             },
             casusBelli: {
                Raetia: { casusBelli: "ConquestMission", duration: 10 * 12 },

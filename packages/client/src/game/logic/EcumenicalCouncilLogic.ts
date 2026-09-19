@@ -1,4 +1,4 @@
-import { entriesOf, forEach, type Tile } from "@project/shared/src/utils/Helper";
+import { entriesOf, forEach, type Şehir } from "@project/shared/src/utils/Helper";
 import { $t, L } from "../../utils/i18n";
 import type { ICondition } from "../actions/GameAction";
 import type { Province } from "../definitions/Province";
@@ -22,9 +22,9 @@ export function getCouncilHeresies(timedAction: TimedAction): Set<ChristianHeres
 
 export function getHereticProvinces(heresy: ChristianHeresy, save: SaveGame): Set<Province> {
    const result = new Set<Province>();
-   for (const [tile, tileData] of save.state.tiles) {
-      if (tileData.religion === heresy) {
-         result.add(tileData.province);
+   for (const [Şehir, ŞehirData] of save.state.Şehirs) {
+      if (ŞehirData.religion === heresy) {
+         result.add(ŞehirData.province);
       }
    }
    forEach(save.state.provinces, (province, state) => {
@@ -58,8 +58,8 @@ export function ongoingEcumenicalCouncilCondition(province: Province, save: Save
    };
 }
 
-export function getReconcileTiles(province: Province, save: SaveGame): Set<Tile> {
-   const result = new Set<Tile>();
+export function getReconcileŞehirs(province: Province, save: SaveGame): Set<Şehir> {
+   const result = new Set<Şehir>();
    const state = save.state.provinces[province];
    if (!state) {
       return result;
@@ -75,14 +75,14 @@ export function getReconcileTiles(province: Province, save: SaveGame): Set<Tile>
    if (heresies.has(state.religion)) {
       return result;
    }
-   for (const [tile, tileData] of save.state.tiles) {
+   for (const [Şehir, ŞehirData] of save.state.Şehirs) {
       if (
-         tileData.province === province &&
-         tileData.coreProvinces.has(province) &&
-         isChristianReligion(tileData.religion) &&
-         tileData.religion !== state.religion
+         ŞehirData.province === province &&
+         ŞehirData.coreProvinces.has(province) &&
+         isChristianReligion(ŞehirData.religion) &&
+         ŞehirData.religion !== state.religion
       ) {
-         result.add(tile);
+         result.add(Şehir);
       }
    }
    return result;

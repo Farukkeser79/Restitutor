@@ -4,7 +4,7 @@ import { finalizeCondition } from "../game/actions/GameAction";
 import { NegotiateWhitePeaceAction } from "../game/actions/NegotiateWhitePeaceAction";
 import { Modifiers } from "../game/definitions/Modifier";
 import { BarbarianRaidNegativeEffect, MaxRaidMonths } from "../game/definitions/SpawnedProvince";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { TimedActions } from "../game/definitions/TimedAction";
 import { GameStateUpdated } from "../game/Events";
 import {
@@ -130,7 +130,7 @@ export function BarbarianRaidModal(): React.ReactNode {
                                                 <div className="text-red">{BarbarianRaidNegativeEffect}%</div>
                                              </div>
                                              <div className="row mx10 my5">
-                                                <div className="f1">{Modifiers.TileOutput.name()}</div>
+                                                <div className="f1">{Modifiers.ŞehirOutput.name()}</div>
                                                 <div className="text-red">{BarbarianRaidNegativeEffect}%</div>
                                              </div>
                                              <div className="row mx10 my5">
@@ -155,8 +155,8 @@ export function BarbarianRaidModal(): React.ReactNode {
                                                 </span>{" "}
                                                 <span className="text-dimmed">
                                                    (
-                                                   {Array.from(raid.tiles)
-                                                      .map((tile) => getTileName(tile, G.save))
+                                                   {Array.from(raid.Şehirs)
+                                                      .map((Şehir) => getŞehirName(Şehir, G.save))
                                                       .join(", ")}
                                                    )
                                                 </span>

@@ -63,15 +63,15 @@ export const Modifiers = {
    },
    LandTax: {
       name: () => $t(L.LandTax),
-      desc: () => $t(L.LandTaxIsDeterminedPrimarilyByTheTilesInfrastructureLevel),
+      desc: () => $t(L.LandTaxIsDeterminedPrimarilyByTheŞehirsInfrastructureLevel),
    },
-   TileOutput: {
-      name: () => $t(L.TileOutput),
-      desc: () => $t(L.TileOutputIsDeterminedPrimarilyByTheTilesProductionLevel),
+   ŞehirOutput: {
+      name: () => $t(L.ŞehirOutput),
+      desc: () => $t(L.ŞehirOutputIsDeterminedPrimarilyByTheŞehirsProductionLevel),
    },
-   TileMaintenance: {
-      name: () => $t(L.TileMaintenance),
-      desc: () => $t(L.MaintenanceIsDeterminedPrimarilyByTheTilesUnrestLevel),
+   ŞehirMaintenance: {
+      name: () => $t(L.ŞehirMaintenance),
+      desc: () => $t(L.MaintenanceIsDeterminedPrimarilyByTheŞehirsUnrestLevel),
    },
    ArmyMaintenance: {
       name: () => $t(L.ArmyMaintenance),
@@ -79,7 +79,7 @@ export const Modifiers = {
    },
    BuildingSlot: {
       name: () => $t(L.BuildingSlot),
-      desc: () => $t(L.EachBuildingOnATileRequiresABuildingSlot),
+      desc: () => $t(L.EachBuildingOnAŞehirRequiresABuildingSlot),
    },
    Diplomat: {
       name: () => $t(L.Diplomat),

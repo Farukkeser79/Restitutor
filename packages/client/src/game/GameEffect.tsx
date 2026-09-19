@@ -5,7 +5,7 @@ import {
    formatPercent,
    mapOf,
    shuffle,
-   type Tile,
+   type Şehir,
 } from "@project/shared/src/utils/Helper";
 import type React from "react";
 import { html } from "../ui/components/RenderHTMLComp";
@@ -31,10 +31,10 @@ import { addProvinceUpgrade, type ProvinceUpgrade, ProvinceUpgrades } from "./de
 import { ChristianHeresy, isChristianReligion, Religion } from "./definitions/Religion";
 import type { SpawnedProvince } from "./definitions/SpawnedProvince";
 import { SpawnedProvinces } from "./definitions/SpawnedProvince";
-import type { ITileData } from "./definitions/Tile";
-import { getTileName } from "./definitions/TileName";
+import type { IŞehirData } from "./definitions/Şehir";
+import { getŞehirName } from "./definitions/ŞehirName";
 import { TimedActions } from "./definitions/TimedAction";
-import { RefreshTiles } from "./Events";
+import { RefreshŞehirs } from "./Events";
 import { filterProvinces } from "./events/GameEventLogic";
 import type { SaveGame } from "./GameState";
 import { addAttitudeModifier, getRelation } from "./logic/DiplomacyLogic";
@@ -57,7 +57,7 @@ export interface IGameEffect {
    provinceModifiers?: (IBaseModifier & { modifier: Modifier; province: Province })[];
    attitudes?: Partial<Record<Province, IBaseModifier & { duration: number }>>;
    casusBelli?: Partial<Record<Province, { casusBelli: CasusBelli; duration: number }>>;
-   makeCore?: Tile[];
+   makeCore?: Şehir[];
    spawnProvinces?: SpawnedProvince[];
    spawnHeresies?: ChristianHeresy[];
 }
@@ -120,7 +120,7 @@ export function getGameEffectDesc(effect: IGameEffect, province: Province, save:
                </div>
             ))}
          {effect.makeCore && (
-            <div>{$t(L.$1BecomeOurCoreTiles, effect.makeCore.map((tile) => getTileName(tile, save)).join(", "))}</div>
+            <div>{$t(L.$1BecomeOurCoreŞehirs, effect.makeCore.map((Şehir) => getŞehirName(Şehir, save)).join(", "))}</div>
          )}
          {effect.casusBelli &&
             mapOf(filterProvinces(effect.casusBelli, province, save), (fromProvince, data) => (
@@ -156,9 +156,9 @@ export function getGameEffectDesc(effect: IGameEffect, province: Province, save:
                   $t(
                      L.SpawnProvinceEffectDesc$1$2,
                      Province[province].name(),
-                     SpawnedProvinces[province].tiles
-                        .map((tile, index) =>
-                           index === 0 ? `${getTileName(tile, save)} (${$t(L.Capital)})` : getTileName(tile, save),
+                     SpawnedProvinces[province].Şehirs
+                        .map((Şehir, index) =>
+                           index === 0 ? `${getŞehirName(Şehir, save)} (${$t(L.Capital)})` : getŞehirName(Şehir, save),
                         )
                         .join(", "),
                   ),
@@ -168,7 +168,7 @@ export function getGameEffectDesc(effect: IGameEffect, province: Province, save:
          {effect.spawnHeresies?.map((heresy) => (
             <div key={heresy}>
                {$t(
-                  L.$1SpreadsTo$2And$3OfTheChristianTiles,
+                  L.$1SpreadsTo$2And$3OfTheChristianŞehirs,
                   Religion[heresy].name(),
                   ChristianHeresy[heresy].provinces.map((province) => getProvinceName(province, save)).join(", "),
                   formatPercent(ChristianHeresy[heresy].percentage),
@@ -217,8 +217,8 @@ export function applyGameEffect(effect: IGameEffect, source: string, province: P
          relation.casusBelli.set(data.casusBelli, { monthsLeft: data.duration });
       }
    });
-   effect.makeCore?.forEach((tile) => {
-      const data = save.state.tiles.get(tile);
+   effect.makeCore?.forEach((Şehir) => {
+      const data = save.state.Şehirs.get(Şehir);
       if (data) {
          data.coreProvinces.add(province);
       }
@@ -236,34 +236,34 @@ export function applyGameEffect(effect: IGameEffect, source: string, province: P
    effect.provinceUpgrades?.forEach((upgrade) => {
       addProvinceUpgrade(upgrade, province, save);
    });
-   const changedTiles: Tile[] = [];
+   const changedŞehirs: Şehir[] = [];
    effect.spawnProvinces?.forEach((spawnedProvince) => {
-      spawnProvince(spawnedProvince, source, save).forEach((tile) => {
-         changedTiles.push(tile);
+      spawnProvince(spawnedProvince, source, save).forEach((Şehir) => {
+         changedŞehirs.push(Şehir);
       });
    });
    effect.spawnHeresies?.forEach((heresy) => {
-      const tiles = new Map<Tile, ITileData>();
+      const Şehirs = new Map<Şehir, IŞehirData>();
       const provinces = ChristianHeresy[heresy].provinces;
-      const pool = shuffle(Array.from(save.state.tiles));
+      const pool = shuffle(Array.from(save.state.Şehirs));
       for (const province of provinces) {
-         for (const [tile, tileData] of pool) {
-            if (tileData.province === province && tileData.coreProvinces.has(province)) {
-               tiles.set(tile, tileData);
+         for (const [Şehir, ŞehirData] of pool) {
+            if (ŞehirData.province === province && ŞehirData.coreProvinces.has(province)) {
+               Şehirs.set(Şehir, ŞehirData);
                break;
             }
          }
       }
-      const candidates = pool.filter(([tile, tileData]) => isChristianReligion(tileData.religion) && !tiles.has(tile));
+      const candidates = pool.filter(([Şehir, ŞehirData]) => isChristianReligion(ŞehirData.religion) && !Şehirs.has(Şehir));
       const size = Math.ceil(candidates.length * ChristianHeresy[heresy].percentage);
-      candidates.slice(0, size).forEach(([tile, tileData]) => {
-         tiles.set(tile, tileData);
+      candidates.slice(0, size).forEach(([Şehir, ŞehirData]) => {
+         Şehirs.set(Şehir, ŞehirData);
       });
-      tiles.forEach((tileData, tile) => {
-         tileData.religion = heresy;
+      Şehirs.forEach((ŞehirData, Şehir) => {
+         ŞehirData.religion = heresy;
       });
    });
-   if (changedTiles.length > 0) {
-      RefreshTiles.emit({ tiles: changedTiles, options: { visual: true, indicator: true } });
+   if (changedŞehirs.length > 0) {
+      RefreshŞehirs.emit({ Şehirs: changedŞehirs, options: { visual: true, indicator: true } });
    }
 }

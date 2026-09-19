@@ -1,4 +1,4 @@
-import { formatNumber, formatPercentDelta, range, type Tile } from "@project/shared/src/utils/Helper";
+import { formatNumber, formatPercentDelta, range, type Şehir } from "@project/shared/src/utils/Helper";
 import type { CasusBelli } from "../game/definitions/CasusBelli";
 import { Modifiers } from "../game/definitions/Modifier";
 import type { Province } from "../game/definitions/Province";
@@ -16,12 +16,12 @@ export function WarMonthlyConsequences({
 }: {
    war: {
       attacker: Province;
-      tiles: Set<Tile>;
+      Şehirs: Set<Şehir>;
       casusBelli: CasusBelli;
       log?: IWarLog[];
    };
 }): React.ReactNode {
-   const { attacker, tiles, casusBelli, log } = war;
+   const { attacker, Şehirs, casusBelli, log } = war;
    const currentYear = log ? Math.floor((log.length + 1) / 12) : 1;
    return (
       <>
@@ -47,7 +47,7 @@ export function WarMonthlyConsequences({
                         </thead>
                         <tbody>
                            {range(currentYear, currentYear + 5).map((year) => {
-                              const monthly = calculateWarMonthlyMilitaryPoint(year * 12 + 1, tiles.size);
+                              const monthly = calculateWarMonthlyMilitaryPoint(year * 12 + 1, Şehirs.size);
                               return (
                                  <tr key={year}>
                                     <td>{year}</td>
@@ -70,7 +70,7 @@ export function WarMonthlyConsequences({
                   </div>
                </div>
                <div className="text-red">
-                  {formatNumber(-calculateWarMonthlyMilitaryPoint(log ? log.length + 1 : 1, tiles.size))}
+                  {formatNumber(-calculateWarMonthlyMilitaryPoint(log ? log.length + 1 : 1, Şehirs.size))}
                   {$t(L.SlashMonth)}
                </div>
             </div>

@@ -1,12 +1,12 @@
 import { $t, L } from "../../utils/i18n";
-import { Tiles } from "../definitions/TileConstants";
+import { Şehirs } from "../definitions/ŞehirConstants";
 import type { ConditionChecks } from "../logic/Calculation";
 import {
    forcePatronageEffect,
-   isCoreTileChecks,
+   isCoreŞehirChecks,
    marriageChecks,
-   maxCoreTileChecks,
-   minCoreTileChecks,
+   maxCoreŞehirChecks,
+   minCoreŞehirChecks,
 } from "../logic/MissionLogic";
 import {
    requireAnyTreatyBetweenChecks,
@@ -30,7 +30,7 @@ export const SiciliaEvent = {
          {
             label: () => $t(L.ExpandTheExportEstates),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.15, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.15, duration: 3 * 12 },
                TradeProfit: { type: "multiply", value: 0.1, duration: 3 * 12 },
             },
          },
@@ -65,7 +65,7 @@ export const SiciliaEvent = {
             label: () => $t(L.RebuildWithoutEndorsingAMiracle),
             resources: { gold: -300 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
                Prestige: { type: "multiply", value: -0.05, duration: 2 * 12 },
             },
          },
@@ -86,7 +86,7 @@ export const SiciliaEvent = {
             resources: { gold: -300 },
             modifiers: {
                Prestige: { type: "multiply", value: 0.15, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 3 * 12 },
             },
          },
          {
@@ -302,7 +302,7 @@ export const SiciliaEvent = {
             label: () => $t(L.BindTheNewLandsToSiciliasEstates),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -321,7 +321,7 @@ export const SiciliaEvent = {
       condition: {
          province: new Set(["Sicilia"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* isCoreTileChecks(Tiles.Rome, province, save);
+            yield* isCoreŞehirChecks(Şehirs.Rome, province, save);
          },
       },
       buttons: [
@@ -347,8 +347,8 @@ export const SiciliaEvent = {
          conditions: function* (province, save): ConditionChecks {
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Sardinia", save);
             yield* requirePeaceBetweenChecks(province, "Sardinia", save);
-            yield* minCoreTileChecks(15, province, save);
-            yield* maxCoreTileChecks(3, "Sardinia", save);
+            yield* minCoreŞehirChecks(15, province, save);
+            yield* maxCoreŞehirChecks(3, "Sardinia", save);
             yield* requireAnyTreatyBetweenChecks(["DefensePact", "Alliance"], province, "Sardinia", save);
             yield* marriageChecks(province, "Sardinia", save);
          },
@@ -369,8 +369,8 @@ export const SiciliaEvent = {
          conditions: function* (province, save): ConditionChecks {
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Corsica", save);
             yield* requirePeaceBetweenChecks(province, "Corsica", save);
-            yield* minCoreTileChecks(15, province, save);
-            yield* maxCoreTileChecks(3, "Corsica", save);
+            yield* minCoreŞehirChecks(15, province, save);
+            yield* maxCoreŞehirChecks(3, "Corsica", save);
             yield* requireAnyTreatyBetweenChecks(["DefensePact", "Alliance"], province, "Corsica", save);
             yield* marriageChecks(province, "Corsica", save);
          },
@@ -391,8 +391,8 @@ export const SiciliaEvent = {
          conditions: function* (province, save): ConditionChecks {
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Africa", save);
             yield* requirePeaceBetweenChecks(province, "Africa", save);
-            yield* minCoreTileChecks(15, province, save);
-            yield* maxCoreTileChecks(3, "Africa", save);
+            yield* minCoreŞehirChecks(15, province, save);
+            yield* maxCoreŞehirChecks(3, "Africa", save);
             yield* requireAnyTreatyBetweenChecks(["DefensePact", "Alliance"], province, "Africa", save);
             yield* marriageChecks(province, "Africa", save);
          },

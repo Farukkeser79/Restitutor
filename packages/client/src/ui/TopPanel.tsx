@@ -43,7 +43,7 @@ import { RebirthPage } from "./RebirthPage";
 import { SenatePage } from "./SenatePage";
 import { SettingsSingletonModal } from "./SettingsSingletonModal";
 import { SocialClassSingletonModal } from "./SocialClassSingletonModal";
-import { TileListSingletonModal } from "./TileListSingletonModal";
+import { ŞehirListSingletonModal } from "./ŞehirListSingletonModal";
 import { TodoPanel } from "./TodoPanel";
 import { TopRightPanel } from "./TopRightPanel";
 import { TradeSingletonModal } from "./TradeSingletonModal";
@@ -72,7 +72,7 @@ export function TopLeftPanel(): React.ReactNode {
    const openTreasury = useCallback(() => showPanel(TreasuryPage, {}), []);
    const openArmy = useCallback(() => showPanel(ArmySingletonModal, {}), []);
    const openFamilyTree = useCallback(() => showPanel(FamilyTreeSingletonModal, {}), []);
-   const openTileUpgrades = useCallback(() => showPanel(TileListSingletonModal, {}), []);
+   const openŞehirUpgrades = useCallback(() => showPanel(ŞehirListSingletonModal, {}), []);
    const openInternalAffairs = useCallback(() => showPanel(InternalAffairsPage, {}), []);
    const openSocialClass = useCallback(() => showPanel(SocialClassSingletonModal, {}), []);
    const openProduction = useCallback(() => showPanel(ProductionSingletonModal, {}), []);
@@ -86,7 +86,7 @@ export function TopLeftPanel(): React.ReactNode {
    useShortcut("OpenTreasury", openTreasury, [openTreasury]);
    useShortcut("OpenArmy", openArmy, [openArmy]);
    useShortcut("OpenFamilyTree", openFamilyTree, [openFamilyTree]);
-   useShortcut("OpenTileUpgrades", openTileUpgrades, [openTileUpgrades]);
+   useShortcut("OpenŞehirUpgrades", openŞehirUpgrades, [openŞehirUpgrades]);
    useShortcut("OpenInternalAffairs", openInternalAffairs, [openInternalAffairs]);
    useShortcut("OpenSocialClass", openSocialClass, [openSocialClass]);
    useShortcut("OpenProduction", openProduction, [openProduction]);
@@ -279,12 +279,12 @@ export function TopLeftPanel(): React.ReactNode {
                      <img src={IconCatalog.FamilyTree} style={{ width: `${IconWidth}rem` }} />
                   </div>
                </FloatingTip>
-               <FloatingTip label={$t(L.TilesAndUpgrades)}>
+               <FloatingTip label={$t(L.ŞehirsAndUpgrades)}>
                   <div
-                     id="TopPanel_TileCount"
+                     id="TopPanel_ŞehirCount"
                      className="pointer"
                      onClick={() => {
-                        showPanel(TileListSingletonModal, {});
+                        showPanel(ŞehirListSingletonModal, {});
                      }}
                   >
                      <img src={IconCatalog.Province} style={{ width: `${IconWidth}rem` }} />

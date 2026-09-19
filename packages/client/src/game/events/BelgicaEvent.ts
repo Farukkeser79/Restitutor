@@ -1,7 +1,7 @@
 import { $t, L } from "../../utils/i18n";
 import { Province } from "../definitions/Province";
 import type { ConditionChecks } from "../logic/Calculation";
-import { minCoreTileChecks, victoryCountChecks, warPowerChecks } from "../logic/MissionLogic";
+import { minCoreŞehirChecks, victoryCountChecks, warPowerChecks } from "../logic/MissionLogic";
 import { getProvinceResource } from "../logic/ProvinceLogic";
 import { EventImage } from "./EventImages";
 import type { IGameEventConfig } from "./GameEvents";
@@ -22,14 +22,14 @@ export const BelgicaEvent = {
             resources: { gold: -1000 },
             modifiers: {
                Prestige: { type: "multiply", value: 0.2, duration: 3 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
             label: () => $t(L.BaskInImperialFavor),
             modifiers: {
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
       ],
@@ -47,7 +47,7 @@ export const BelgicaEvent = {
             label: () => $t(L.ExpandTheImperialWorkshops),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
             trades: {
                Lugdunensis: { offer: { theyOffer: "gold", weOffer: "garments" }, extraProfit: 0.5 },
@@ -196,7 +196,7 @@ export const BelgicaEvent = {
             label: () => $t(L.EndowTheGlassblowersWorkshops),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
@@ -235,7 +235,7 @@ export const BelgicaEvent = {
             label: () => $t(L.RebuildTheRavagedCity),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
       ],
@@ -261,7 +261,7 @@ export const BelgicaEvent = {
             label: () => $t(L.InvestInTheCitysOwnTrades),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                LandTax: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
@@ -396,7 +396,7 @@ export const BelgicaEvent = {
       condition: {
          province: new Set(["Belgica"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(20, province, save);
+            yield* minCoreŞehirChecks(20, province, save);
             yield* warPowerChecks(10_000, province, save);
             yield* victoryCountChecks(10, province, save);
          },

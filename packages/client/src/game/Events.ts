@@ -1,5 +1,5 @@
 import type { IChat, IUser } from "@project/shared/src/rpc/ServerMessageTypes";
-import type { Tile } from "@project/shared/src/utils/Helper";
+import type { Şehir } from "@project/shared/src/utils/Helper";
 import { TypedEvent } from "@project/shared/src/utils/TypedEvent";
 import type { ReactElement } from "react";
 import type { ShowModalEvent } from "../ui/common/PanelTypes";
@@ -12,8 +12,8 @@ export const GameTimeUpdated = new TypedEvent<void>();
 export const GameSpeedChanged = new TypedEvent<number>();
 
 // UI
-export const RefreshTiles = new TypedEvent<{
-   tiles: Iterable<Tile>;
+export const RefreshŞehirs = new TypedEvent<{
+   Şehirs: Iterable<Şehir>;
    options: { indicator?: boolean; visual?: boolean };
 }>();
 export const RefreshTechTree = new TypedEvent<void>();

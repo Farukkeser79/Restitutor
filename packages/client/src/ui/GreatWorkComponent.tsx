@@ -42,7 +42,7 @@ export function GreatWorkComponent({ greatWork }: { greatWork: GreatWork }): Rea
                      <div className="divider light" />
                      <div className="mx10 my5 text-display row g5">
                         <div className="mi xs">visibility</div>
-                        <div className="f1">{$t(L.ClickToPanToTheGreatWorkTile)}</div>
+                        <div className="f1">{$t(L.ClickToPanToTheGreatWorkŞehir)}</div>
                      </div>
                   </div>
                </div>
@@ -55,12 +55,12 @@ export function GreatWorkComponent({ greatWork }: { greatWork: GreatWork }): Rea
             onClick={() => {
                G.scene
                   .getCurrent(WorldScene)
-                  ?.lookAt(config.tile, { time: 0.2 })
+                  ?.lookAt(config.Şehir, { time: 0.2 })
                   .then((scene) => {
-                     scene.drawSelectors(new Set([config.tile]));
-                     const tileData = G.save.state.tiles.get(config.tile);
-                     if (tileData) {
-                        scene.drawProvinceOutline(tileData.province);
+                     scene.drawSelectors(new Set([config.Şehir]));
+                     const ŞehirData = G.save.state.Şehirs.get(config.Şehir);
+                     if (ŞehirData) {
+                        scene.drawProvinceOutline(ŞehirData.province);
                      }
                   });
             }}

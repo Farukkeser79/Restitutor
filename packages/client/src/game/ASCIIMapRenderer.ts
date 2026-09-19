@@ -1,4 +1,4 @@
-import { createTile, tileToPoint } from "@project/shared/src/utils/Helper";
+import { createŞehir, ŞehirToPoint } from "@project/shared/src/utils/Helper";
 import { Province } from "./definitions/Province";
 import type { SaveGame } from "./GameState";
 import { isLand } from "./Land";
@@ -19,8 +19,8 @@ export function getViewport(save: SaveGame): IMapViewport {
    let minY = Number.POSITIVE_INFINITY;
    let maxY = Number.NEGATIVE_INFINITY;
 
-   for (const tile of save.state.tiles.keys()) {
-      const { x, y } = tileToPoint(tile);
+   for (const Şehir of save.state.Şehirs.keys()) {
+      const { x, y } = ŞehirToPoint(Şehir);
       minX = Math.min(minX, x);
       maxX = Math.max(maxX, x);
       minY = Math.min(minY, y);
@@ -30,25 +30,25 @@ export function getViewport(save: SaveGame): IMapViewport {
    return { minX, maxX, minY, maxY };
 }
 
-export function getTileCode(x: number, y: number, save: SaveGame): string {
-   const tile = createTile(x, y);
-   const tileData = save.state.tiles.get(tile);
-   if (tileData) {
-      return Province[tileData.province].code;
+export function getŞehirCode(x: number, y: number, save: SaveGame): string {
+   const Şehir = createŞehir(x, y);
+   const ŞehirData = save.state.Şehirs.get(Şehir);
+   if (ŞehirData) {
+      return Province[ŞehirData.province].code;
    }
-   return isLand(tile) ? UnassignedLandCode : OceanCode;
+   return isLand(Şehir) ? UnassignedLandCode : OceanCode;
 }
 
 export function renderMap(save: SaveGame, staggerOddRows: boolean): string {
    const viewport = getViewport(save);
    const rows: string[] = [];
    for (let y = viewport.minY; y <= viewport.maxY; y++) {
-      const tiles: string[] = [];
+      const Şehirs: string[] = [];
       for (let x = viewport.minX; x <= viewport.maxX; x++) {
-         tiles.push(getTileCode(x, y, save));
+         Şehirs.push(getŞehirCode(x, y, save));
       }
       const indent = staggerOddRows && y % 2 !== 0 ? "  " : "";
-      rows.push(`${y.toString().padStart(3, "0")}|${indent}${tiles.join(" ")}`);
+      rows.push(`${y.toString().padStart(3, "0")}|${indent}${Şehirs.join(" ")}`);
    }
    return rows.join("\n");
 }

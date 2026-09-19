@@ -7,7 +7,7 @@ import {
    getProvincePrestige,
    getProvincePrestigeRanking,
    getProvinceStability,
-   getProvinceTileCount,
+   getProvinceŞehirCount,
    getWarPower,
 } from "../game/logic/ProvinceLogic";
 import { G } from "../utils/Global";
@@ -37,7 +37,7 @@ export function ProvinceListSingletonModal(): React.ReactNode {
                      <th style={{ width: 0 }}></th>
                      <th></th>
                      <th>{$t(L.Prestige)}</th>
-                     <th>{$t(L.Tiles)}</th>
+                     <th>{$t(L.Şehirs)}</th>
                      <th>{$t(L.Income)}</th>
                      <th>{$t(L.Stability)}</th>
                      <th>{$t(L.WarPower)}</th>
@@ -67,7 +67,7 @@ export function ProvinceListSingletonModal(): React.ReactNode {
                                  <div>{formatNumber(prestige.value)}</div>
                               </BreakdownTooltip>
                            </td>
-                           <td>{getProvinceTileCount(province, G.save)}</td>
+                           <td>{getProvinceŞehirCount(province, G.save)}</td>
                            <td>{colorNumber(getProvinceIncome(province, G.save).income)}</td>
                            <td>
                               <BreakdownTooltip breakdown={stability}>

@@ -1,4 +1,4 @@
-import { clamp, entriesOf, forEach, formatNumber, type Tile } from "@project/shared/src/utils/Helper";
+import { clamp, entriesOf, forEach, formatNumber, type Şehir } from "@project/shared/src/utils/Helper";
 import { type Edge, MarkerType, type Node } from "@xyflow/react";
 import { remToPx } from "../../ui/common/UIScaling";
 import {
@@ -25,7 +25,7 @@ import {
    type ProvinceStats,
 } from "../definitions/Province";
 import { initSaveGame, SaveGame } from "../GameState";
-import { addProvinceResource, getProvinceResource, getTilesAnnexedAndCored, provinceResourceOf } from "./ProvinceLogic";
+import { addProvinceResource, getProvinceResource, getŞehirsAnnexedAndCored, provinceResourceOf } from "./ProvinceLogic";
 
 export function makeLegacyUpgradeNodes(province: Province, save: SaveGame): { nodes: Node[]; edges: Edge[] } {
    const nodes: Node[] = [];
@@ -101,18 +101,18 @@ export function getLegacyPointsNextRun(save: SaveGame): IValueBreakdown {
       name: $t(L.LegacyPointsFromPreviousRuns),
       value: total,
    });
-   const tilesAnnexedAndCored = getTilesAnnexedAndCored(save.state.playerProvince, save);
+   const ŞehirsAnnexedAndCored = getŞehirsAnnexedAndCored(save.state.playerProvince, save);
    result.add.push({
-      name: $t(L.TilesAnnexedAndCored),
-      value: tilesAnnexedAndCored,
-      desc: $t(L.EachAnnexedAndCoredTileGrants$1LegacyPoint, "1"),
+      name: $t(L.ŞehirsAnnexedAndCored),
+      value: ŞehirsAnnexedAndCored,
+      desc: $t(L.EachAnnexedAndCoredŞehirGrants$1LegacyPoint, "1"),
    });
    const previousBest = save.options.rebirthHistory.reduce((max, history) => {
-      return Math.max(max, history.tileAnnexedAndCored);
+      return Math.max(max, history.ŞehirAnnexedAndCored);
    }, 0);
    result.add.push({
       name: $t(L.PersonalBestBonus),
-      value: clamp(tilesAnnexedAndCored - previousBest, 0, Number.POSITIVE_INFINITY),
+      value: clamp(ŞehirsAnnexedAndCored - previousBest, 0, Number.POSITIVE_INFINITY),
       desc: $t(L.PersonalBestBonusDesc$1$2, "1", formatNumber(previousBest)),
    });
    return finalizeBreakdown(result);
@@ -185,8 +185,8 @@ export type IRebirthHistory = {
    province: Province;
    resources: ProvinceResources;
    stats: ProvinceStats;
-   tiles: Map<Tile, { core: boolean }>;
-   tileAnnexedAndCored: number;
+   Şehirs: Map<Şehir, { core: boolean }>;
+   ŞehirAnnexedAndCored: number;
 };
 
 export function makeRebirthHistory(save: SaveGame): IRebirthHistory | undefined {
@@ -199,11 +199,11 @@ export function makeRebirthHistory(save: SaveGame): IRebirthHistory | undefined 
       province: save.state.playerProvince,
       resources: state.resources,
       stats: state.stats,
-      tiles: new Map(
-         Array.from(save.state.tiles)
+      Şehirs: new Map(
+         Array.from(save.state.Şehirs)
             .filter(([_, data]) => data.province === save.state.playerProvince)
-            .map(([tile, data]) => [tile, { core: data.coreProvinces.has(save.state.playerProvince) }]),
+            .map(([Şehir, data]) => [Şehir, { core: data.coreProvinces.has(save.state.playerProvince) }]),
       ),
-      tileAnnexedAndCored: getTilesAnnexedAndCored(save.state.playerProvince, save),
+      ŞehirAnnexedAndCored: getŞehirsAnnexedAndCored(save.state.playerProvince, save),
    };
 }

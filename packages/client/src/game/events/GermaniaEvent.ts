@@ -1,8 +1,8 @@
 import { $t, L } from "../../utils/i18n";
 import { Province } from "../definitions/Province";
-import { getTileName } from "../definitions/TileName";
+import { getŞehirName } from "../definitions/ŞehirName";
 import type { ConditionChecks } from "../logic/Calculation";
-import { forcePatronageEffect, maxCoreTileChecks, minCoreTileChecks, warPowerChecks } from "../logic/MissionLogic";
+import { forcePatronageEffect, maxCoreŞehirChecks, minCoreŞehirChecks, warPowerChecks } from "../logic/MissionLogic";
 import { getProvinceResource } from "../logic/ProvinceLogic";
 import {
    requireAnyTreatyBetweenChecks,
@@ -26,7 +26,7 @@ export const GermaniaEvent = {
             label: () => $t(L.ExpandThePottersWorkshops),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
@@ -140,7 +140,7 @@ export const GermaniaEvent = {
             label: () => $t(L.PlantTheRhineHillsides),
             resources: { gold: -500 },
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
             trades: {
                Belgica: { offer: { theyOffer: "gold", weOffer: "grain" }, extraProfit: 0.5 },
@@ -301,7 +301,7 @@ export const GermaniaEvent = {
             label: () => $t(L.EvacuateTheExposedFrontier),
             modifiers: {
                Stability: { type: "add", value: 10, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: -0.1, duration: 2 * 12 },
             },
          },
       ],
@@ -355,7 +355,7 @@ export const GermaniaEvent = {
          conditions: function* (province, save): ConditionChecks {
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Raetia", save);
             yield* requirePeaceBetweenChecks(province, "Raetia", save);
-            yield* maxCoreTileChecks(3, "Raetia", save);
+            yield* maxCoreŞehirChecks(3, "Raetia", save);
             yield* requireAnyTreatyBetweenChecks(["DefensePact", "Alliance"], province, "Raetia", save);
          },
       },
@@ -375,7 +375,7 @@ export const GermaniaEvent = {
          conditions: function* (province, save): ConditionChecks {
             yield* requireNoTreatyBetweenChecks(["Patron"], province, "Belgica", save);
             yield* requirePeaceBetweenChecks(province, "Belgica", save);
-            yield* maxCoreTileChecks(3, "Belgica", save);
+            yield* maxCoreŞehirChecks(3, "Belgica", save);
             yield* requireAnyTreatyBetweenChecks(["DefensePact", "Alliance"], province, "Belgica", save);
          },
       },
@@ -394,7 +394,7 @@ export const GermaniaEvent = {
          province: new Set(["Germania"]),
          playerOnly: true,
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(25, province, save);
+            yield* minCoreŞehirChecks(25, province, save);
          },
       },
       buttons: [
@@ -407,20 +407,20 @@ export const GermaniaEvent = {
                {
                   desc: (province, save) =>
                      $t(
-                        L.$1TileDefenseFor$2And$3For$4Years,
+                        L.$1ŞehirDefenseFor$2And$3For$4Years,
                         "-10%",
-                        getTileName(9175112, save),
-                        getTileName(9109577, save),
+                        getŞehirName(9175112, save),
+                        getŞehirName(9109577, save),
                         "5",
                      ),
                   effect: (province, save) => {
-                     save.state.tiles.get(9175112)?.modifiers.Defense.push({
+                     save.state.Şehirs.get(9175112)?.modifiers.Defense.push({
                         type: "multiply",
                         value: -0.1,
                         duration: 5 * 12,
                         name: GermaniaEvent.Germania13.name(),
                      });
-                     save.state.tiles.get(9109577)?.modifiers.Defense.push({
+                     save.state.Şehirs.get(9109577)?.modifiers.Defense.push({
                         type: "multiply",
                         value: -0.1,
                         duration: 5 * 12,
@@ -439,20 +439,20 @@ export const GermaniaEvent = {
                {
                   desc: (province, save) =>
                      $t(
-                        L.$1TileDefenseFor$2And$3For$4Years,
+                        L.$1ŞehirDefenseFor$2And$3For$4Years,
                         "-10%",
-                        getTileName(9240648, save),
-                        getTileName(9175113, save),
+                        getŞehirName(9240648, save),
+                        getŞehirName(9175113, save),
                         "5",
                      ),
                   effect: (province, save) => {
-                     save.state.tiles.get(9240648)?.modifiers.Defense.push({
+                     save.state.Şehirs.get(9240648)?.modifiers.Defense.push({
                         type: "multiply",
                         value: -0.1,
                         duration: 5 * 12,
                         name: GermaniaEvent.Germania12.name(),
                      });
-                     save.state.tiles.get(9175113)?.modifiers.Defense.push({
+                     save.state.Şehirs.get(9175113)?.modifiers.Defense.push({
                         type: "multiply",
                         value: -0.1,
                         duration: 5 * 12,
@@ -471,7 +471,7 @@ export const GermaniaEvent = {
       condition: {
          province: new Set(["Germania"]),
          conditions: function* (province, save): ConditionChecks {
-            yield* minCoreTileChecks(30, province, save);
+            yield* minCoreŞehirChecks(30, province, save);
          },
       },
       buttons: [

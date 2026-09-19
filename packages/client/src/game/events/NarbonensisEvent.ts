@@ -1,9 +1,9 @@
 import { $t, L } from "../../utils/i18n";
 import { Province } from "../definitions/Province";
-import { getTileName } from "../definitions/TileName";
+import { getŞehirName } from "../definitions/ŞehirName";
 import type { ConditionChecks } from "../logic/Calculation";
 import {
-   annexTiles,
+   annexŞehirs,
    forcePatronageEffect,
    marriageChecks,
    provinceResourceChecks,
@@ -33,7 +33,7 @@ export const NarbonensisEvent = {
             resources: { gold: -500 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -85,7 +85,7 @@ export const NarbonensisEvent = {
             resources: { gold: -500 },
             modifiers: {
                Stability: { type: "add", value: 10, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -195,7 +195,7 @@ export const NarbonensisEvent = {
             resources: { gold: -300 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -285,7 +285,7 @@ export const NarbonensisEvent = {
             resources: { gold: -500 },
             modifiers: {
                TradeProfit: { type: "multiply", value: 0.1, duration: 2 * 12 },
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -338,7 +338,7 @@ export const NarbonensisEvent = {
          {
             label: () => $t(L.ExchangeCraftsmenAndCultivators),
             modifiers: {
-               TileOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
+               ŞehirOutput: { type: "multiply", value: 0.1, duration: 2 * 12 },
             },
          },
          {
@@ -414,13 +414,13 @@ export const NarbonensisEvent = {
          province: new Set(["Narbonensis"]),
          conditions: function* (province, save): ConditionChecks {
             yield* requireAnyTreatyBetweenChecks(["Alliance"], province, "Italia", save);
-            const AugustaPraetoria = save.state.tiles.get(9175112);
+            const AugustaPraetoria = save.state.Şehirs.get(9175112);
             (yield AugustaPraetoria?.province === province && AugustaPraetoria?.coreProvinces.has(province))?.describe(
-               $t(L.$1IsCoreTileOf$2, getTileName(9175112, save), Province.Narbonensis.name()),
+               $t(L.$1IsCoreŞehirOf$2, getŞehirName(9175112, save), Province.Narbonensis.name()),
             );
-            const Taurinorum = save.state.tiles.get(9175113);
+            const Taurinorum = save.state.Şehirs.get(9175113);
             (yield Taurinorum?.province === "Italia" && Taurinorum?.coreProvinces.has("Italia"))?.describe(
-               $t(L.$1IsCoreTileOf$2, getTileName(9175113, save), Province.Italia.name()),
+               $t(L.$1IsCoreŞehirOf$2, getŞehirName(9175113, save), Province.Italia.name()),
             );
             return;
          },
@@ -432,15 +432,15 @@ export const NarbonensisEvent = {
                {
                   desc: (province, save) =>
                      $t(
-                        L.$1Becomes$2CoreTileAnd$3Becomes$4CoreTile,
-                        getTileName(9175112, save),
+                        L.$1Becomes$2CoreŞehirAnd$3Becomes$4CoreŞehir,
+                        getŞehirName(9175112, save),
                         Province.Italia.name(),
-                        getTileName(9175113, save),
+                        getŞehirName(9175113, save),
                         Province.Narbonensis.name(),
                      ),
                   effect: (province, save) => {
-                     annexTiles({ tiles: [9175112], core: true, province: "Italia", save });
-                     annexTiles({ tiles: [9175113], core: true, province, save });
+                     annexŞehirs({ Şehirs: [9175112], core: true, province: "Italia", save });
+                     annexŞehirs({ Şehirs: [9175113], core: true, province, save });
                   },
                },
             ],

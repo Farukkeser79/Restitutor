@@ -1,9 +1,9 @@
-import { entriesOf, type Tile } from "@project/shared/src/utils/Helper";
+import { entriesOf, type Şehir } from "@project/shared/src/utils/Helper";
 import { Buildings } from "../game/definitions/Building";
 import { Modifiers } from "../game/definitions/Modifier";
-import { getTileName } from "../game/definitions/TileName";
+import { getŞehirName } from "../game/definitions/ŞehirName";
 import { GameStateUpdated } from "../game/Events";
-import { getBuildingSlot } from "../game/logic/TileLogic";
+import { getBuildingSlot } from "../game/logic/ŞehirLogic";
 import { G } from "../utils/Global";
 import { refreshOnTypedEvent } from "../utils/Hook";
 import { $t, L } from "../utils/i18n";
@@ -13,15 +13,15 @@ import { BuildingConstructionButton, DemolishBuildingButton } from "./BuildingCo
 import { FloatingTip } from "./components/FloatingTip";
 import { Grid2 } from "./UIConstant";
 
-export function TileBuildingsModal({ tile }: { tile: Tile }): React.ReactNode {
+export function ŞehirBuildingsModal({ Şehir }: { Şehir: Şehir }): React.ReactNode {
    refreshOnTypedEvent(GameStateUpdated);
-   const tileData = G.save.state.tiles.get(tile);
-   if (!tileData) {
+   const ŞehirData = G.save.state.Şehirs.get(Şehir);
+   if (!ŞehirData) {
       return null;
    }
-   const buildingSlots = getBuildingSlot(tile, G.save);
+   const buildingSlots = getBuildingSlot(Şehir, G.save);
    return (
-      <ModalComp size="lg" title={<ModalTitleBar title={$t(L.BuildingsIn$1, getTileName(tile, G.save))} dismiss />}>
+      <ModalComp size="lg" title={<ModalTitleBar title={$t(L.BuildingsIn$1, getŞehirName(Şehir, G.save))} dismiss />}>
          <BreakdownTooltip
             breakdown={buildingSlots}
             tooltip={(element) => (
@@ -34,7 +34,7 @@ export function TileBuildingsModal({ tile }: { tile: Tile }): React.ReactNode {
             <div className="box row m10 p10">
                <div className="f1">{$t(L.UsedTotalBuildingSlots)}</div>
                <div>
-                  {tileData.buildings.size}/{buildingSlots.value}
+                  {ŞehirData.buildings.size}/{buildingSlots.value}
                </div>
             </div>
          </BreakdownTooltip>
@@ -52,12 +52,12 @@ export function TileBuildingsModal({ tile }: { tile: Tile }): React.ReactNode {
                         <div className="text-sm text-dimmed">{config.desc()}</div>
                      </div>
                      <div>
-                        {tileData.buildings.has(building) ? (
-                           <DemolishBuildingButton building={building} tile={tile}>
+                        {ŞehirData.buildings.has(building) ? (
+                           <DemolishBuildingButton building={building} Şehir={Şehir}>
                               {$t(L.Demolish)}
                            </DemolishBuildingButton>
                         ) : (
-                           <BuildingConstructionButton building={building} tile={tile}>
+                           <BuildingConstructionButton building={building} Şehir={Şehir}>
                               {$t(L.Build)}
                            </BuildingConstructionButton>
                         )}

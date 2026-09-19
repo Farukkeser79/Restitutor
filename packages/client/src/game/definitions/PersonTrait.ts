@@ -4,13 +4,13 @@ import { type IBaseModifier, type Modifier, modifierToString } from "./Modifier"
 
 export type IPersonTrait =
    | {
-        name: () => string;
-        desc: () => string;
-     }
+      name: () => string;
+      desc: () => string;
+   }
    | {
-        name: () => string;
-        modifiers: Partial<Record<Modifier, IBaseModifier>>;
-     };
+      name: () => string;
+      modifiers: Partial<Record<Modifier, IBaseModifier>>;
+   };
 
 export type PersonTrait = keyof typeof PersonTrait;
 
@@ -21,7 +21,7 @@ export const PersonTrait = {
    },
    Methodical: {
       name: () => $t(L.PersonTraitMethodical),
-      modifiers: { TileOutput: { type: "multiply", value: 0.02 } },
+      modifiers: { ŞehirOutput: { type: "multiply", value: 0.02 } },
    },
    Robust: {
       name: () => $t(L.PersonTraitRobust),
@@ -37,7 +37,7 @@ export const PersonTrait = {
    },
    Efficient: {
       name: () => $t(L.PersonTraitEfficient),
-      modifiers: { TileMaintenance: { type: "multiply", value: -0.02 } },
+      modifiers: { ŞehirMaintenance: { type: "multiply", value: -0.02 } },
    },
    Bold: {
       name: () => $t(L.PersonTraitBold),
@@ -56,14 +56,14 @@ export const PersonTrait = {
       name: () => $t(L.PersonTraitThrifty),
       modifiers: { AdvisorCost: { type: "multiply", value: -0.02 } },
    },
-   Fertile: {
-      name: () => $t(L.PersonTraitFertile),
+   FerŞehir: {
+      name: () => $t(L.PersonTraitFerŞehir),
       desc: () => $t(L.$1OffspringChance, "+2%"),
    },
 } as const satisfies Record<string, IPersonTrait>;
 
 export const GovernorTraits = keysOf(PersonTrait);
-export const AdvisorTraits = GovernorTraits.filter((trait) => trait !== "Fertile" && trait !== "Thrifty");
+export const AdvisorTraits = GovernorTraits.filter((trait) => trait !== "FerŞehir" && trait !== "Thrifty");
 
 export function getPersonTraitDescription(trait: PersonTrait): string {
    const def: IPersonTrait = PersonTrait[trait];

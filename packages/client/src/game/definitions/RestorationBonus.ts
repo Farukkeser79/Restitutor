@@ -5,7 +5,7 @@ import LandTax from "../../assets/images/modifiers/LandTax.webp";
 import Manpower from "../../assets/images/modifiers/Manpower.webp";
 import Prestige from "../../assets/images/modifiers/Prestige.webp";
 import Stability from "../../assets/images/modifiers/Stability.webp";
-import TileOutput from "../../assets/images/modifiers/TileOutput.webp";
+import ŞehirOutput from "../../assets/images/modifiers/ŞehirOutput.webp";
 import TradeProfit from "../../assets/images/modifiers/TradeProfit.webp";
 import WarPower from "../../assets/images/modifiers/WarPower.webp";
 import type { ImageWithCredit } from "../events/ImageWithCredit";
@@ -83,14 +83,14 @@ export const RestorationBonus = {
          credit: "Cincinnatus behind the plow, Anton Hoffmann (1920)",
       },
    },
-   TileOutput: {
+   ŞehirOutput: {
       effect: {
          modifiers: {
-            TileOutput: { type: "multiply", value: 0.02 },
+            ŞehirOutput: { type: "multiply", value: 0.02 },
          },
       },
       image: {
-         url: TileOutput,
+         url: ŞehirOutput,
          credit: "A Forge, Antonio Zucchi (c.1700s)",
       },
    },
